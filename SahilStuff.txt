@@ -1,0 +1,36 @@
+COMPONENT SETUP***
+
+
+
+import React from 'react'
+import './Card.css'
+import '../pages/Team.css'
+
+export const Card = (props) => {
+  return (
+    <div className = {"item " + props.index}>
+        {props.name}
+    </div>
+  )
+}
+________________________________________________________________________________________________
+PAGE SETUP***
+
+
+
+import React from 'react'
+import './Home.css'
+import "./AllPages.css"
+
+export const Home = () => {
+  return (
+    <div>
+        <header className = "Shadowed Gradient App-header">
+          RUN FOR WATER
+        </header>
+    </div>
+  )
+}
+
+
+
