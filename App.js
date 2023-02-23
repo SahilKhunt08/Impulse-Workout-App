@@ -4,6 +4,8 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 import Home from "./pages/home";
+import Page2 from "./pages/page2";
+import Page3 from "./pages/page3";
 import Profile from "./pages/profile";
 
 function HomeScreen() {
@@ -28,7 +30,9 @@ function MyTabs() {
   return (
     <Tab.Navigator>
       <Tab.Screen name="Home" component={Home} />
-      <Tab.Screen name="Settings" component={Profile} />
+      <Tab.Screen name="Page2" component={Page2} />
+      <Tab.Screen name="Page3" component={Page3} />
+      <Tab.Screen name="Profile" component={Profile} />
     </Tab.Navigator>
   );
 }
