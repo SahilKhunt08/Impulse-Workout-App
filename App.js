@@ -8,22 +8,6 @@ import Page2 from "./pages/page2";
 import Page3 from "./pages/page3";
 import Profile from "./pages/profile";
 
-function HomeScreen() {
-  return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>Home!</Text>
-    </View>
-  );
-}
-
-function SettingsScreen() {
-  return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>Settings!</Text>
-    </View>
-  );
-}
-
 const Tab = createBottomTabNavigator();
 
 function MyTabs() {
