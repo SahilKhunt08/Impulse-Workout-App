@@ -6,23 +6,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Home from "./pages/home";
 import Page2 from "./pages/page2";
 import Page3 from "./pages/page3";
-import Profile from "./pages/profile";
-
-function HomeScreen() {
-  return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>Home!</Text>
-    </View>
-  );
-}
-
-function SettingsScreen() {
-  return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>Settings!</Text>
-    </View>
-  );
-}
+import Profile from "./pages/profile";  
 
 const Tab = createBottomTabNavigator();
 
@@ -54,7 +38,7 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#429692',
     alignItems: 'center',
     justifyContent: 'center',
   },
