@@ -27,8 +27,8 @@ export default function App() {
     //   <Text>Sahil changed stuff! Viddy Change</Text>
     //   <StatusBar style="auto" />
     //   <Home></Home>
-    // </View>
-
+    // </View>  
+     
     <NavigationContainer>
       <MyTabs />
     </NavigationContainer>
@@ -39,8 +39,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#429692',
-    alignItems: 'center',
-    justifyContent: 'center',
+    // alignItems: 'center',
+    // justifyContent: 'center',
   },
 });
 
