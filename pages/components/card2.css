@@ -1,0 +1,77 @@
+.boxes{
+    margin: 20px;
+    margin-top: 150px;
+    background-color: rgb(198, 177, 198);
+    overflow: hidden;
+    height: 200px;
+    max-height: 35vh;
+    box-shadow: 0px 12px 18px -6px rgba(0, 0, 0, 0.3);
+    border-radius: 10px 10px 10px 10px;
+}
+
+.grids{
+    max-width: 50%;
+    margin: auto;
+}
+
+.activityBox{
+    height: 450px;
+    width: 300px;
+    background-color: rgb(198, 177, 198);
+    border-color: rgb(96, 134, 139);
+    border-width: 10px;
+    border-radius: 15px;    
+    margin: 30px;
+    margin-left: 30px;
+    box-shadow: 0px 12px 18px -6px rgba(0, 0, 0, 0.3);
+    font-size: 15px;
+}
+
+.activityBar1 {
+    background-color: rgb(114, 95, 114);
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transform: translate(0px, 0px);
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+    color: white;
+    font-size: 27px;
+    font-family: "ComBold";
+}
+
+.activityBar2 {
+    background-color: rgb(114, 95, 114);
+    height: 40px;
+    width: 200px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transform: translate(0px, 0px);
+    border-radius: 15px;
+    color: white;
+    font-size: 22px;
+    font-family: "ComBold";
+}
+
+.activityImg {
+    max-height: 150px;
+    max-width: 250px;
+    margin-top: 15px;
+}
+
+.activityHeader {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.activityBody {
+    font-size: 15px;
+    font-family: "ComBold";
+    display: flex;
+    justify-content: left;
+    align-items: left;
+    text-align: left;
+}

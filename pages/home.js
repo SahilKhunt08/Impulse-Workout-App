@@ -9,7 +9,8 @@ export default function Home() {
     return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#429692'}}>
       <Text>Home!</Text>
-      {/* <Card1></Card1> */}
+      <Card1></Card1>
+      <Text>Hello</Text>
       <Card2></Card2>
     </View>
   )
