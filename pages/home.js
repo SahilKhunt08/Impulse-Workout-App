@@ -10,8 +10,9 @@ export default function Home() {
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#429692'}}>
       <Text>Home!</Text>
       <Card1></Card1>
-      <Text>Hello</Text>
+      <Text style={{margin: "10"}}>Hello</Text>
       <Card2></Card2>
+      {/* <Card2></Card2> */}
     </View>
   )
 }
