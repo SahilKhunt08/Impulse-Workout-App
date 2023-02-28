@@ -6,23 +6,31 @@ const LeftContent = props => <Avatar.Icon {...props} icon="human" />
 
 const Card2 = () => (
     <View style={styles.container}>
+        <View style={styles.testView}></View>
         {/* <Text style={styles.title}>React Native</Text> */}
-        <Card.Title title="Full Name" subtitle="User Name" left={LeftContent} />
-        <View style={{alignContent: "center"}}>
+        <Card.Title title="Full Name" subtitle="User Name" left={LeftContent} style={styles.temp}/>
+        <View style={styles.testView}> 
             <Button style={styles.button1}>Cancel</Button>
-            <Button style={styles.button1}>Add</Button>
+            <Button style={[styles.button1, styles.purple]}>Add</Button>
         </View>
   </View>
 );
 
 const styles = StyleSheet.create({
+    testView: {
+        alignItems: "center",
+    },
     container: {
         padding: 1,
-        backgroundColor: 'white',
+        backgroundColor: '#f6f3f9',
         borderRadius: 10,
         width: 350,
         borderColor: "black",
         borderWidth: 4,
+
+        display: "flex",
+        textAlign: "center",
+        justify: "center",
     },
     title: {
     //   marginTop: 16,
@@ -41,20 +49,20 @@ const styles = StyleSheet.create({
         borderColor: 'black',
         borderWidth: 1,
         color: "",
-        maxWidth: 150,
+        maxWidth: 100,
         fontSize: 10,
         backgroundColor: "white",
     },
+    purple: {
+        // backgroundColor: '#635b9f',
+        // /: 'white',
+    },
+    temp: {
+        borderColor: "black",
+        // borderWidth: 4,
+        maxWidth: 175,
+    },
 
-    // boxes: {
-    //     margin: 20px;
-    //     margin-top: 150px;
-    //     background-color: rgb(198, 177, 198);
-    //     overflow: hidden;
-    //     height: 200px;
-    //     max-height: 35vh;
-    //     box-shadow: 0px 12px 18px -6px rgba(0, 0, 0, 0.3);
-    //     border-radius: 10px 10px 10px 10px;
-    // }
   });
+  
 export default Card2;
