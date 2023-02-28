@@ -1,12 +1,11 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, TouchableHighlight } from 'react-native';
 import { Avatar, Button, Card} from 'react-native-paper';
 
 const LeftContent = props => <Avatar.Icon {...props} icon="human" />
 
 const Card2 = () => (
     <View style={styles.container}>
-        <View style={styles.testView}></View>
         {/* <Text style={styles.title}>React Native</Text> */}
         <Card.Title title="Full Name" subtitle="User Name" left={LeftContent} style={styles.temp}/>
         <View style={styles.testView}> 
@@ -19,6 +18,8 @@ const Card2 = () => (
 const styles = StyleSheet.create({
     testView: {
         alignItems: "center",
+        flexDirection: "row",
+        // marginLeft: 100,
     },
     container: {
         padding: 1,
@@ -28,9 +29,10 @@ const styles = StyleSheet.create({
         borderColor: "black",
         borderWidth: 4,
 
-        display: "flex",
-        textAlign: "center",
+        // display: "flex",
+        // textAlign: "center",
         justify: "center",
+        flexDirection: "row",
     },
     title: {
     //   marginTop: 16,
@@ -61,6 +63,7 @@ const styles = StyleSheet.create({
         borderColor: "black",
         // borderWidth: 4,
         maxWidth: 175,
+        width: 175,
     },
 
   });

@@ -8,9 +8,9 @@ import Card2 from "./components/card2";
 export default function Home() {
     return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#429692'}}>
-      <Text> Temp </Text>
-      <Card1></Card1>
-      <Text> Temp </Text>
+      {/* <Text> Temp </Text> */}
+      {/* <Card1></Card1> */}
+      {/* <Text> Temp </Text> */}
       <Card2></Card2>
       {/* <Card2></Card2> */}
     </View>
