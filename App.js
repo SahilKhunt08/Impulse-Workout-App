@@ -6,14 +6,15 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Home from "./pages/home";
 import Page2 from "./pages/page2";
 import Page3 from "./pages/page3";
-
 import Profile from "./pages/profile";
 
+import Login from "./pages/login";
 
 const Tab = createBottomTabNavigator();
 
 function MyTabs() {
   return (
+    // <View>
     <Tab.Navigator>
       <Tab.Screen name="Home" component={Home} />
       <Tab.Screen name="Page2" component={Page2} />
