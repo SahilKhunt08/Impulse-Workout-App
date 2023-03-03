@@ -5,14 +5,28 @@ const handleLogin = () => {
   console.log("fdd")
 }
 
+
+
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("")
+
+  const [boolean1, setboolean1] = useState(true);
+  const handleTemp = () => {
+    setboolean1(!boolean1);
+  }
 
   return (
     <View style={styles.container}>
       {/* <Image style={styles.image} source={require("./assets/log2.png")} />  */}
       <StatusBar style="auto" />
+
+      <TouchableOpacity style={styles.loginBtn} onPress={handleTemp}>
+        <Text style={styles.loginText}>Click Me</Text> 
+      </TouchableOpacity> 
+      { boolean1 && <Text>Random Text</Text>}
+
+
       <View style={styles.inputView}>
         <TextInput
           style={styles.TextInput}

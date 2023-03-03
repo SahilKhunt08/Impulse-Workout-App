@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, Button} from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import React, { useState } from "react";
@@ -10,7 +10,7 @@ import Page3 from "./pages/page3";
 import Profile from "./pages/profile";
 
 import Login from "./pages/login";
-import { render } from 'react-native/Libraries/Renderer/implementations/ReactNativeRenderer-prod';
+// import { render } from 'react-native/Libraries/Renderer/implementations/ReactNativeRenderer-prod';
 
 const Tab = createBottomTabNavigator();
 
@@ -27,16 +27,28 @@ const Tab = createBottomTabNavigator();
 // }
 
 
+
+const Testing1 = ({ title, showButton }) => (
+  <View>
+    <Text style={{ fontSize: 60 }}>{title}</Text>
+    {showButton && <Button title="Press me!" />}
+  </View>
+)
+
+
 function MyTabs() {
-  const [loggedIn, setLoggedIn] = useState(false)
-  console.log(loggedIn)
+  // const [loggedIn, setLoggedIn] = useState(false)
+  // console.log(loggedIn)
 
   return (
     <Tab.Navigator>
+      <Tab.Screen name="Login" component={Login} />
       <Tab.Screen name="Home" component={Home} />
       <Tab.Screen name="Page2" component={Page2} />
       <Tab.Screen name="Page3" component={Page3} />
-      {loggedIn == 'true'? <Tab.Screen name="Login" component={Login} /> : <Tab.Screen name="Profile" component={Profile}/>}
+      <Tab.Screen name="Profile" component={Profile} />
+      {/* <Tab.Screen name="Login" component={Login} /> */}
+      {/* {loggedIn == 'true'? <Tab.Screen name="Login" component={Login} /> : <Tab.Screen name="Profile" component={Profile}/>} */}
 
 
       {/* <CheckLogin/> */}
@@ -44,21 +56,39 @@ function MyTabs() {
   );
 }
 
+
 export default function App() {
+
+  const [boolean1, setboolean1] = useState(!false);
+  const [boolean2, setboolean2] = useState(!true);
+  const handleTemp = () => {
+    setboolean1(!boolean1);
+  }
+
   return (
-    <NavigationContainer>
-      <MyTabs/>
-    </NavigationContainer>
+    <View style={styles.container}>
+      {boolean1 && <Login></Login>}
+      {/* <Testing1 title="Title" showButton={true} /> */}
+      {boolean2 && <NavigationContainer>
+        <MyTabs/>
+      </NavigationContainer> }
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    // flex: 1,
-    // backgroundColor: '#429692',
-    // alignItems: 'center',
-    // justifyContent: 'center',
-    
+    flex: 1,
+    backgroundColor: '#429692',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: "row",
   },
 });
+
+
+
+
+
+
 
