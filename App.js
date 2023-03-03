@@ -2,6 +2,9 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Button} from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+
 import React, { useState } from "react";
 
 import Home from "./pages/home";
@@ -13,6 +16,7 @@ import Login from "./pages/login";
 // import { render } from 'react-native/Libraries/Renderer/implementations/ReactNativeRenderer-prod';
 
 const Tab = createBottomTabNavigator();
+const Stack = createNativeStackNavigator();
 
 // function CheckLogin() {
 //   // const [loggedIn, setLoggedIn] = useState(false);
@@ -42,7 +46,7 @@ function MyTabs() {
 
   return (
     <Tab.Navigator>
-      <Tab.Screen name="Login" component={Login} />
+      {/* <Tab.Screen name="Login" component={Login} /> */}
       <Tab.Screen name="Home" component={Home} />
       <Tab.Screen name="Page2" component={Page2} />
       <Tab.Screen name="Page3" component={Page3} />
@@ -66,13 +70,22 @@ export default function App() {
   }
 
   return (
-    <View style={styles.container}>
-      {boolean1 && <Login></Login>}
-      {/* <Testing1 title="Title" showButton={true} /> */}
-      {boolean2 && <NavigationContainer>
-        <MyTabs/>
-      </NavigationContainer> }
-    </View>
+    // <View style={styles.container}>
+    //   {boolean1 && <Login></Login>}
+    //   {boolean2 && <NavigationContainer>
+    //     <MyTabs/>
+    //   </NavigationContainer> }
+    // </View>
+
+
+  <NavigationContainer>
+    <Stack.Navigator initialRouteName="Home">
+      <Stack.Screen name="Home" component={Home} />
+      <Stack.Screen name="Details" component={Page2} />
+
+    </Stack.Navigator>
+  </NavigationContainer>
+
   );
 }
 
@@ -90,5 +103,8 @@ const styles = StyleSheet.create({
 
 
 
+
+//authstack
+//navigation.navigate
 
 
