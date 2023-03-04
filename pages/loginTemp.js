@@ -1,48 +1,37 @@
 import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
 import { StyleSheet, Text, View, Image, TextInput, Button, TouchableOpacity } from "react-native";
-// import {db} from './firebase';
-import { auth } from './firebase';
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+
+
+const handleLogin = () => {
+  console.log("fdd");
+}
+
 
 export default function Login({ navigation }) {
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("")
 
-  const handleRegister = () => {
-    createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-          // Signed in 
-      const user = userCredential.user;
-        // ...
-      })
-      .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        // ..
-      });
+  const [boolean1, setboolean1] = useState(true);
+  const handleTemp = () => {
+    setboolean1(!boolean1);
+    console.log("345");
   }
 
-  const handleLogin = () => {
-    signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-      // Signed in 
-      const user = userCredential.user;
-      // ...
-      console.log("Correct")
-      navigation.navigate('MyTabs')
-    })
-    .catch((error) => {
-      const errorCode = error.code;
-      const errorMessage = error.message;
-      console.log("Not Correct");
-    });
+  const handleSignUp = () => {
+    console.log("yuh14");
   }
 
   return (
     <View style={styles.container}>
+      {/* <Image style={styles.image} source={require("./assets/log2.png")} />  */}
       <StatusBar style="auto" />
+
+      {/* <TouchableOpacity style={styles.loginBtn} onPress={handleTemp}>
+        <Text style={styles.loginText}>Click Me</Text> 
+      </TouchableOpacity> 
+      { boolean1 && <Text>Random Text</Text>} */}
+
       <View style={styles.inputView}>
         <TextInput
           style={styles.TextInput}
@@ -63,12 +52,12 @@ export default function Login({ navigation }) {
       <TouchableOpacity>
         <Text style={styles.forgot_button}>Forgot Password?</Text> 
       </TouchableOpacity> 
-      <TouchableOpacity style={styles.loginBtn} onPress={handleLogin}>
+      <TouchableOpacity style={styles.loginBtn} onPress={() => navigation.navigate('MyTabs')}>
         <Text style={styles.loginText}>LOGIN</Text> 
       </TouchableOpacity> 
 
-      <TouchableOpacity style={styles.loginBtn} onPress={handleRegister} >
-        <Text style={styles.loginText}>REGISTER</Text> 
+      <TouchableOpacity style={styles.loginBtn} onPress={handleSignUp} >
+        <Text style={styles.loginText}>SIGN UP</Text> 
       </TouchableOpacity> 
     </View> 
   );
