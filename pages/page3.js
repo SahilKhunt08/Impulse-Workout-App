@@ -1,6 +1,6 @@
 import React from 'react'
 import { StyleSheet, Text, View } from 'react-native';
-// import './pages/page3.css'
+// import './pages/page2.css'
 // import "./pages/allPages.css"
 
 export default function Page3() {
