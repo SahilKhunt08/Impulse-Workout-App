@@ -8,7 +8,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React, { useState } from "react";
 
 import Home from "./pages/home";
-import Page2 from "./pages/page2";
+import Workout from "./pages/workout";
 import Page3 from "./pages/page3";
 import Profile from "./pages/profile";
 
@@ -48,7 +48,7 @@ function MyTabs() {
     <Tab.Navigator>
       {/* <Tab.Screen name="Login" component={Login} /> */}
       <Tab.Screen name="Home" component={Home} />
-      <Tab.Screen name="Page2" component={Page2} />
+      <Tab.Screen name="Workout" component={Workout} />
       <Tab.Screen name="Page3" component={Page3} />
       <Tab.Screen name="Profile" component={Profile} />
       {/* <Tab.Screen name="Login" component={Login} /> */}
