@@ -79,10 +79,10 @@ export default function App() {
 
 
   <NavigationContainer>
-    <Stack.Navigator initialRouteName="Login">
+    <Stack.Navigator initialRouteName="Impulse">
       <Stack.Screen name="Login" component={Login} />
       <Stack.Screen name="Home"  >{Home}</Stack.Screen>
-      <Stack.Screen name="MyTabs" component={MyTabs} />
+      <Stack.Screen name="Impulse" component={MyTabs} />
     </Stack.Navigator>
   </NavigationContainer>
 
