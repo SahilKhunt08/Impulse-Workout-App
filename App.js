@@ -9,7 +9,7 @@ import React, { useState } from "react";
 
 import Home from "./pages/home";
 import Page2 from "./pages/page2";
-import Page3 from "./pages/page3";
+import addFriends from "./pages/addFriends";
 import Profile from "./pages/profile";
 
 import Login from "./pages/login";
@@ -49,7 +49,7 @@ function MyTabs() {
       {/* <Tab.Screen name="Login" component={Login} /> */}
       <Tab.Screen name="Home" component={Home} />
       <Tab.Screen name="Page2" component={Page2} />
-      <Tab.Screen name="Page3" component={Page3} />
+      <Tab.Screen name="Add Freinds" component={addFriends} />
       <Tab.Screen name="Profile" component={Profile} />
       {/* <Tab.Screen name="Login" component={Login} /> */}
       {/* {loggedIn == 'true'? <Tab.Screen name="Login" component={Login} /> : <Tab.Screen name="Profile" component={Profile}/>} */}
