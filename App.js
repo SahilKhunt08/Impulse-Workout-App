@@ -9,9 +9,8 @@ import React, { useState } from "react";
 
 import Home from "./pages/home";
 import Page2 from "./pages/page2";
-import addFriends from "./pages/addFriends";
+import AddFriends from "./pages/addFriends";
 import Profile from "./pages/profile";
-
 import Login from "./pages/login";
 // import { render } from 'react-native/Libraries/Renderer/implementations/ReactNativeRenderer-prod';
 
@@ -49,7 +48,7 @@ function MyTabs() {
       {/* <Tab.Screen name="Login" component={Login} /> */}
       <Tab.Screen name="Home" component={Home} />
       <Tab.Screen name="Page2" component={Page2} />
-      <Tab.Screen name="Add Freinds" component={addFriends} />
+      <Tab.Screen name="addFriends" component={AddFriends} />
       <Tab.Screen name="Profile" component={Profile} />
       {/* <Tab.Screen name="Login" component={Login} /> */}
       {/* {loggedIn == 'true'? <Tab.Screen name="Login" component={Login} /> : <Tab.Screen name="Profile" component={Profile}/>} */}

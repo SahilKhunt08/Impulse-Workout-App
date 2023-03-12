@@ -2,7 +2,7 @@ import { initializeApp } from "firebase/app";
 // import "firebase/storage";
 // import "firebase/firestore";
 // import firebase from "firebase/app";
-// import {getFirestore} from "firebase/firestore";
+import {getFirestore} from "firebase/firestore";
 import {getAuth} from "firebase/auth"
 
 const firebaseConfig = {
@@ -16,21 +16,8 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-// const app = initializeApp(firebaseConfig);
-// const db = getFirestore(app);
-// export {db};
-
-// let app;
-// if (firebase.apps.length === 0) {
-//     app = firebase.initializeApp(firebaseConfig);
-// } else {
-//     app = firebase.app();
-// }
-
-// const auth = firebase.auth;
-// export { auth };
-
-
-
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
+const db = getFirestore(app);
+export {db};
+

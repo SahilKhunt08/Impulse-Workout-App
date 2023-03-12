@@ -1,9 +1,26 @@
 import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
 import { StyleSheet, Text, View, Image, TextInput, Button, TouchableOpacity } from "react-native";
-// import {db} from './firebase';
 import { auth } from './firebase';
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
+import { addDoc, doc, enableNetwork, setDoc } from "firebase/firestore"; 
+import {db} from './firebase';
+import { async } from "@firebase/util";
+
+async function newDoc(user) {}
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      // User is signed in, see docs for a list of available properties
+      // https://firebase.google.com/docs/reference/js/firebase.User
+      const uid = user.uid;
+      setDoc(doc(db, "accounts", uid), {
+        friendsID: "",
+      }); 
+    } else {
+      // User is signed out
+      // ...
+    }
+  });
 
 export default function Login({ navigation }) {
 
@@ -11,17 +28,20 @@ export default function Login({ navigation }) {
   const [password, setPassword] = useState("")
 
   const handleRegister = () => {
-    createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-          // Signed in 
-      const user = userCredential.user;
-        // ...
-      })
+    createUserWithEmailAndPassword(auth, email, password).then((user) => {
+        newDoc(user);
+        return  db.collection('accounts').doc(user.user.uid).set({
+          friends: "None"
+        })
+      }).then(() => {
+        console.log("userMade")
+      }) 
       .catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
         // ..
       });
+
   }
 
   const handleLogin = () => {
