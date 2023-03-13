@@ -2,27 +2,47 @@ import React, { useState } from "react";
 import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity } from "react-native";
 import { auth } from './firebase';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
-import { addDoc, doc, enableNetwork, setDoc, getCountFromServer, collection, getDocs, namedQuery} from "firebase/firestore"; 
+import { addDoc, doc, enableNetwork, setDoc, getCountFromServer, collection, getDocs, namedQuery, updateDoc,getDoc} from "firebase/firestore"; 
 import {db} from './firebase';
 import { Button } from 'react-native-paper';
 
-async function getUserAmt(friendID) {
-  const auth = getAuth()
-  const user = auth.currentUser
-  console.log(friendID)
+async function getUserAmt(friendIDInput) {
+  console.log(friendIDInput)
 
-  const accountsColRef = collection(db, "accounts");
+  const accountsColRef = collection(db, "accounts"); 
   const accountsNum = await getCountFromServer(accountsColRef);
   // global.totalUsers = accountsNum.data().count
 
 
   const querySnapshot = await getDocs(accountsColRef);
   querySnapshot.forEach(doc => {
-    if (friendID === doc.id.substring(0,5)){
-      console.log("correctamundo HAHAHA WOOOHOOO WEEHEEE WALUIGI")
+    if (friendIDInput === doc.id.substring(0,5)){
+      addFriendToUserDoc(doc.id)
+      //figure put how to update a doc, CURRENT ERROR
+   
+      // setDoc(docRef, data, { merge:true })
+      // const docRef = doc(db, "cities", "SF");
+
+      // updateDoc(docRef, {
+      // });
     }
   });
 }
+
+async function addFriendToUserDoc(friendID) {
+  const auth = getAuth()
+  const user = auth.currentUser
+  const docRef = doc(db, "accounts", user.uid)
+  //get current Friends
+  const currFriends = await getDoc(docRef); 
+  // currFriends.info().friendsID
+  await updateDoc(docRef, {
+    friendsID: currFriends.data().friendsID + ", " + friendID
+  });
+  //  setDoc(docRef, data, { merge:true })
+
+}
+
 
 
 export default function AddFriends() {
