@@ -6,11 +6,12 @@ import { Card } from 'react-native-paper';
 import { auth } from './firebase';
 import {db} from './firebase';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
-import { addDoc, doc, enableNetwork, setDoc, getCountFromServer, collection, getDocs, namedQuery} from "firebase/firestore"; 
+import { addDoc, doc, enableNetwork, setDoc, getCountFromServer, collection, getDocs, namedQuery, query} from "firebase/firestore"; 
 
 export default function Workout() {
 
-  const [search, setSearch] = useState("biceps");
+  const [search1, setSearch1] = useState("biceps");
+  const [search2, setSearch2] = useState("muscle");
   const [userUID, setUserUID] = useState("");
   const [workoutNum, setWorkoutNum] = useState(1);
   const [workoutString, setWorkoutString] = useState("Workouts Here");
@@ -56,32 +57,65 @@ export default function Workout() {
     console.log(counter);
   }
 
-  const callAPI = () => {
-    console.log(search);
-    const options = {
-      method: 'GET',
-      url: 'https://exercises-by-api-ninjas.p.rapidapi.com/v1/exercises',
-      params: {muscle: search},
-      headers: {
-        'X-RapidAPI-Key': 'd1b21c7c74msh10859b8b93cc3adp10d1c8jsncacbeda663df',
-        'X-RapidAPI-Host': 'exercises-by-api-ninjas.p.rapidapi.com'
-      }
-    };
-    axios.request(options).then(function (response) {
-      // console.log(response.data);
-      const allData = response.data;
-      console.log("----------------------");
-      // setExerciseArr(exerciseArr => [...exerciseArr, allData]);
-      for(var i = 0; i < 10; i++){
-        allData[i].id = counter + i;
-      }
-      setCount(counter + 10);
-      setExerciseArr(allData);
-      // console.log(exerciseArr);
+  const submitInput = () => {
+    if (search2.toLowerCase() == "muscle"){
+      const options = {
+        method: 'GET',
+        url: 'https://exercises-by-api-ninjas.p.rapidapi.com/v1/exercises',
+        params: {muscle: search1},
+        headers: {
+          'X-RapidAPI-Key': 'd1b21c7c74msh10859b8b93cc3adp10d1c8jsncacbeda663df',
+          'X-RapidAPI-Host': 'exercises-by-api-ninjas.p.rapidapi.com'
+        }
+      };
+      axios.request(options).then(function (response) {
+        displayData(response.data);
+      }).catch(function (error) {
+        console.error(error);
+      });
+    
+    } else if (search2.toLowerCase() == "difficulty"){
+        const options = {
+          method: 'GET',
+          url: 'https://exercises-by-api-ninjas.p.rapidapi.com/v1/exercises',
+          params: {difficulty: search1},
+          headers: {
+            'X-RapidAPI-Key': 'd1b21c7c74msh10859b8b93cc3adp10d1c8jsncacbeda663df',
+            'X-RapidAPI-Host': 'exercises-by-api-ninjas.p.rapidapi.com'
+          }
+        };
+        axios.request(options).then(function (response) {
+          displayData(response.data);
+        }).catch(function (error) {
+          console.error(error);
+        });    
+      
+      } else if (search2.toLowerCase() == "type"){
+          const options = {
+            method: 'GET',
+            url: 'https://exercises-by-api-ninjas.p.rapidapi.com/v1/exercises',
+            params: {type: search1},
+            headers: {
+              'X-RapidAPI-Key': 'd1b21c7c74msh10859b8b93cc3adp10d1c8jsncacbeda663df',
+              'X-RapidAPI-Host': 'exercises-by-api-ninjas.p.rapidapi.com'
+            }
+          };
+          axios.request(options).then(function (response) {
+            displayData(response.data);
+          }).catch(function (error) {
+            console.error(error);
+          });    
+        }
+  }
 
-    }).catch(function (error) {
-      console.error(error);
-    }); 
+  const displayData = (input) => {
+    console.log("----------------------");
+    // setExerciseArr(exerciseArr => [...exerciseArr, allData]);
+    for(var i = 0; i < 10; i++){
+      input[i].id = counter + i;
+    }
+    setCount(counter + 10);
+    setExerciseArr(input);
   }
 
   async function selectWorkout(num) {
@@ -114,15 +148,15 @@ export default function Workout() {
           style={styles.searchInput}
           placeholder="Search Workout"
           placeholderTextColor="#003f5c"
-          onChangeText={(search) => setSearch(search)}
+          onChangeText={(search1) => setSearch1(search1)}
         /> 
         <TextInput
           style={styles.searchInput}
           placeholder="Category"
           placeholderTextColor="#003f5c"
-          onChangeText={(search) => setSearch(search)}
+          onChangeText={(search2) => setSearch2(search2)}
         /> 
-        <TouchableOpacity style={styles.searchButton} onPress={callAPI}>
+        <TouchableOpacity style={styles.searchButton} onPress={submitInput}>
           <Text>Call API</Text>
         </TouchableOpacity>
       </View> 
@@ -132,7 +166,7 @@ export default function Workout() {
       </TouchableOpacity> */}
 
       <View style={styles.playlist}>
-        <Text>Save to playlist</Text>
+        <Text style={styles.playlistText}>Save to playlist</Text>
         <View style={{flexDirection: "row"}}>
           <TouchableOpacity style={styles.button2} onPress={() => selectWorkout(1)}>
             <Text> Workout 1 </Text>
@@ -144,7 +178,7 @@ export default function Workout() {
             <Text> Workout 3 </Text>
           </TouchableOpacity>
         </View>
-        <Text> {workoutString} </Text>
+        <Text style={styles.playlistText}> {workoutString} </Text>
       </View>
 
       <Modal
@@ -202,12 +236,17 @@ export default function Workout() {
 const styles = StyleSheet.create({
 
   playlist: {
-    backgroundColor: "cyan",
+    backgroundColor: "#40c5c7",
     borderRadius: 5,
     borderWidth: 3,
     alignItems: "center",
     width: "90%",
     height: "30%"
+  },
+  playlistText: {
+    fontSize: 17,
+    marginTop: 10,
+    marginHorizontal: 10,
   },
 
   //————————————————————————————————————————————————————————————————
@@ -355,5 +394,6 @@ const styles = StyleSheet.create({
       // backgroundColor: "cyan",
       maxHeight: 495,
     }
+
 
 });
