@@ -7,7 +7,7 @@ import { addDoc, doc, enableNetwork, setDoc } from "firebase/firestore";
 import {db} from './firebase';
 import { async } from "@firebase/util";
 
-async function newDoc(user) {}
+async function newDoc(user) {
   onAuthStateChanged(auth, (user) => {
     if (user) {
       // User is signed in, see docs for a list of available properties
@@ -22,6 +22,7 @@ async function newDoc(user) {}
       // ...
     }
   });
+}
 
 export default function Login({ navigation }) {
 
