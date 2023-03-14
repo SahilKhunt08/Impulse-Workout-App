@@ -6,58 +6,46 @@ import { addDoc, doc, enableNetwork, setDoc, getCountFromServer, collection, get
 import {db} from './firebase';
 import { Button } from 'react-native-paper';
 
-async function getUserAmt(friendIDInput) {
-  console.log(friendIDInput)
-
+//check user input
+async function verifyUserInput(friendIDInput) {
   const accountsColRef = collection(db, "accounts"); 
-  const accountsNum = await getCountFromServer(accountsColRef);
-  // global.totalUsers = accountsNum.data().count
-
-
+  
   const querySnapshot = await getDocs(accountsColRef);
   querySnapshot.forEach(doc => {
     if (friendIDInput === doc.id.substring(0,5)){
       addFriendToUserDoc(doc.id)
-      //figure put how to update a doc, CURRENT ERROR
-   
-      // setDoc(docRef, data, { merge:true })
-      // const docRef = doc(db, "cities", "SF");
-
-      // updateDoc(docRef, {
-      // });
     }
   });
 }
 
+//add friend UID to user doc
 async function addFriendToUserDoc(friendID) {
   const auth = getAuth()
   const user = auth.currentUser
-  const docRef = doc(db, "accounts", user.uid)
-  //get current Friends
-  const currFriends = await getDoc(docRef); 
-  // currFriends.info().friendsID
-  await updateDoc(docRef, {
-    friendsID: currFriends.data().friendsID + ", " + friendID
+
+  //Add Friend UID to user document
+  const userDocRef = doc(db, "accounts", user.uid)
+  const currFriends = await getDoc(userDocRef); 
+  await updateDoc(userDocRef, {
+    friendsID: currFriends.data().friendsID + friendID + ","
   });
-  //  setDoc(docRef, data, { merge:true })
+
+
+  const friendDocRef = doc(db, "accounts", friendID)
+  const currentRequests = await getDoc(friendDocRef); 
+  await updateDoc(friendDocRef, {
+    requests: currentRequests.data().requests + user.uid + ","
+  });
 
 }
 
 
 
 export default function AddFriends() {
-  const auth = getAuth();
-  const user = auth.currentUser
   const [friendID, setFriendID] = useState("")
 
   const checkFriendID = () => {
-    getUserAmt(friendID);
-    // console.log(totalUsers+ "")
-    // for (let index = 0; index < totalUsers; index++) {
-    //   console.log("GIGIs")
-      
-    // }
-    //Loop thru collection for all ids, if friendID ===, a
+    verifyUserInput(friendID);
   }
   
   return (

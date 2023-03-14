@@ -15,6 +15,7 @@ async function newDoc(user) {}
       const uid = user.uid;
       setDoc(doc(db, "accounts", uid), {
         friendsID: "",
+        requests: ""
       }); 
     } else {
       // User is signed out
