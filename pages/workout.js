@@ -3,21 +3,47 @@ import { StyleSheet, Text, View, TouchableOpacity, TextInput, FlatList, Modal, P
 import { Button } from 'react-native-paper';
 import axios from "axios";
 import { Card } from 'react-native-paper';
+import { auth } from './firebase';
+import {db} from './firebase';
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
+import { addDoc, doc, enableNetwork, setDoc, getCountFromServer, collection, getDocs, namedQuery} from "firebase/firestore"; 
 
 export default function Workout() {
 
+  const [search, setSearch] = useState("biceps");
+  const [userUID, setUserUID] = useState("");
+  const [workoutNum, setWorkoutNum] = useState(1);
+  const [workoutString, setWorkoutString] = useState("Workouts Here");
+  const [counter, setCount] = useState(3);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalDirections, setModalDirections] = useState("");
+  const [modalInfo, setModalInfo] = useState("");
   const [exerciseArr, setExerciseArr] = useState([
     {id: "0", equipment: 'equipment1', muscle: "muscle1"},
     {id: "1", equipment: 'equipment2', muscle: "muscle2"},
     {id: "2", equipment: 'equipment3', muscle: "muscle3"},
   ]);
 
-  const saveExercise = (index) => {
-    console.log("Save Exercise")
-    // const newFruits = fruits.filter((_, i) => i !== index);
+  async function saveExercise(index) {
+    const temp1 = exerciseArr.filter(a => a.id === index);
+    const docRef = await setDoc(doc(db, "exercises", temp1[0].name), {
+      difficulty: temp1[0].difficulty,
+      equipment: temp1[0].equipment,
+      muscle: temp1[0].muscle,
+      name: temp1[0].name,
+      type: temp1[0].type,
+      instructions: temp1[0].instructions,
+    });
+  
     const newExerciseArr = exerciseArr.filter(a => a.id !== index);
-    // console.log(index);
     setExerciseArr(newExerciseArr);
+    console.log("Save Exercise")
+
+    const collectionName = "workout" + workoutNum;
+    const docRef2 = await setDoc(doc(db, "accounts", userUID, collectionName, temp1[0].name), {
+    });
+
+    selectWorkout(workoutNum);
   };
 
   const addInfo = () => {
@@ -58,11 +84,25 @@ export default function Workout() {
     }); 
   }
 
-  const [search, setSearch] = useState("biceps");
-  const [counter, setCount] = useState(3);
-  const [modalVisible, setModalVisible] = useState(false);
-  const [modalDirections, setModalDirections] = useState("");
-  const [modalInfo, setModalInfo] = useState("");
+  async function selectWorkout(num) {
+    setWorkoutNum(num);
+    const auth = getAuth();
+    const user = auth.currentUser
+    setUserUID(user.uid);
+
+    const docNameArr = []; //every account doc ID
+    const collectionName = "workout" + num;
+    const querySnapshot = await getDocs(collection(db, "accounts", userUID, collectionName));
+    querySnapshot.forEach((doc) => {
+      docNameArr.push(doc.id);
+    });
+    let tempString = "";
+    for(var i = 0; i < docNameArr.length; i++){
+      tempString += docNameArr[i] + " | "
+    }
+    tempString = tempString.substring(0, tempString.length - 3);
+    setWorkoutString(tempString);
+  }
 
   return (
     <View style={styles.container}>
@@ -71,6 +111,12 @@ export default function Workout() {
         <TextInput
           style={styles.searchInput}
           placeholder="Search Workout"
+          placeholderTextColor="#003f5c"
+          onChangeText={(search) => setSearch(search)}
+        /> 
+        <TextInput
+          style={styles.searchInput}
+          placeholder="Category"
           placeholderTextColor="#003f5c"
           onChangeText={(search) => setSearch(search)}
         /> 
@@ -85,6 +131,18 @@ export default function Workout() {
 
       <View style={styles.playlist}>
         <Text>Save to playlist</Text>
+        <View style={{flexDirection: "row"}}>
+          <TouchableOpacity style={styles.button2} onPress={() => selectWorkout(1)}>
+            <Text> Workout 1 </Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.button2} onPress={() => selectWorkout(2)}>
+            <Text> Workout 2 </Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.button2} onPress={() => selectWorkout(3)}>
+            <Text> Workout 3 </Text>
+          </TouchableOpacity>
+        </View>
+        <Text> {workoutString} </Text>
       </View>
 
       <Modal
@@ -168,6 +226,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     padding: 10,
     marginTop: 5,
+    marginHorizontal: 5,
     borderRadius: 5,
   },
 //————————————————————————————————————————————————————————————————
@@ -182,8 +241,8 @@ const styles = StyleSheet.create({
   searchInput: {
     backgroundColor: "#FFC0CB",
     borderRadius: 20,
-    maxWidth: "75%", 
-    marginRight: 10,
+    maxWidth: "50%", 
+    marginRight: 5,
     height: 50,
     flex: 1,
     padding: 10,
