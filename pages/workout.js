@@ -19,9 +19,9 @@ export default function Workout() {
   const [modalDirections, setModalDirections] = useState("");
   const [modalInfo, setModalInfo] = useState("");
   const [exerciseArr, setExerciseArr] = useState([
-    {id: "0", equipment: 'equipment1', muscle: "muscle1"},
-    {id: "1", equipment: 'equipment2', muscle: "muscle2"},
-    {id: "2", equipment: 'equipment3', muscle: "muscle3"},
+    // {id: "0", equipment: 'equipment1', muscle: "muscle1"},
+    // {id: "1", equipment: 'equipment2', muscle: "muscle2"},
+    // {id: "2", equipment: 'equipment3', muscle: "muscle3"},
   ]);
 
   async function saveExercise(index) {
@@ -87,12 +87,14 @@ export default function Workout() {
   async function selectWorkout(num) {
     setWorkoutNum(num);
     const auth = getAuth();
-    const user = auth.currentUser
+    const user = auth.currentUser;
     setUserUID(user.uid);
 
     const docNameArr = []; //every account doc ID
     const collectionName = "workout" + num;
-    const querySnapshot = await getDocs(collection(db, "accounts", userUID, collectionName));
+    console.log("YUH1");
+    console.log("accounts" + " | " + user.uid + " | " + collectionName);
+    const querySnapshot = await getDocs(collection(db, "accounts", user.uid, collectionName));
     querySnapshot.forEach((doc) => {
       docNameArr.push(doc.id);
     });
@@ -162,7 +164,7 @@ export default function Workout() {
                 onPress={() => setModalVisible(!modalVisible)}>
                 <Text style={styles.textStyle}>Close Directions</Text>
               </Pressable>
-          </View>
+          </View>  
         </View>
       </Modal>
       
