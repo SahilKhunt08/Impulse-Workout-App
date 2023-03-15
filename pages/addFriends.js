@@ -9,11 +9,12 @@ import { Button } from 'react-native-paper';
 //check user input
 async function verifyUserInput(friendIDInput) {
   const accountsColRef = collection(db, "accounts"); 
-  
+  console.log("KJHG")
   const querySnapshot = await getDocs(accountsColRef);
   querySnapshot.forEach(doc => {
-    if (friendIDInput === doc.id.substring(0,5)){
+    if (friendIDInput === doc.id.substring(0,3)){
       addFriendToUserDoc(doc.id)
+      console.log("matches")
     }
   });
 }
@@ -23,19 +24,24 @@ async function addFriendToUserDoc(friendID) {
   const auth = getAuth()
   const user = auth.currentUser
 
-  //Add friend UID to friends field in user document
-  const userDocRef = doc(db, "accounts", user.uid)
-  const currFriends = await getDoc(userDocRef); 
-  await updateDoc(userDocRef, {
-    friendsID: currFriends.data().friendsID + friendID + ","
-  });
+  // Add friend UID to friends field in user document
+  await setDoc(doc(db, "accounts", user.uid, "friends", friendID), {
+    id: friendID
+  })
+
+  // await updateDoc(userDocRef, {
+  //   friendsID: currFriends.data().friendsID + friendID + ","
+  // });
 
   //Add user UID to request field in friend document
-  const friendDocRef = doc(db, "accounts", friendID)
-  const currentRequests = await getDoc(friendDocRef); 
-  await updateDoc(friendDocRef, {
-    requests: currentRequests.data().requests + user.uid + ","
-  });
+  // const friendDocRef = doc(db, "accounts", friendID)
+  // const currentRequests = await getDoc(friendDocRef); 
+  // await updateDoc(friendDocRef, {
+  //   requests: currentRequests.data().requests + user.uid + ","
+  // });
+  await setDoc(doc(db, "accounts", friendID, "requests", user.uid), {
+    id: user.uid
+  })
 
 }
 
@@ -46,6 +52,7 @@ export default function AddFriends() {
 
   const checkFriendID = () => {
     verifyUserInput(friendID);
+    console.log("FDFDFDBNVNV")
   }
   
   return (
