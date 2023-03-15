@@ -31,8 +31,6 @@ const Stack = createNativeStackNavigator();
 
 // }
 
-
-
 const Testing1 = ({ title, showButton }) => (
   <View>
     <Text style={{ fontSize: 60 }}>{title}</Text>

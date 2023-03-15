@@ -125,13 +125,16 @@ export default function Workout() {
     setUserUID(user.uid);
 
     const docNameArr = []; //every account doc ID
+
+
     const collectionName = "workout" + num;
-    console.log("YUH1");
-    console.log("accounts" + " | " + user.uid + " | " + collectionName);
+    
     const querySnapshot = await getDocs(collection(db, "accounts", user.uid, collectionName));
     querySnapshot.forEach((doc) => {
       docNameArr.push(doc.id);
     });
+
+    
     let tempString = "";
     for(var i = 0; i < docNameArr.length; i++){
       tempString += docNameArr[i] + " | "
