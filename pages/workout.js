@@ -131,7 +131,9 @@ export default function Workout() {
     
     const querySnapshot = await getDocs(collection(db, "accounts", user.uid, collectionName));
     querySnapshot.forEach((doc) => {
-      docNameArr.push(doc.id);
+      if(doc.id != "temp"){
+        docNameArr.push(doc.id);
+      }
     });
 
     

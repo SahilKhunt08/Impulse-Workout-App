@@ -8,15 +8,28 @@ import { Button } from 'react-native-paper';
 
 //check user input
 async function verifyUserInput(friendIDInput) {
+
+  const auth = getAuth();
+  const user = auth.currentUser;
+  const docRef = doc(db, "accounts", user.uid);
+  const docSnap = await getDoc(docRef);
+  let accountUsername = "";
+  if (docSnap.exists()) {
+    accountUsername = docSnap.data().username;
+  } else {
+    console.log("No such document!");
+  }
+
   const accountsColRef = collection(db, "accounts"); 
-  console.log("KJHG")
   const querySnapshot = await getDocs(accountsColRef);
+  if(friendIDInput !== accountUsername){
   querySnapshot.forEach(doc => {
-    if (friendIDInput === doc.id.substring(0,3)){
-      addFriendToUserDoc(doc.id)
-      console.log("matches")
-    }
-  });
+      if (friendIDInput === doc.data().username){
+        addFriendToUserDoc(doc.id)
+        console.log("matches")
+      }
+    });
+  }
 }
 
 //add friend UID to user doc
@@ -52,7 +65,6 @@ export default function AddFriends() {
 
   const checkFriendID = () => {
     verifyUserInput(friendID);
-    console.log("FDFDFDBNVNV")
   }
   
   return (
@@ -61,11 +73,10 @@ export default function AddFriends() {
           style={styles.TextInput}
           placeholder="Friend ID"
           placeholderTextColor="#003f5c"
-          secureTextEntry={true}
           onChangeText={(friendID) => setFriendID(friendID)}
         /> 
        <TouchableOpacity style={styles.loginBtn} onPress={checkFriendID} >
-        <Text style={styles.loginText}>REGISTER</Text> 
+        <Text style={styles.loginText}>ADD FRIEND</Text> 
       </TouchableOpacity> 
      </View>
   )

@@ -10,15 +10,21 @@ import { async } from "@firebase/util";
 async function newDoc() {
   const auth = getAuth();
   const user = auth.currentUser   
-  const friendsRef = await setDoc(doc(db, "accounts", user.uid, "friends", "init"), {
+  const usernameString = auth.currentUser.email.substring(0, auth.currentUser.email.indexOf("@"));
+  const friendsRef = await setDoc(doc(db, "accounts", user.uid, "friends", "temp"), {
   });
-  const requestsRef = await setDoc(doc(db, "accounts", user.uid, "requests", "init"), {
+  const requestsRef = await setDoc(doc(db, "accounts", user.uid, "requests", "temp"), {
+  });
+  const workout1Ref = await setDoc(doc(db, "accounts", user.uid, "workout1", "temp"), {
+  });
+  const workout2Ref = await setDoc(doc(db, "accounts", user.uid, "workout2", "temp"), {
+  });
+  const workout3Ref = await setDoc(doc(db, "accounts", user.uid, "workout3", "temp"), {
   });
   const setTempField = await setDoc(doc(db, "accounts", user.uid), {
-    temp: ""
+    username: usernameString,
   })
 }
-
 
 export default function Login({ navigation }) {
   const [email, setEmail] = useState("");
@@ -45,7 +51,8 @@ export default function Login({ navigation }) {
       const user = userCredential.user;
       // ...
       console.log("Correct")
-      navigation.navigate('MyTabs')
+      // navigation.replace('Impulse')
+      navigation.navigate('Impulse') //Old version
     })
     .catch((error) => {
       const errorCode = error.code;

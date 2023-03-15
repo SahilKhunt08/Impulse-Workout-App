@@ -2,19 +2,14 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Button} from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-
 import React, { useState } from "react";
 
 import Home from "./pages/home";
-
 import Workout from "./pages/workout";
 import AddFriends from "./pages/addFriends";
-
 import Profile from "./pages/profile";
 import Login from "./pages/login";
-// import { render } from 'react-native/Libraries/Renderer/implementations/ReactNativeRenderer-prod';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -39,12 +34,12 @@ const Testing1 = ({ title, showButton }) => (
 )
 
 
-function MyTabs() {
+function Impulse() {
   // const [loggedIn, setLoggedIn] = useState(false)
   // console.log(loggedIn)
 
   return (
-    <Tab.Navigator>
+    <Tab.Navigator  screenOptions={{ headerShown: false }}>
       {/* <Tab.Screen name="Login" component={Login} /> */}
       <Tab.Screen name="Home" component={Home} />
 
@@ -74,16 +69,16 @@ export default function App() {
     // <View style={styles.container}>
     //   {boolean1 && <Login></Login>}
     //   {boolean2 && <NavigationContainer>
-    //     <MyTabs/>
+    //     <Impulse/>
     //   </NavigationContainer> }
     // </View>
 
 
-  <NavigationContainer>
+  <NavigationContainer  screenOptions={{ headerShown: false }}>
     <Stack.Navigator initialRouteName="Login">
       <Stack.Screen name="Login" component={Login} />
       <Stack.Screen name="Home"  >{Home}</Stack.Screen>
-      <Stack.Screen name="MyTabs" component={MyTabs} />
+      <Stack.Screen name="Impulse" component={Impulse} />
     </Stack.Navigator>
   </NavigationContainer>
 
