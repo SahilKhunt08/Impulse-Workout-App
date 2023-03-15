@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { StyleSheet, Text, View, Image, TextInput, Button, TouchableOpacity } from "react-native";
 import { auth } from './firebase';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
-import { addDoc, doc, enableNetwork, setDoc, collection, getDoc, getDocs } from "firebase/firestore"; 
+import { addDoc, doc, enableNetwork, setDoc, collection, getDoc, getDocs, deleteDoc } from "firebase/firestore"; 
 import {db} from './firebase';
 import { async } from "@firebase/util";
 
@@ -14,9 +14,16 @@ async function newDoc() {
   });
   const requestsRef = await setDoc(doc(db, "accounts", user.uid, "requests", "init"), {
   });
+  const workout1Ref = await setDoc(doc(db, "accounts", user.uid, "workout1", "init"), {
+  });
+  const workout2Ref = await setDoc(doc(db, "accounts", user.uid, "workout2", "init"), {
+  });
+  const workout3Ref = await setDoc(doc(db, "accounts", user.uid, "workout3", "init"), {
+  });
   const setTempField = await setDoc(doc(db, "accounts", user.uid), {
     temp: ""
   })
+
 }
 
 
