@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { TouchableOpacity, Text, View, StyleSheet, Image, TextInput} from 'react-native';
+import { TouchableOpacity, Text, View, StyleSheet, Image, TextInput, ScrollView} from 'react-native';
 import { Card } from 'react-native-paper';
 import { Avatar } from '@rneui/themed';
 import { auth } from './firebase';
@@ -19,16 +19,16 @@ export default function Profile() {
     const docSnap = await getDoc(docRef1);
 
     if (docSnap.exists()) {
-      allDocInfo[0] = docSnap.data().var1; //name of field
-      allDocInfo[1] = docSnap.data().var2; //name of field
+      // allDocInfo[0] = docSnap.data().var1; //name of field
+      // allDocInfo[1] = docSnap.data().var2; //name of field
       allDocInfo[2] = docSnap.data().username;
     } else {
       console.log("No such document!");
     }
 
     const docRef2 = await setDoc(doc(db, "accounts", user.uid), {
-      var1: allDocInfo[0],
-      var2: allDocInfo[1],
+      // var1: allDocInfo[0],
+      // var2: allDocInfo[1],
       username: username,
     });
   }
@@ -42,6 +42,7 @@ export default function Profile() {
           source={require('../assets/person2.png')}
         ></Avatar>
       </View>
+      <View style={{flexDirection: "row", alignItems: "center"}}>
       <Card>
       <TextInput
           style={styles.paragraph}
@@ -52,8 +53,24 @@ export default function Profile() {
         {/* <Image source={require('../assets/person1.png')}></Image> */}
       </Card>
       <TouchableOpacity style={styles.button2} onPress={saveProfile}>
-          <Text> Save </Text>
-        </TouchableOpacity>
+        <Text> Save </Text>
+      </TouchableOpacity>
+      </View>
+
+      <View style={styles.requestContainer}>
+        <View style={styles.requestTitleBar}>
+         <Text style={styles.requestTitle}> Friend Requests</Text>
+        </View>
+
+        <ScrollView style={styles.scrollStyle}>
+          <View style={styles.container2}>
+            <Text>Gekfrgegwg</Text>
+
+          </View>
+
+
+        </ScrollView>
+      </View>
     </View>
   )
 }
@@ -66,6 +83,30 @@ const styles = StyleSheet.create({
     backgroundColor: '#7ab3d6',
     alignContent: "center",
     alignItems: "center",
+  },
+  container2: {
+    alignItems: "center",
+  },
+  requestContainer: {
+    backgroundColor: "#40c5c7",
+    borderRadius: 5,
+    borderWidth: 3,
+    alignItems: "center",
+    width: "100%",
+    height: "62%",
+    marginTop: 10,
+  },
+  requestTitleBar: {
+    backgroundColor: "#319b9e",
+    width: "100%",
+    alignItems: "center",
+    height: "10%",
+    justifyContent: "center",
+  },
+  requestTitle: {
+    fontSize: 20,
+    // marginTop: 10,
+    // marginHorizontal: 10,
   },
   profilePicture: {
     // marginTop: 5,
@@ -90,5 +131,14 @@ const styles = StyleSheet.create({
     marginTop: 5,
     marginHorizontal: 5,
     borderRadius: 5,
+  },
+  scrollStyle: {
+    // marginTop: 10,
+    // flex: 1,
+    width: "100%",
+    height: "100%",
+    // backgroundColor: "cyan",
+    maxHeight: 495,
+    alignContent: "center"
   },
 });
