@@ -14,18 +14,6 @@ import Login from "./pages/login";
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
-// function CheckLogin() {
-//   // const [loggedIn, setLoggedIn] = useState(false);
-//   const checkLogin = () => {
-//   if (loggedIn == true) {
-//     return <Tab.Screen name="Profile" component={Profile} />
-//   } else {
-//     return <Tab.Screen name="Login" component={Login} />
-//   }
-// }
-
-// }
-
 const Testing1 = ({ title, showButton }) => (
   <View>
     <Text style={{ fontSize: 60 }}>{title}</Text>
@@ -33,55 +21,26 @@ const Testing1 = ({ title, showButton }) => (
   </View>
 )
 
-
 function Impulse() {
-  // const [loggedIn, setLoggedIn] = useState(false)
-  // console.log(loggedIn)
-
   return (
     <Tab.Navigator  screenOptions={{ headerShown: false }}>
-      {/* <Tab.Screen name="Login" component={Login} /> */}
       <Tab.Screen name="Home" component={Home} />
-
       <Tab.Screen name="Workout" component={Workout} />
       <Tab.Screen name="addFriends" component={AddFriends} />
-
-<Tab.Screen name="Profile" component={Profile} />
-      {/* <Tab.Screen name="Login" component={Login} /> */}
-      {/* {loggedIn == 'true'? <Tab.Screen name="Login" component={Login} /> : <Tab.Screen name="Profile" component={Profile}/>} */}
-
-
-      {/* <CheckLogin/> */}
+      <Tab.Screen name="Profile" component={Profile} />
     </Tab.Navigator>
   );
 }
 
-
 export default function App() {
-
-  const [boolean1, setboolean1] = useState(!false);
-  const [boolean2, setboolean2] = useState(!true);
-  const handleTemp = () => {
-    setboolean1(!boolean1);
-  }
-
   return (
-    // <View style={styles.container}>
-    //   {boolean1 && <Login></Login>}
-    //   {boolean2 && <NavigationContainer>
-    //     <Impulse/>
-    //   </NavigationContainer> }
-    // </View>
-
-
-  <NavigationContainer  screenOptions={{ headerShown: false }}>
-    <Stack.Navigator initialRouteName="Login">
-      <Stack.Screen name="Login" component={Login} />
-      <Stack.Screen name="Home"  >{Home}</Stack.Screen>
-      <Stack.Screen name="Impulse" component={Impulse} />
-    </Stack.Navigator>
-  </NavigationContainer>
-
+    <NavigationContainer  screenOptions={{ headerShown: false }}>
+      <Stack.Navigator initialRouteName="Login">
+        <Stack.Screen name="Login" component={Login} />
+        <Stack.Screen name="Home"  >{Home}</Stack.Screen>
+        <Stack.Screen name="Impulse" component={Impulse} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
 
@@ -94,13 +53,3 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
 });
-
-
-
-
-
-
-//authstack
-//navigation.navigate
-
-

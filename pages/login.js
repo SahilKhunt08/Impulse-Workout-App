@@ -82,7 +82,7 @@ export default function Login({ navigation }) {
         /> 
       </View> 
       <TouchableOpacity>
-        <Text style={styles.forgot_button}>Forgot Password?</Text> 
+        <Text style={styles.forgot_button}></Text> 
       </TouchableOpacity> 
       <TouchableOpacity style={styles.loginBtn} onPress={handleLogin}>
         <Text style={styles.loginText}>LOGIN</Text> 
@@ -98,16 +98,15 @@ export default function Login({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: '#f6f3f9',
+    backgroundColor: '#f5fbff',
   },
   image: {
     marginBottom: 40,
   },
   inputView: {
-    backgroundColor: "#FFC0CB",
+    backgroundColor: "#7ab3d6",
     borderRadius: 30,
     width: "70%",
     height: 45,
@@ -131,6 +130,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     marginTop: 40,
-    backgroundColor: "#FF1493",
+    backgroundColor: "#578bab",
   },
+
 });

@@ -6,88 +6,65 @@ import { addDoc, doc, enableNetwork, setDoc, getCountFromServer, collection, get
 import {db} from './firebase';
 import { Button } from 'react-native-paper';
 
-//check user input
-async function verifyUserInput(friendIDInput) {
-
-  const auth = getAuth();
-  const user = auth.currentUser;
-  const docRef = doc(db, "accounts", user.uid);
-  const docSnap = await getDoc(docRef);
-  let accountUsername = "";
-  if (docSnap.exists()) {
-    accountUsername = docSnap.data().username;
-  } else {
-    console.log("No such document!");
-  }
-
-  const accountsColRef = collection(db, "accounts"); 
-  const querySnapshot = await getDocs(accountsColRef);
-  if(friendIDInput !== accountUsername){
-  querySnapshot.forEach(doc => {
-      if (friendIDInput === doc.data().username){
-        addFriendToUserDoc(doc.id)
-        console.log("matches")
-      }
-    });
-  }
-}
-
-//add friend UID to user doc
-async function addFriendToUserDoc(friendID) {
-  const auth = getAuth()
-  const user = auth.currentUser
-
-  // Add friend UID to friends field in user document
-  await setDoc(doc(db, "accounts", user.uid, "friends", friendID), {
-    id: friendID
-  })
-
-  // await updateDoc(userDocRef, {
-  //   friendsID: currFriends.data().friendsID + friendID + ","
-  // });
-
-  //Add user UID to request field in friend document
-  // const friendDocRef = doc(db, "accounts", friendID)
-  // const currentRequests = await getDoc(friendDocRef); 
-  // await updateDoc(friendDocRef, {
-  //   requests: currentRequests.data().requests + user.uid + ","
-  // });
-  await setDoc(doc(db, "accounts", friendID, "requests", user.uid), {
-    id: user.uid
-  })
-
-}
-
-
 
 export default function AddFriends() {
   const [friendID, setFriendID] = useState("")
 
-  const checkFriendID = () => {
-    verifyUserInput(friendID);
+  async function verifyUserInput() {
+    const auth = getAuth();
+    const user = auth.currentUser;
+    const docRef = doc(db, "accounts", user.uid);
+    const docSnap = await getDoc(docRef);
+    let accountUsername = "";
+    if (docSnap.exists()) {
+      accountUsername = docSnap.data().username;
+    } else {
+      console.log("No such document!");
+    }
+
+    const accountsColRef = collection(db, "accounts"); 
+    const querySnapshot = await getDocs(accountsColRef);
+    if(friendID !== accountUsername){
+    querySnapshot.forEach(doc => {
+        if (friendID === doc.data().username){
+          addFriendToUserDoc(doc.id)
+          console.log("matches")
+        }
+      });
+    }
+  }
+
+  //add friend UID to user doc
+  async function addFriendToUserDoc(friendID) {
+    const auth = getAuth()
+    const user = auth.currentUser
+
+    await setDoc(doc(db, "accounts", friendID, "requests", user.uid), {
+      id: user.uid
+    })
   }
   
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+    <View style={styles.container}>
      <TextInput
           style={styles.TextInput}
           placeholder="Friend ID"
           placeholderTextColor="#003f5c"
           onChangeText={(friendID) => setFriendID(friendID)}
         /> 
-       <TouchableOpacity style={styles.loginBtn} onPress={checkFriendID} >
+       <TouchableOpacity style={styles.loginBtn} onPress={verifyUserInput} >
         <Text style={styles.loginText}>ADD FRIEND</Text> 
       </TouchableOpacity> 
      </View>
   )
 }
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: '#f6f3f9',
+    backgroundColor: '#adc9db',
   },
   image: {
     marginBottom: 40,

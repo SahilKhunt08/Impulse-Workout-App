@@ -152,14 +152,18 @@ export default function Workout() {
         <TextInput
           style={styles.searchInput}
           placeholder="Search Workout"
-          placeholderTextColor="#003f5c"
-          onChangeText={(search1) => setSearch1(search1)}
+          placeholderTextColor="#edf9ff"
+          color="#edf9ff"
+          onChangeText={(search1) => setSearch1(search1)
+          }
         /> 
         <TextInput
           style={styles.searchInput}
           placeholder="Category"
-          placeholderTextColor="#003f5c"
-          onChangeText={(search2) => setSearch2(search2)}
+          placeholderTextColor="#edf9ff"
+          color="#edf9ff"
+          onChangeText={(search2) => setSearch2(search2)
+          }
         /> 
         <TouchableOpacity style={styles.searchButton} onPress={submitInput}>
           <Text>Call API</Text>
@@ -241,7 +245,7 @@ export default function Workout() {
 const styles = StyleSheet.create({
 
   playlist: {
-    backgroundColor: "#40c5c7",
+    backgroundColor: "#7ab3d6",
     borderRadius: 5,
     borderWidth: 3,
     alignItems: "center",
@@ -257,9 +261,8 @@ const styles = StyleSheet.create({
   //————————————————————————————————————————————————————————————————
   container: {
     flex: 1,
-    backgroundColor: "#fff",
     alignItems: "center",
-    backgroundColor: '#429692',
+    backgroundColor: '#adc9db',
   },
   button1: {
     alignItems: 'center',
@@ -285,7 +288,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   searchInput: {
-    backgroundColor: "#FFC0CB",
+    backgroundColor: "#578bab",
     borderRadius: 20,
     maxWidth: "50%", 
     marginRight: 5,

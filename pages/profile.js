@@ -10,7 +10,8 @@ import { addDoc, getDoc, doc, enableNetwork, setDoc, getCountFromServer, collect
 export default function Profile() {
 
   const [username, setUsername] = useState("");
-  const [requestArr, setRequestArr] = useState([{name: "temp", id: "temp"}]);
+  // const [requestArr, setRequestArr] = useState([{name: "temp", id: "temp"}]);
+  const [requestArr, setRequestArr] = useState([]);
   const [count, setCount] = useState(0);
   const auth = getAuth();
   const user = auth.currentUser;
@@ -60,29 +61,41 @@ export default function Profile() {
 
   async function addButton(index) { 
     //TODO
-    //User can't add themselves as a friend.
+    //Done: User can't add themselves as a friend.
     //If friend request accepted, request goes away and both friends get added to eachother
     //If pending requests from both sides and one accepts, both are friends and both pending goes away.
     //——————————————————————————————————————————————————————————————————
-    const tempArr = requestArr.filter(a => a.id !== index);
-    setRequestArr(tempArr);
+    const addedFriend = requestArr.filter(a => a.id === index);
+    const newRequestArray = requestArr.filter(a => a.id !== index);
+    setRequestArr(newRequestArray);
     console.log("Added Friend")
-    console.log(tempArr)
-    //CONSOLE.LOG
-    // Added Friend
-    // Array [
-    //   Object {
-    //     "id": 1,
-    //     "name": "temp3",
-    //   },
-    // ]
+    let acceptedName = addedFriend[0].name;
 
+    //Removed friend request
+    const querySnapshot = await getDocs(collection(db, "accounts"));
+    querySnapshot.forEach((doc) => {
+      if(doc.data().username == acceptedName){
+        acceptedName = doc.id;
+      }
+    });
+    await deleteDoc(doc(db, "accounts", user.uid, "requests", acceptedName));
+
+    //Adds friend to your account
+    await setDoc(doc(db, "accounts", user.uid, "friends", acceptedName), {
+      username: acceptedName,
+    });
+
+    //Adds your account to the friend
+    await setDoc(doc(db, "accounts", acceptedName, "friends", user.uid), {
+      username: user.uid,
+    });
   }
 
   async function denyButton(index) {
     const deniedArr = requestArr.filter(a => a.id === index);
     let deniedName = deniedArr[0].name;
-
+    
+    //Removed friend request
     console.log(deniedName);
     const querySnapshot = await getDocs(collection(db, "accounts"));
     querySnapshot.forEach((doc) => {
@@ -90,8 +103,8 @@ export default function Profile() {
         deniedName = doc.id;
       }
     });
-
     await deleteDoc(doc(db, "accounts", user.uid, "requests", deniedName));
+
     const tempArr = requestArr.filter(a => a.id !== index);
     setRequestArr(tempArr);
   }
@@ -106,7 +119,6 @@ export default function Profile() {
         ></Avatar>
       </View>
       <View style={{flexDirection: "row", alignItems: "center"}}>
-      <Card>
       <TextInput
           style={styles.paragraph}
           placeholder="Username"
@@ -114,7 +126,6 @@ export default function Profile() {
           onChangeText={(username) => setUsername(username)}
         /> 
         {/* <Image source={require('../assets/person1.png')}></Image> */}
-      </Card>
       <TouchableOpacity style={styles.button2} onPress={saveProfile}>
         <Text> Save </Text>
       </TouchableOpacity>
@@ -156,7 +167,7 @@ const styles = StyleSheet.create({
     flex: 1,
     // justifyContent: 'center',
     padding: 20,
-    backgroundColor: '#7ab3d6',
+    backgroundColor: '#adc9db',
     alignContent: "center",
     alignItems: "center",
   },
@@ -164,16 +175,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   requestContainer: {
-    backgroundColor: "#40c5c7",
+    backgroundColor: "#7ab3d6",
     borderRadius: 5,
     borderWidth: 3,
     alignItems: "center",
     width: "100%",
-    height: "62%",
+    height: "67%",
     marginTop: 10,
   },
   requestTitleBar: {
-    backgroundColor: "#319b9e",
+    backgroundColor: "#578bab",
     width: "100%",
     alignItems: "center",
     height: "10%",
@@ -192,7 +203,13 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     textAlign: 'center',
-    padding: 20
+    // padding: 20
+
+    backgroundColor: 'white',
+    padding: 10,
+    marginTop: 5,
+    marginHorizontal: 5,
+    borderRadius: 5,
   },
   button1: {
     alignItems: 'center',
