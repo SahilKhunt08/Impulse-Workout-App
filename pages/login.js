@@ -10,9 +10,16 @@ import { async } from "@firebase/util";
 async function newDoc() {
   const auth = getAuth();
   const user = auth.currentUser   
-  const friendsRef = await setDoc(doc(db, "accounts", user.uid, "friends", "init"), {
+  const usernameString = auth.currentUser.email.substring(0, auth.currentUser.email.indexOf("@"));
+  const friendsRef = await setDoc(doc(db, "accounts", user.uid, "friends", "temp"), {
   });
-  const requestsRef = await setDoc(doc(db, "accounts", user.uid, "requests", "init"), {
+  const requestsRef = await setDoc(doc(db, "accounts", user.uid, "requests", "temp"), {
+  });
+  const workout1Ref = await setDoc(doc(db, "accounts", user.uid, "workout1", "temp"), {
+  });
+  const workout2Ref = await setDoc(doc(db, "accounts", user.uid, "workout2", "temp"), {
+  });
+  const workout3Ref = await setDoc(doc(db, "accounts", user.uid, "workout3", "temp"), {
   });
   const workout1Ref = await setDoc(doc(db, "accounts", user.uid, "workout1", "init"), {
   });
@@ -21,11 +28,10 @@ async function newDoc() {
   const workout3Ref = await setDoc(doc(db, "accounts", user.uid, "workout3", "init"), {
   });
   const setTempField = await setDoc(doc(db, "accounts", user.uid), {
-    temp: ""
+    username: usernameString,
   })
 
 }
-
 
 export default function Login({ navigation }) {
   const [email, setEmail] = useState("");
@@ -52,7 +58,8 @@ export default function Login({ navigation }) {
       const user = userCredential.user;
       // ...
       console.log("Correct")
-      navigation.navigate('MyTabs')
+      // navigation.replace('Impulse')
+      navigation.navigate('Impulse') //Old version
     })
     .catch((error) => {
       const errorCode = error.code;
@@ -82,7 +89,7 @@ export default function Login({ navigation }) {
         /> 
       </View> 
       <TouchableOpacity>
-        <Text style={styles.forgot_button}>Forgot Password?</Text> 
+        <Text style={styles.forgot_button}></Text> 
       </TouchableOpacity> 
       <TouchableOpacity style={styles.loginBtn} onPress={handleLogin}>
         <Text style={styles.loginText}>LOGIN</Text> 
@@ -98,16 +105,15 @@ export default function Login({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: '#f6f3f9',
+    backgroundColor: '#f5fbff',
   },
   image: {
     marginBottom: 40,
   },
   inputView: {
-    backgroundColor: "#FFC0CB",
+    backgroundColor: "#7ab3d6",
     borderRadius: 30,
     width: "70%",
     height: 45,
@@ -131,6 +137,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     marginTop: 40,
-    backgroundColor: "#FF1493",
+    backgroundColor: "#578bab",
   },
+
 });
