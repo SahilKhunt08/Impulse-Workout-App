@@ -2,34 +2,17 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Button} from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-
 import React, { useState } from "react";
 
 import Home from "./pages/home";
-
 import Workout from "./pages/workout";
 import AddFriends from "./pages/addFriends";
-
 import Profile from "./pages/profile";
 import Login from "./pages/login";
-// import { render } from 'react-native/Libraries/Renderer/implementations/ReactNativeRenderer-prod';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
-
-// function CheckLogin() {
-//   // const [loggedIn, setLoggedIn] = useState(false);
-//   const checkLogin = () => {
-//   if (loggedIn == true) {
-//     return <Tab.Screen name="Profile" component={Profile} />
-//   } else {
-//     return <Tab.Screen name="Login" component={Login} />
-//   }
-// }
-
-// }
 
 const Testing1 = ({ title, showButton }) => (
   <View>
@@ -38,55 +21,26 @@ const Testing1 = ({ title, showButton }) => (
   </View>
 )
 
-
-function MyTabs() {
-  // const [loggedIn, setLoggedIn] = useState(false)
-  // console.log(loggedIn)
-
+function Impulse() {
   return (
-    <Tab.Navigator>
-      {/* <Tab.Screen name="Login" component={Login} /> */}
+    <Tab.Navigator  screenOptions={{ headerShown: false }}>
       <Tab.Screen name="Home" component={Home} />
-
       <Tab.Screen name="Workout" component={Workout} />
       <Tab.Screen name="addFriends" component={AddFriends} />
-
-<Tab.Screen name="Profile" component={Profile} />
-      {/* <Tab.Screen name="Login" component={Login} /> */}
-      {/* {loggedIn == 'true'? <Tab.Screen name="Login" component={Login} /> : <Tab.Screen name="Profile" component={Profile}/>} */}
-
-
-      {/* <CheckLogin/> */}
+      <Tab.Screen name="Profile" component={Profile} />
     </Tab.Navigator>
   );
 }
 
-
 export default function App() {
-
-  const [boolean1, setboolean1] = useState(!false);
-  const [boolean2, setboolean2] = useState(!true);
-  const handleTemp = () => {
-    setboolean1(!boolean1);
-  }
-
   return (
-    // <View style={styles.container}>
-    //   {boolean1 && <Login></Login>}
-    //   {boolean2 && <NavigationContainer>
-    //     <MyTabs/>
-    //   </NavigationContainer> }
-    // </View>
-
-
-  <NavigationContainer>
-    <Stack.Navigator initialRouteName="Login">
-      <Stack.Screen name="Login" component={Login} />
-      <Stack.Screen name="Home"  >{Home}</Stack.Screen>
-      <Stack.Screen name="MyTabs" component={MyTabs} />
-    </Stack.Navigator>
-  </NavigationContainer>
-
+    <NavigationContainer  screenOptions={{ headerShown: false }}>
+      <Stack.Navigator initialRouteName="Login">
+        <Stack.Screen name="Login" component={Login} />
+        <Stack.Screen name="Home"  >{Home}</Stack.Screen>
+        <Stack.Screen name="Impulse" component={Impulse} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
 
@@ -99,13 +53,3 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
 });
-
-
-
-
-
-
-//authstack
-//navigation.navigate
-
-

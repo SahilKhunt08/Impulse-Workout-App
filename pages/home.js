@@ -7,12 +7,22 @@ import Card2 from "./components/card2";
 
 export default function Home({ navigation }) {
     return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#429692'}}>
+    <View style={styles.container}>
       {/* <Text> Temp </Text> */}
       {/* <Card1></Card1> */}
       {/* <Text> Temp </Text> */}
-      <Card2></Card2>
+      {/* <Card2></Card2> */}
       {/* <Card2></Card2> */}
     </View>
   )
 }
+
+const styles = StyleSheet.create({
+
+  container: {
+    flex: 1,
+    alignItems: "center",
+    backgroundColor: '#adc9db',
+  },
+
+});
