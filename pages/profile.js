@@ -15,9 +15,6 @@ export default function Profile({ navigation }) {
     return unsubscribe;
   }, []);
 
-
-
-
   const [username, setUsername] = useState("");
   // const [requestArr, setRequestArr] = useState([{name: "temp", id: "temp"}]);
   const [requestArr, setRequestArr] = useState([]);
@@ -152,7 +149,7 @@ export default function Profile({ navigation }) {
           <View style={styles.container2}>
           {requestArr.map((info, index) => (
           <View key={index} style={styles.workoutCard}>
-            <Text> {info.name + " | " + info.id} </Text>
+            <Text> {info.name} </Text>
             <View style={{alignItems: "center", flexDirection: "row",}}>
               <TouchableOpacity style={styles.requestButton} onPress={() => addButton(info.id)}>
                 <Text> Add </Text>

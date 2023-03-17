@@ -215,7 +215,7 @@ export default function Workout() {
       <View style={styles.container}>
         {exerciseArr.map((info, index) => (
           <View key={index} style={styles.workoutCard}>
-            <Text> {info.name + " — " + info.muscle + " — " + info.id} </Text>
+            <Text> {info.name + " — " + info.muscle} </Text>
             <View style={styles.buttonView}>
               <TouchableOpacity style={styles.cardButton} onPress={() => saveExercise(info.id)}>
                 <Text> Save </Text>
