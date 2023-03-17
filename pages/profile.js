@@ -7,7 +7,16 @@ import {db} from './firebase';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
 import { addDoc, getDoc, doc, enableNetwork, setDoc, getCountFromServer, collection, getDocs, namedQuery, query, deleteDoc} from "firebase/firestore"; 
 
-export default function Profile() {
+export default function Profile({ navigation }) {
+  React.useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      loadRequests();
+    });
+    return unsubscribe;
+  }, []);
+
+
+
 
   const [username, setUsername] = useState("");
   // const [requestArr, setRequestArr] = useState([{name: "temp", id: "temp"}]);
@@ -129,9 +138,9 @@ export default function Profile() {
       <TouchableOpacity style={styles.button2} onPress={saveProfile}>
         <Text> Save </Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.button2} onPress={loadRequests}>
+      {/* <TouchableOpacity style={styles.button2} onPress={loadRequests}>
         <Text> Load Requests </Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
       </View>
 
       <View style={styles.requestContainer}>
@@ -243,16 +252,15 @@ const styles = StyleSheet.create({
     height: 40,
     width: 60,
     justifyContent: "center",
-},
-workoutCard: {
-  marginTop: 10,
-  width: "90%",
-  backgroundColor: "white",
-  bordercolor: "black",
-  borderWidth: 2,
-  borderRadius: 5,
-  justifyContent: "center",
-  alignContent: "center",
-
-}, 
+  },
+  workoutCard: {
+    marginTop: 10,
+    width: "90%",
+    backgroundColor: "white",
+    bordercolor: "black",
+    borderWidth: 2,
+    borderRadius: 5,
+    justifyContent: "center",
+    alignContent: "center",
+  }, 
 });
