@@ -21,12 +21,6 @@ async function newDoc() {
   });
   const workout3Ref = await setDoc(doc(db, "accounts", user.uid, "workout3", "temp"), {
   });
-  const workout1Ref = await setDoc(doc(db, "accounts", user.uid, "workout1", "init"), {
-  });
-  const workout2Ref = await setDoc(doc(db, "accounts", user.uid, "workout2", "init"), {
-  });
-  const workout3Ref = await setDoc(doc(db, "accounts", user.uid, "workout3", "init"), {
-  });
   const setTempField = await setDoc(doc(db, "accounts", user.uid), {
     username: usernameString,
   })
