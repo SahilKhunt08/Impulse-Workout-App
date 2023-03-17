@@ -7,7 +7,7 @@ import React, { useState } from "react";
 
 import Home from "./pages/home";
 import Workout from "./pages/workout";
-import AddFriends from "./pages/addFriends";
+import Friends from "./pages/friends";
 import Profile from "./pages/profile";
 import Login from "./pages/login";
 
@@ -26,7 +26,7 @@ function Impulse() {
     <Tab.Navigator  screenOptions={{ headerShown: false }}>
       <Tab.Screen name="Home" component={Home} />
       <Tab.Screen name="Workout" component={Workout} />
-      <Tab.Screen name="Add Friends" component={AddFriends} />
+      <Tab.Screen name="Friends" component={Friends} />
       <Tab.Screen name="Profile" component={Profile} />
     </Tab.Navigator>
   );

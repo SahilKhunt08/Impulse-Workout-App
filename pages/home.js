@@ -8,9 +8,6 @@ import {db} from './firebase';
 
 
 //Code Functionality for Home Page
-
-
-
 export default function Home({ navigation }) {
 
 const [workoutQuery, setWorkoutQuery] = useState("")
@@ -38,10 +35,7 @@ const [exercises, setExercises] = useState([]);
       if (index >= exercises.length - 1) { 
          setIndex(0)
       }
-      console.log(exercises)
       setCurrExercise(exercises[index])
-
-      console.log(exercises[index] )
     }
 
     return (
@@ -54,7 +48,7 @@ const [exercises, setExercises] = useState([]);
             onChangeText={(workoutQuery) => setWorkoutQuery(workoutQuery)}
         /> 
         <TouchableOpacity style={styles.loginBtn} onPress={queryWorkoutCols} >
-          <Text style={styles.loginText}>Search</Text> 
+          <Text style={styles.loginText}>Select</Text> 
         </TouchableOpacity> 
       </View>
 
@@ -92,23 +86,25 @@ const styles = StyleSheet.create({
   search: {
     flexDirection: "row",
     marginBottom: 60,
+    backgroundColor: "#7ab3d6",
+
   },
   TextInput: {
     height: 40,
     flex: 1,
     padding: 10,
-    width: 260,
     marginLeft: 40,
   },
   loginBtn: {
     width: "40%",
     borderRadius: 25,
-    marginBottom: 70,
     marginRight: 35,
     height: 40,
+    borderRadius: 30,
+    borderWidth: 3,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#7ab3d6",
+    backgroundColor: "#DDDDDD",
   },
 
   //————————————————————————————————————————————————————————————————
@@ -156,6 +152,7 @@ const styles = StyleSheet.create({
     padding: 10,
     marginTop: 140,
     marginBottom: 20,
+    borderRadius: 20,
   },
   button2: {
     alignItems: 'center',
