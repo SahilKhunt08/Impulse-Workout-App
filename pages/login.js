@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { StyleSheet, Text, View, Image, TextInput, Button, TouchableOpacity } from "react-native";
 import { auth } from './firebase';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
-import { addDoc, doc, enableNetwork, setDoc, collection, getDoc, getDocs } from "firebase/firestore"; 
+import { addDoc, doc, enableNetwork, setDoc, collection, getDoc, getDocs, deleteDoc } from "firebase/firestore"; 
 import {db} from './firebase';
 import { async } from "@firebase/util";
 
@@ -24,6 +24,7 @@ async function newDoc() {
   const setTempField = await setDoc(doc(db, "accounts", user.uid), {
     username: usernameString,
   })
+
 }
 
 export default function Login({ navigation }) {
