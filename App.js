@@ -26,7 +26,7 @@ function Impulse() {
     <Tab.Navigator  screenOptions={{ headerShown: false }}>
       <Tab.Screen name="Home" component={Home} />
       <Tab.Screen name="Workout" component={Workout} />
-      <Tab.Screen name="addFriends" component={AddFriends} />
+      <Tab.Screen name="Add Friends" component={AddFriends} />
       <Tab.Screen name="Profile" component={Profile} />
     </Tab.Navigator>
   );
@@ -37,7 +37,7 @@ export default function App() {
     <NavigationContainer  screenOptions={{ headerShown: false }}>
       <Stack.Navigator initialRouteName="Login">
         <Stack.Screen name="Login" component={Login} />
-        <Stack.Screen name="Home"  >{Home}</Stack.Screen>
+        <Stack.Screen name="Home">{Home}</Stack.Screen>
         <Stack.Screen name="Impulse" component={Impulse} />
       </Stack.Navigator>
     </NavigationContainer>
