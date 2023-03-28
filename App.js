@@ -23,7 +23,7 @@ const Testing1 = ({ title, showButton }) => (
 
 function Impulse() {
   return (
-    <Tab.Navigator  screenOptions={{ headerShown: false }}>
+    <Tab.Navigator screenOptions={{ headerShown: false }}>
       <Tab.Screen name="Home" component={Home} />
       <Tab.Screen name="Workout" component={Workout} />
       <Tab.Screen name="Friends" component={Friends} />
@@ -34,9 +34,22 @@ function Impulse() {
 
 export default function App() {
   return (
-    <NavigationContainer  screenOptions={{ headerShown: false }}>
-      <Stack.Navigator initialRouteName="Login">
-        <Stack.Screen name="Login" component={Login} />
+    <NavigationContainer >
+      <Stack.Navigator screenOptions={{headerShown: true}} initialRouteName="Login">
+        <Stack.Screen name="Login" component={Login}
+          options={{
+            // title: 'Welcome',
+            title: '',
+            headerStyle: {
+              backgroundColor: '#0d0d12',
+            },
+            headerTintColor: '#fff',
+            headerTitleStyle: {
+              fontWeight: 'bold',
+              // fontSize: 20,
+            },
+          }}
+        />
         <Stack.Screen name="Home">{Home}</Stack.Screen>
         <Stack.Screen name="Impulse" component={Impulse} />
       </Stack.Navigator>
