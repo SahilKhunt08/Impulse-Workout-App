@@ -139,7 +139,7 @@ const newStyles = StyleSheet.create({
     fontSize: 30,
     alignSelf: "left",
     marginBottom: 50,
-    marginTop: -50,
+    marginTop: 50,
   },
   infoText: {
     color: "#ffffff",

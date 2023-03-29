@@ -4,6 +4,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React, { useState } from "react";
+import { Icon } from '@rneui/themed';
 
 import Home from "./pages/home";
 import Workout from "./pages/workout";
@@ -14,20 +15,117 @@ import Login from "./pages/login";
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
-const Testing1 = ({ title, showButton }) => (
-  <View>
-    <Text style={{ fontSize: 60 }}>{title}</Text>
-    {showButton && <Button title="Press me!" />}
-  </View>
-)
-
 function Impulse() {
   return (
-    <Tab.Navigator screenOptions={{ headerShown: false }}>
-      <Tab.Screen name="Home" component={Home} />
-      <Tab.Screen name="Workout" component={Workout} />
-      <Tab.Screen name="Friends" component={Friends} />
-      <Tab.Screen name="Profile" component={Profile} />
+    <Tab.Navigator screenOptions={{ headerShown: true }}>
+      <Tab.Screen name="Home" component={Home} 
+        options={{
+          title: 'Home',
+          headerStyle: {
+            backgroundColor: '#32324a',  
+          },
+          tabBarStyle: {
+            backgroundColor: '#32324a',  
+            borderTopWidth: 0,
+          },
+          headerTintColor: '#fff',
+          headerTitleStyle: {
+            fontWeight: 'bold',
+            fontSize: 20,
+          },
+          tabBarIcon: (tabInfo) => {
+            return (
+              <Icon
+              name="home"
+              type="material"
+                size={27}
+                color={tabInfo.focused ? "#7d7dfa" : "#fff"}
+              />
+            );
+          },
+        }}
+      />
+      <Tab.Screen name="Workout" component={Workout} 
+        options={{
+          title: 'Workout',
+          headerStyle: {
+            backgroundColor: '#32324a',  
+          },
+          tabBarStyle: {
+            backgroundColor: '#32324a',  
+            borderTopWidth: 0,
+          },
+          headerTintColor: '#ffffff',
+          headerTitleStyle: {
+            fontWeight: 'bold',
+            fontSize: 20,
+          },
+          tabBarIcon: (tabInfo) => {
+            return (
+              <Icon
+                name="dumbbell"
+                type="material-community"
+                size={27}
+                color={tabInfo.focused ? "#7d7dfa" : "#fff"}
+              />
+            );
+          },
+        }}
+      />
+      <Tab.Screen name="Friends" component={Friends} 
+        options={{
+          title: 'Friends',
+          headerStyle: {
+            backgroundColor: '#32324a',  
+          },
+          tabBarStyle: {
+            backgroundColor: '#32324a',  
+            borderTopWidth: 0,
+          },
+          headerTintColor: '#fff',
+          headerTitleStyle: {
+            fontWeight: 'bold',
+            fontSize: 20,
+          },
+          tabBarIcon: (tabInfo) => {
+            return (
+              <Icon
+              name="people"
+              type="material"
+                size={27}
+                color={tabInfo.focused ? "#7d7dfa" : "#fff"}
+              />
+            );
+          },
+        }}      
+      />
+      <Tab.Screen name="Profile" component={Profile} 
+        options={{
+          title: 'Profile',
+          headerStyle: {
+            backgroundColor: '#32324a',  
+          },
+          tabBarStyle: {
+            backgroundColor: '#32324a',  
+            borderTopWidth: 0,
+          },
+          headerTintColor: '#fff',
+          headerTitleStyle: {
+            fontWeight: 'bold',
+            fontSize: 20,
+          },
+          tabBarIcon: (tabInfo) => {
+            return (
+              <Icon
+              name="account-circle"
+              type="material"
+                size={27}
+                color={tabInfo.focused ? "#7d7dfa" : "#fff"}
+              />
+            );
+          },
+        }}      
+      />
     </Tab.Navigator>
   );
 }
@@ -35,34 +133,22 @@ function Impulse() {
 export default function App() {
   return (
     <NavigationContainer >
-      <Stack.Navigator screenOptions={{headerShown: true}} initialRouteName="Login">
+      <Stack.Navigator screenOptions={{headerShown: false}} initialRouteName="Login">
         <Stack.Screen name="Login" component={Login}
           options={{
-            // title: 'Welcome',
-            title: '',
+            title: 'Welcome',
             headerStyle: {
               backgroundColor: '#0d0d12',
             },
             headerTintColor: '#fff',
             headerTitleStyle: {
               fontWeight: 'bold',
-              // fontSize: 20,
+              fontSize: 20,
             },
           }}
         />
-        <Stack.Screen name="Home">{Home}</Stack.Screen>
-        <Stack.Screen name="Impulse" component={Impulse} />
+        <Stack.Screen name="Impulse" component={Impulse}/>
       </Stack.Navigator>
     </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#429692',
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexDirection: "row",
-  },
-});

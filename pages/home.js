@@ -6,8 +6,6 @@ import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, on
 import { addDoc, doc, enableNetwork, setDoc, getCountFromServer, collection, getDocs, namedQuery, updateDoc,getDoc} from "firebase/firestore"; 
 import {db} from './firebase';
 
-
-//Code Functionality for Home Page
 export default function Home({ navigation }) {
 
 const [workoutQuery, setWorkoutQuery] = useState("")

@@ -7,6 +7,8 @@ import { auth } from './firebase';
 import {db} from './firebase';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
 import { addDoc, doc, enableNetwork, setDoc, getCountFromServer, collection, getDocs, namedQuery, query} from "firebase/firestore"; 
+import { Icon } from '@rneui/themed';
+
 
 export default function Workout() {
 
@@ -146,7 +148,7 @@ export default function Workout() {
   }
 
   return (
-    <View style={styles.container}>
+    <View style={newStyles.container}>
 
       <View style={styles.searchView}>
         <TextInput
@@ -211,17 +213,20 @@ export default function Workout() {
         </View>
       </Modal>
       
-      <ScrollView style={styles.scrollStyle}>
-      <View style={styles.container}>
+      <ScrollView>
+      <View style={newStyles.container}>
         {exerciseArr.map((info, index) => (
-          <View key={index} style={styles.workoutCard}>
-            <Text> {info.name + " — " + info.muscle} </Text>
+          <View key={index} style={newStyles.cardComp}>
+            <View style={newStyles.cardTextView}>
+              <Text style={newStyles.cardText1}> {info.name} </Text>
+              <Text style={newStyles.cardText2}> {info.difficulty} </Text>
+            </View>
             <View style={styles.buttonView}>
-              <TouchableOpacity style={styles.cardButton} onPress={() => saveExercise(info.id)}>
+              {/* <TouchableOpacity style={styles.cardButton} onPress={() => saveExercise(info.id)}>
                 <Text> Save </Text>
-              </TouchableOpacity>
+              </TouchableOpacity> */}
               <TouchableOpacity
-                style={[styles.cardButton]}
+                style={[newStyles.cardInfoBtn]}
                 onPress={() => {
                 setModalVisible(true);
                 setModalDirections(info.instructions)
@@ -231,7 +236,12 @@ export default function Workout() {
                   "Equipment: " + info.equipment + " \n " +
                   "Type: " + info.type + " — " + info.difficulty)
                 }}>
-                <Text>Details</Text>
+                <Icon style={{alignContent: "end",}}
+                  color='#ffffff'   
+                  name="information-outline"
+                  type="material-community"
+                  size="30"
+                />
               </TouchableOpacity>
             </View>
           </View>
@@ -241,6 +251,40 @@ export default function Workout() {
       </View>
   )
 }
+
+const newStyles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: "center",
+    backgroundColor: '#0d0d12',
+  },
+  cardComp: {
+    flexDirection: "row",
+    width:300,
+    backgroundColor: "#282838",
+    borderWidth: 0,
+    borderRadius: 7,
+    marginBottom: 5,
+    alignItems: "center",
+    height: "15%",
+  },
+  cardTextView: {
+
+  },
+  cardText1: {
+    color: "#e0e0e0",
+    fontSize: 16,
+  },
+  cardText2: {
+    color: "#a8a8a8",
+    fontSize: 15,
+    fontWeight: "300",
+  },
+  cardInfoBtn: {
+    height: 30,
+    // backgroundColor: "darkblue",
+  },
+})
 
 const styles = StyleSheet.create({
 
