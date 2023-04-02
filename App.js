@@ -17,10 +17,18 @@ const Stack = createNativeStackNavigator();
 
 function Impulse() {
   return (
-    <Tab.Navigator screenOptions={{ headerShown: true }}>
+    <Tab.Navigator 
+      screenOptions={{
+        headerShown: true, 
+        tabBarActiveTintColor: '#9595f5',
+        tabBarInactiveTintColor: '#d6d6d6',
+      }}
+    >
       <Tab.Screen name="Home" component={Home} 
         options={{
-          title: 'Home',
+          // title: 'Home',
+          headerTitle: "Home",
+          tabBarLabel: "Home",
           headerStyle: {
             backgroundColor: '#32324a',  
           },
