@@ -7,6 +7,8 @@ import { auth } from './firebase';
 import {db} from './firebase';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
 import { addDoc, doc, enableNetwork, setDoc, getCountFromServer, collection, getDocs, namedQuery, query} from "firebase/firestore"; 
+import { Icon } from '@rneui/themed';
+import { CheckBox } from '@rneui/themed';
 
 export default function Workout() {
 
@@ -21,8 +23,6 @@ export default function Workout() {
   const [modalInfo, setModalInfo] = useState("");
   const [exerciseArr, setExerciseArr] = useState([
     // {id: "0", equipment: 'equipment1', muscle: "muscle1"},
-    // {id: "1", equipment: 'equipment2', muscle: "muscle2"},
-    // {id: "2", equipment: 'equipment3', muscle: "muscle3"},
   ]);
 
   async function saveExercise(index) {
@@ -58,6 +58,7 @@ export default function Workout() {
   }
 
   const submitInput = () => {
+
     if (search2.toLowerCase() == "muscle"){
       const options = {
         method: 'GET',
@@ -113,6 +114,7 @@ export default function Workout() {
     // setExerciseArr(exerciseArr => [...exerciseArr, allData]);
     for(var i = 0; i < 10; i++){
       input[i].id = counter + i;
+      // input[i].id = i + 1;
     }
     setCount(counter + 10);
     setExerciseArr(input);
@@ -144,9 +146,10 @@ export default function Workout() {
     tempString = tempString.substring(0, tempString.length - 3);
     setWorkoutString(tempString);
   }
+  const [isSelected, setSelection] = useState(false);
 
   return (
-    <View style={styles.container}>
+    <View style={newStyles.container}>
 
       <View style={styles.searchView}>
         <TextInput
@@ -211,36 +214,94 @@ export default function Workout() {
         </View>
       </Modal>
       
-      <ScrollView style={styles.scrollStyle}>
-      <View style={styles.container}>
-        {exerciseArr.map((info, index) => (
-          <View key={index} style={styles.workoutCard}>
-            <Text> {info.name + " — " + info.muscle} </Text>
-            <View style={styles.buttonView}>
-              <TouchableOpacity style={styles.cardButton} onPress={() => saveExercise(info.id)}>
-                <Text> Save </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.cardButton]}
-                onPress={() => {
-                setModalVisible(true);
-                setModalDirections(info.instructions)
-                setModalInfo(
-                  "Name: " + info.name + " \n" + 
-                  "Muscle: " + info.muscle + " \n " + 
-                  "Equipment: " + info.equipment + " \n " +
-                  "Type: " + info.type + " — " + info.difficulty)
-                }}>
-                <Text>Details</Text>
-              </TouchableOpacity>
+      <ScrollView style={newStyles.scrollContainer1}>
+        <View style={newStyles.scrollContainer2}>
+          {exerciseArr.map((info, index) => (
+            <View key={index} style={newStyles.cardComp}>
+              <View style={newStyles.cardTextView}>
+                <Text style={newStyles.cardText1}> {info.name} </Text>
+                <Text style={newStyles.cardText2}> {info.difficulty} </Text>
+              </View>
+              <View style={styles.buttonView}>
+                {/* <TouchableOpacity style={styles.cardButton} onPress={() => saveExercise(info.id)}>
+                  <Text> Save </Text>
+                </TouchableOpacity> */}
+                <TouchableOpacity
+                  style={[newStyles.cardInfoBtn]}
+                  onPress={() => {
+                  setModalVisible(true);
+                  setModalDirections(info.instructions)
+                  setModalInfo(
+                    "Name: " + info.name + " \n" + 
+                    "Muscle: " + info.muscle + " \n " + 
+                    "Equipment: " + info.equipment + " \n " +
+                    "Type: " + info.type + " — " + info.difficulty)
+                  }}>
+                  <Icon style={{alignContent: "end",}}
+                    color='#ffffff'   
+                    name="information-outline"
+                    type="material-community"
+                    size="30"
+                  />
+                </TouchableOpacity>
+              </View>
             </View>
-          </View>
-          ))}
+            ))}
         </View>
       </ScrollView>
-      </View>
+    </View>
   )
 }
+
+const newStyles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: "center",
+    backgroundColor: '#0d0d12',
+  },
+
+  scrollContainer1: {
+    flex: 1,
+    // width: "100%",
+    // height: "100%",
+    // // backgroundColor: "cyan",
+    // maxHeight: 495,
+    // alignContent: "center"
+  },
+  scrollContainer2: {
+    flex: 1,
+    alignItems: "center",
+  },
+  cardComp: {
+    flexDirection: "row",
+    width: "95%",
+    backgroundColor: "#282838",
+    borderWidth: 0,
+    borderRadius: 7,
+    marginBottom: 5,
+    alignItems: "center",
+    height: "15%",
+  },
+  cardTextView: {
+    marginLeft: 10,
+    width: "85%",
+  },
+  cardText1: {
+    color: "#e0e0e0",
+    fontSize: 16,
+  },
+  cardText2: {
+    color: "#a8a8a8",
+    fontSize: 15,
+    fontWeight: "300",
+  },
+  cardInfoBtn: {
+    height: 30,
+    // backgroundColor: "darkblue",
+    justifyContent: "flex-end",
+    alignSelf: "flex-end",
+  },
+})
 
 const styles = StyleSheet.create({
 
