@@ -6,7 +6,6 @@ import { auth } from './firebase';
 import {db} from './firebase';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
 import { addDoc, getDoc, doc, enableNetwork, setDoc, getCountFromServer, collection, getDocs, namedQuery, query, deleteDoc} from "firebase/firestore"; 
-
 export default function Profile({ navigation }) {
   React.useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
@@ -66,11 +65,6 @@ export default function Profile({ navigation }) {
   }
 
   async function addButton(index) { 
-    //TODO
-    //Done: User can't add themselves as a friend.
-    //If friend request accepted, request goes away and both friends get added to eachother
-    //If pending requests from both sides and one accepts, both are friends and both pending goes away.
-    //——————————————————————————————————————————————————————————————————
     const addedFriend = requestArr.filter(a => a.id === index);
     const newRequestArray = requestArr.filter(a => a.id !== index);
     setRequestArr(newRequestArray);
@@ -117,27 +111,34 @@ export default function Profile({ navigation }) {
 
   return (
     <View style={styles.container}>
+
+      <View style={{left: 150, flexDirection:'row-reverse', justifyContent:'flex-start', flexWrap:'nowrap' }}>
+        <TouchableOpacity  onPress={saveProfile}>
+            <Image source={ require('../assets/settingsIcon.png') } style={ { width: 35, height: 35 } } />
+        </TouchableOpacity>
+        
+      </View>
+
       <View style={styles.profilePicture}>
         <Avatar
           size={150}
           rounded
           source={require('../assets/person2.png')}
         ></Avatar>
+       
       </View>
-      <View style={{flexDirection: "row", alignItems: "center"}}>
-      <TextInput
-          style={styles.paragraph}
-          placeholder="Username"
-          placeholderTextColor="#003f5c"
-          onChangeText={(username) => setUsername(username)}
-        /> 
-        {/* <Image source={require('../assets/person1.png')}></Image> */}
-      <TouchableOpacity style={styles.button2} onPress={saveProfile}>
-        <Text> Save </Text>
-      </TouchableOpacity>
-      {/* <TouchableOpacity style={styles.button2} onPress={loadRequests}>
-        <Text> Load Requests </Text>
-      </TouchableOpacity> */}
+
+      <View style={{flexDirection: "row", alignItems: "center",}}>
+          <TextInput
+              style={styles.paragraph}
+              placeholder="Username"
+              placeholderTextColor= "#ffffff"
+              onChangeText={(username) => setUsername(username)}
+            /> 
+          <TouchableOpacity  onPress={saveProfile}>
+            <Image source={ require('../assets/checkmark1.png') } style={ { width: 40, height: 40 } } />
+
+          </TouchableOpacity>
       </View>
 
       <View style={styles.requestContainer}>
@@ -165,6 +166,7 @@ export default function Profile({ navigation }) {
  
       </View>
     </View>
+
   )
 }
 
@@ -173,7 +175,7 @@ const styles = StyleSheet.create({
     flex: 1,
     // justifyContent: 'center',
     padding: 20,
-    backgroundColor: '#adc9db',
+    backgroundColor: '#0d0d12',
     alignContent: "center",
     alignItems: "center",
   },
@@ -181,16 +183,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   requestContainer: {
-    backgroundColor: "#7ab3d6",
-    borderRadius: 5,
-    borderWidth: 3,
+    backgroundColor: "#0d0d12",
+    borderWidth: 2,
+    borderColor: "#555070",
     alignItems: "center",
     width: "100%",
-    height: "67%",
+    height: "60%",
     marginTop: 10,
   },
   requestTitleBar: {
-    backgroundColor: "#578bab",
+    backgroundColor: "#0d0d12",
     width: "100%",
     alignItems: "center",
     height: "10%",
@@ -198,24 +200,25 @@ const styles = StyleSheet.create({
   },
   requestTitle: {
     fontSize: 20,
-    // marginTop: 10,
-    // marginHorizontal: 10,
+    color: "#ffffff"
+
   },
   profilePicture: {
-    // marginTop: 5,
     marginBottom: 15,
   },
   paragraph: {
-    fontSize: 18,
+    borderRadius: 5,
+    borderWidth: 2,
+    borderColor: "#404057",
+    fontSize: 15,
     fontWeight: 'bold',
     textAlign: 'center',
-    // padding: 20
-
-    backgroundColor: 'white',
+    backgroundColor: '#0d0d12',
     padding: 10,
     marginTop: 5,
     marginHorizontal: 5,
-    borderRadius: 5,
+   
+
   },
   button1: {
     alignItems: 'center',
@@ -232,11 +235,8 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   scrollStyle: {
-    // marginTop: 10,
-    // flex: 1,
     width: "100%",
     height: "100%",
-    // backgroundColor: "cyan",
     maxHeight: 495,
     alignContent: "center"
   },
@@ -261,3 +261,10 @@ const styles = StyleSheet.create({
     alignContent: "center",
   }, 
 });
+
+//Code for box shadows
+// shadowColor: '#171717',
+// shadowOffset: {width: -2, height: 4},
+// shadowOpacity: 0.2,
+// shadowRadius: 3,
+
