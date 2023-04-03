@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { StyleSheet, Text, View, TouchableOpacity, TextInput, FlatList, Modal, Pressable, ScrollView} from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, TextInput, FlatList, Modal, Pressable, ScrollView, Image} from 'react-native';
 import { Button } from 'react-native-paper';
 import axios from "axios";
 import { Card } from 'react-native-paper';
@@ -152,7 +152,7 @@ export default function Workout() {
     <View style={newStyles.container}>
 
       <View style={styles.searchView}>
-        <TextInput
+        {/* <TextInput
           style={styles.searchInput}
           placeholder="Search Workout"
           placeholderTextColor="#edf9ff"
@@ -167,17 +167,30 @@ export default function Workout() {
           color="#edf9ff"
           onChangeText={(search2) => setSearch2(search2)
           }
-        /> 
-        <TouchableOpacity style={styles.searchButton} onPress={submitInput}>
-          <Text>Call API</Text>
-        </TouchableOpacity>
+        />  */}
+
+        <View style={newStyles.inputView}>
+          <TextInput
+            style={newStyles.inputText}
+            placeholder="someone@example.com"
+            placeholderTextColor="#cccccc"
+            onChangeText={(email) => setEmail(email)}
+          /> 
+        </View> 
+
+        <TouchableOpacity  onPress={submitInput}>
+            <Image source={ require('../assets/filter.png') } style={ { width: 50, height: 50 } } />
+
+          </TouchableOpacity>
+      
+       
       </View> 
 
       {/* <TouchableOpacity style={styles.button2} onPress={() => addInfo()}>
         <Text>Add Info</Text>
       </TouchableOpacity> */}
 
-      <View style={styles.playlist}>
+      {/* <View style={styles.playlist}>
         <Text style={styles.playlistText}>Save to playlist</Text>
         <View style={{flexDirection: "row"}}>
           <TouchableOpacity style={styles.button2} onPress={() => selectWorkout(1)}>
@@ -191,7 +204,7 @@ export default function Workout() {
           </TouchableOpacity>
         </View>
         <Text style={styles.playlistText}> {workoutString} </Text>
-      </View>
+      </View> */}
 
       <Modal
         animationType="slide"
@@ -258,6 +271,23 @@ const newStyles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     backgroundColor: '#0d0d12',
+  },
+
+  inputView: {
+    borderColor: "#404057",
+    borderWidth: 2,
+    borderRadius: 5,
+    height: 45,
+    width: 280,
+    marginRight: 5,
+    alignItems: "center",
+  },
+  inputText: {
+    height: 50,
+    width: "100%",
+    flex: 1,
+    padding: 15,
+    color: "#ffffff",
   },
 
   scrollContainer1: {
