@@ -27,6 +27,7 @@
     "react-native": "0.70.5",
     "react-native-axios": "^0.17.1",
     "react-native-divider": "^1.0.3",
+    "react-native-flip-card": "^3.5.7",
     "react-native-paper": "^5.2.0"
   },
   "devDependencies": {

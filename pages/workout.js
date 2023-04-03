@@ -1,17 +1,17 @@
 import React, { useState } from "react";
-import { StyleSheet, Text, View, TouchableOpacity, TextInput, FlatList, Modal, Pressable, ScrollView} from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, TextInput, FlatList, Modal, Pressable, ScrollView, Image} from 'react-native';
 import { Button } from 'react-native-paper';
 import axios from "axios";
 import { Card } from 'react-native-paper';
 import { auth } from './firebase';
 import {db} from './firebase';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
-import { addDoc, doc, enableNetwork, setDoc, getCountFromServer, collection, getDocs, namedQuery, query} from "firebase/firestore"; 
+import { addDoc, doc, enableNetwork, setDoc, getCountFromServer, collection, getDocs, namedQuery, query } from "firebase/firestore"; 
 import { Icon } from '@rneui/themed';
 import { CheckBox } from '@rneui/themed';
+import FlipCard from 'react-native-flip-card'
 
 export default function Workout() {
-
   const [search1, setSearch1] = useState("biceps");
   const [search2, setSearch2] = useState("muscle");
   const [userUID, setUserUID] = useState("");
@@ -19,8 +19,7 @@ export default function Workout() {
   const [workoutString, setWorkoutString] = useState("Workouts Here");
   const [counter, setCount] = useState(3);
   const [modalVisible, setModalVisible] = useState(false);
-  const [modalDirections, setModalDirections] = useState("");
-  const [modalInfo, setModalInfo] = useState("");
+  const [modalInfo, setModalInfo] = useState([]);
   const [exerciseArr, setExerciseArr] = useState([
     // {id: "0", equipment: 'equipment1', muscle: "muscle1"},
   ]);
@@ -146,32 +145,28 @@ export default function Workout() {
     tempString = tempString.substring(0, tempString.length - 3);
     setWorkoutString(tempString);
   }
-  const [isSelected, setSelection] = useState(false);
 
   return (
     <View style={newStyles.container}>
-
       <View style={styles.searchView}>
         <TextInput
           style={styles.searchInput}
           placeholder="Search Workout"
           placeholderTextColor="#edf9ff"
           color="#edf9ff"
-          onChangeText={(search1) => setSearch1(search1)
-          }
-        /> 
+          onChangeText={(search1) => setSearch1(search1)}
+        />
         <TextInput
           style={styles.searchInput}
           placeholder="Category"
           placeholderTextColor="#edf9ff"
           color="#edf9ff"
-          onChangeText={(search2) => setSearch2(search2)
-          }
-        /> 
+          onChangeText={(search2) => setSearch2(search2)}
+        />
         <TouchableOpacity style={styles.searchButton} onPress={submitInput}>
           <Text>Call API</Text>
         </TouchableOpacity>
-      </View> 
+      </View>
 
       {/* <TouchableOpacity style={styles.button2} onPress={() => addInfo()}>
         <Text>Add Info</Text>
@@ -179,14 +174,23 @@ export default function Workout() {
 
       <View style={styles.playlist}>
         <Text style={styles.playlistText}>Save to playlist</Text>
-        <View style={{flexDirection: "row"}}>
-          <TouchableOpacity style={styles.button2} onPress={() => selectWorkout(1)}>
+        <View style={{ flexDirection: "row" }}>
+          <TouchableOpacity
+            style={styles.button2}
+            onPress={() => selectWorkout(1)}
+          >
             <Text> Workout 1 </Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.button2} onPress={() => selectWorkout(2)}>
+          <TouchableOpacity
+            style={styles.button2}
+            onPress={() => selectWorkout(2)}
+          >
             <Text> Workout 2 </Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.button2} onPress={() => selectWorkout(3)}>
+          <TouchableOpacity
+            style={styles.button2}
+            onPress={() => selectWorkout(3)}
+          >
             <Text> Workout 3 </Text>
           </TouchableOpacity>
         </View>
@@ -197,23 +201,37 @@ export default function Workout() {
         animationType="slide"
         transparent={true}
         visible={modalVisible}
-        onRequestClose={() => {
-        Alert.alert('Modal has been closed.');
-        setModalVisible(!modalVisible);
-        }}>
-        <View style={styles.centeredView}>
-          <View style={styles.modalView}>
-            <Text style={styles.modalText}>{modalInfo}</Text>
-            <Text style={styles.modalText}>{modalDirections}</Text>
-              <Pressable
-                style={[styles.modalButton, styles.buttonClose]}
-                onPress={() => setModalVisible(!modalVisible)}>
-                <Text style={styles.textStyle}>Close Directions</Text>
-              </Pressable>
-          </View>  
+        onRequestClose={() => {Alert.alert("Modal has been closed."); setModalVisible(!modalVisible); }}>
+        <View style={modalStyles.modalContainer}>
+          <View style={modalStyles.modalView}>
+            <View style={modalStyles.titleView}>
+              <Text style={modalStyles.titleText}>{modalInfo.name}</Text>
+              <Text>Hello</Text>
+            </View>
+            {/* <Text style={styles.modalText}>{modalDirections}</Text> */}
+
+            <FlipCard  style={styles.card}
+              friction={6}
+              perspective={10000}
+              flipHorizontal={true}
+              flipVertical={false}
+              flip={false}
+              clickable={true}>
+              <View style={{backgroundColor: "red", height: 400, width: 300}}>
+                <Image source={ require('./body1.png') } style={ { width: 200, height: 300 } } />
+              </View>
+              <View style={{backgroundColor: "red", height: 400, width: 300}}>
+                <Image source={ require('./body2.png') } style={ { width: 200, height: 300 } } />
+              </View>
+            </FlipCard>
+
+            <TouchableOpacity style={[styles.modalButton, styles.buttonClose]} onPress={() => setModalVisible(!modalVisible)}>
+              <Text style={modalStyles.closeText}>Return</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </Modal>
-      
+
       <ScrollView style={newStyles.scrollContainer1}>
         <View style={newStyles.scrollContainer2}>
           {exerciseArr.map((info, index) => (
@@ -229,16 +247,18 @@ export default function Workout() {
                 <TouchableOpacity
                   style={[newStyles.cardInfoBtn]}
                   onPress={() => {
-                  setModalVisible(true);
-                  setModalDirections(info.instructions)
-                  setModalInfo(
-                    "Name: " + info.name + " \n" + 
-                    "Muscle: " + info.muscle + " \n " + 
-                    "Equipment: " + info.equipment + " \n " +
-                    "Type: " + info.type + " — " + info.difficulty)
-                  }}>
-                  <Icon style={{alignContent: "end",}}
-                    color='#ffffff'   
+                    setModalVisible(true);
+                    setModalInfo({
+                      name: info.name, 
+                      muscle: info.muscle, 
+                      equipment: info.equipment, 
+                      difficulty: info.difficulty, 
+                      instructions: info.instructions});
+                  }}
+                >
+                  <Icon
+                    style={{ alignContent: "end" }}
+                    color="#ffffff"
                     name="information-outline"
                     type="material-community"
                     size="30"
@@ -246,12 +266,59 @@ export default function Workout() {
                 </TouchableOpacity>
               </View>
             </View>
-            ))}
+          ))}
         </View>
       </ScrollView>
     </View>
-  )
+  );
 }
+
+const modalStyles = StyleSheet.create({
+
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 12,
+    // height: 100,
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: '#404057', //0d0d12
+    padding: 15,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+    height: "80.5%",
+    width: "100%",
+  },
+
+  titleView: {
+    backgroundColor: '#0d0d12',
+    width: "100%",
+    height: "20%",
+    justifyContent: "center",
+    alignContent: "center"
+  },
+  titleText: {
+    color: 'white',
+    fontWeight: 'bold',
+    alignSelf: "center"
+  },
+
+  closeText: {
+    color: 'white',
+    fontWeight: 'bold',
+  },
+
+
+})
 
 const newStyles = StyleSheet.create({
   container: {
