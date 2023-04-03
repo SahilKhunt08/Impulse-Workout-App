@@ -172,7 +172,7 @@ export default function Workout() {
         <View style={newStyles.inputView}>
           <TextInput
             style={newStyles.inputText}
-            placeholder="someone@example.com"
+            placeholder="Search"
             placeholderTextColor="#cccccc"
             onChangeText={(email) => setEmail(email)}
           /> 
