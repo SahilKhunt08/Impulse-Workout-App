@@ -11,6 +11,8 @@ import Workout from "./pages/workout";
 import Friends from "./pages/friends";
 import Profile from "./pages/profile";
 import Login from "./pages/login";
+import Filter from "./pages/filter";
+
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
