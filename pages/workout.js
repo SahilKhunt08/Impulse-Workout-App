@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { StyleSheet, Text, View, TouchableOpacity, TextInput, FlatList, Modal, Pressable, ScrollView, Image} from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, TextInput, FlatList, Modal, Pressable, ScrollView, Image } from 'react-native';
 import { Button } from 'react-native-paper';
 import axios from "axios";
 import { Card } from 'react-native-paper';
@@ -23,8 +23,17 @@ export default function Workout() {
   const [exerciseArr, setExerciseArr] = useState([
     // {id: "0", equipment: 'equipment1', muscle: "muscle1"},
   ]);
+  const [modalIndex, setModalIndex] = useState(0);
+  const [fixModalIndex, setFixModalIndex] = useState(true);
 
-  async function saveExercise(index) {
+  async function saveExercise(name) {
+    var index = -1;
+    for(var i = 0; i < exerciseArr.length; i++){
+      if(name == exerciseArr[i].name){
+        index = exerciseArr[i].id;
+        i = exerciseArr.length;
+      }
+    }
     const temp1 = exerciseArr.filter(a => a.id === index);
     const docRef = await setDoc(doc(db, "exercises", temp1[0].name), {
       difficulty: temp1[0].difficulty,
@@ -37,7 +46,7 @@ export default function Workout() {
   
     const newExerciseArr = exerciseArr.filter(a => a.id !== index);
     setExerciseArr(newExerciseArr);
-    console.log("Save Exercise")
+    // console.log("Save Exercise")
 
     const collectionName = "workout" + workoutNum;
     const docRef2 = await setDoc(doc(db, "accounts", userUID, collectionName, temp1[0].name), {
@@ -146,6 +155,56 @@ export default function Workout() {
     setWorkoutString(tempString);
   }
 
+  const modalButtons = (action) => {
+    var tempIndex = modalIndex; 
+    if(fixModalIndex){
+      setFixModalIndex(false);
+      tempIndex -= exerciseArr[0].id;
+    }
+
+    if (action == "ADD"){
+      saveExercise(exerciseArr[tempIndex].name);
+    } 
+    else if (action == "LEFT"){
+      tempIndex--;
+      if(tempIndex < 0){
+        tempIndex = exerciseArr.length - 1
+      } 
+    } 
+    else if (action == "RIGHT"){
+      tempIndex++;
+      if(tempIndex > exerciseArr.length - 1){
+        tempIndex = 0;
+      }
+    }
+
+    var update = true;
+    var count = 0;
+    if(exerciseArr.length == 1 && action == "ADD"){ 
+      setModalVisible(!modalVisible);
+      update = false;
+    } 
+    else if (action == "ADD") {
+      if(tempIndex + 1> exerciseArr.length - 1){
+        tempIndex = 0;
+      } else {
+        count = 1;
+      }
+    } 
+
+    if(update) {
+      setModalIndex(tempIndex);
+      setModalInfo({
+        id: exerciseArr[tempIndex + count].id,
+        name: exerciseArr[tempIndex + count].name, 
+        muscle: exerciseArr[tempIndex + count].muscle, 
+        equipment: exerciseArr[tempIndex + count].equipment, 
+        difficulty: exerciseArr[tempIndex + count].difficulty, 
+        instructions: exerciseArr[tempIndex + count].instructions
+      }); 
+    }
+  }
+
   return (
     <View style={newStyles.container}>
       <View style={styles.searchView}>
@@ -205,25 +264,43 @@ export default function Workout() {
         <View style={modalStyles.modalContainer}>
           <View style={modalStyles.modalView}>
             <View style={modalStyles.titleView}>
-              <Text style={modalStyles.titleText}>{modalInfo.name}</Text>
-              <Text>Hello</Text>
+              <Text style={modalStyles.titleText}>{modalInfo.name} — {modalInfo.id}</Text>
             </View>
-            {/* <Text style={styles.modalText}>{modalDirections}</Text> */}
 
-            <FlipCard  style={styles.card}
+            <View style={modalStyles.flipCardView}>
+            <FlipCard style={modalStyles.flipCard}
               friction={6}
               perspective={10000}
               flipHorizontal={true}
               flipVertical={false}
               flip={false}
               clickable={true}>
-              <View style={{backgroundColor: "red", height: 400, width: 300}}>
-                <Image source={ require('./body1.png') } style={ { width: 200, height: 300 } } />
+              <View style={modalStyles.imageContainer}>
+                <Image source={ require('./resources/body1.png') } style={modalStyles.imageStyle} />
               </View>
-              <View style={{backgroundColor: "red", height: 400, width: 300}}>
-                <Image source={ require('./body2.png') } style={ { width: 200, height: 300 } } />
+              <View style={modalStyles.imageContainer}>
+                <Image source={ require('./resources/body2.png') } style={modalStyles.imageStyle} />
               </View>
             </FlipCard>
+            </View>
+
+            <Text>{modalInfo.equipment}</Text>
+
+            <View style={modalStyles.controlView}>
+              <TouchableOpacity style={modalStyles.controlImg1} onPress={() => modalButtons("LEFT")}>
+                {/* <Image source={require('./resources/google4.png')} styles={modalStyles.controlImg1}/> */}
+                {/* <Image source={require('./google1.png')} styles={modalStyles.controlImg1}/> */}
+                <Text style={{color: "#fff", fontSize: "20", alignSelf: "center"}}> Left </Text>
+              </TouchableOpacity> 
+              <TouchableOpacity style={modalStyles.controlImg1} onPress={() => modalButtons("ADD")}>
+                <Text style={{color: "#fff", fontSize: "20", alignSelf: "center"}}> Add </Text>
+              </TouchableOpacity> 
+              <TouchableOpacity style={modalStyles.controlImg1} onPress={() => modalButtons("RIGHT")}>
+                <Text style={{color: "#fff", fontSize: "20", alignSelf: "center"}} > Right </Text>
+              </TouchableOpacity> 
+
+
+            </View>
 
             <TouchableOpacity style={[styles.modalButton, styles.buttonClose]} onPress={() => setModalVisible(!modalVisible)}>
               <Text style={modalStyles.closeText}>Return</Text>
@@ -248,7 +325,10 @@ export default function Workout() {
                   style={[newStyles.cardInfoBtn]}
                   onPress={() => {
                     setModalVisible(true);
+                    setModalIndex(info.id);
+                    setFixModalIndex(true);
                     setModalInfo({
+                      id: info.id,
                       name: info.name, 
                       muscle: info.muscle, 
                       equipment: info.equipment, 
@@ -284,8 +364,8 @@ const modalStyles = StyleSheet.create({
   },
   modalView: {
     margin: 20,
-    backgroundColor: '#404057', //0d0d12
-    padding: 15,
+    backgroundColor: "#8b8bc7", //'#404057', //0d0d12
+    // padding: 15,
     alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: {
@@ -300,24 +380,70 @@ const modalStyles = StyleSheet.create({
   },
 
   titleView: {
-    backgroundColor: '#0d0d12',
+    backgroundColor: '#505075',
     width: "100%",
-    height: "20%",
+    height: "8%",
     justifyContent: "center",
     alignContent: "center"
   },
   titleText: {
     color: 'white',
     fontWeight: 'bold',
-    alignSelf: "center"
+    alignSelf: "center",
+    fontSize: 20,
+  },
+
+  flipCardView: {
+    backgroundColor: "grey", 
+    flex: 1, 
+    maxHeight: 200*1.8 + 10, 
+    width: 250,
+    alignItems: "center",
+  },
+  flipCard: {
+    marginTop: 10,
+    height: 200 * 1.8,
+    width: 100 * 1.8,
+    maxHeight: 200 * 1.8,
+    maxWidth: 180 * 1.8,
+    bordercolor: "#fff",
+    borderWidth: 3,
+    borderRadius: 10,
+    backgroundColor: "white",
+  },
+  imageContainer: {
+    maxHeight: 200 * 1.7,
+    maxWidth: 100 * 1.7,
+    marginTop: 20,
+  },
+  imageStyle: {
+    maxHeight: "95%",
+    maxWidth: "95%",
+    backgroundColor: "red",
+  },
+
+  controlView: {
+    marginTop: 80,
+    flexDirection: "row",
+    backgroundColor: "red",
+    width: 300,
+    height: 100,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  controlImg1: {
+    maxHeight: 100,
+    maxWidth: 100,
+    height: 60,
+    width: 60,
+    backgroundColor: "black",
+    marginHorizontal: 15,
   },
 
   closeText: {
     color: 'white',
     fontWeight: 'bold',
   },
-
-
 })
 
 const newStyles = StyleSheet.create({
