@@ -20,34 +20,16 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { CheckBox } from '@rneui/themed';
 import Divider from 'react-native-divider';
 import { makeStyles } from "@rneui/base";
+import { isEmpty } from "@firebase/util";
 
 const Stack = createNativeStackNavigator();
 
-export default function Workout() {
-  return (
-    <NavigationContainer independent={true}>
-      <Stack.Navigator screenOptions={{
-            headerShown: true,
-            title: 'Progress Starts Here',
-            headerStyle: {
-              backgroundColor: '#0d0d12',
-            },
-            headerTintColor: '#fff',
-            headerTitleStyle: {
-              fontWeight: 'bold',
-              fontSize: 20,
-            },
-          }} 
-          initialRouteName="Workout">
-        <Stack.Screen name ="Progress Starts Here" component={WorkoutPage}/>
-        <Stack.Screen name ="Filter" component={Filter}/>
-      </Stack.Navigator>
-    </NavigationContainer>
-  )
-}
+export default function Workout () {
+ //_______________________________________________________________________________________________________________________________________________________________________________
 
-function Filter({difficultyChild, musclesChild, typeChild}) {
+//Filter PAGE
 
+  const [filterModalVis, setfilterModalVis] = useState(false)
   const [styleBeginner, setStyleBeginner] = useState(newStyles.loginBtn);
   const [styleIntermediate, setStyleIntermediate] = useState(newStyles.loginBtn);
   const [styleExpert, setStyleExpert] = useState(newStyles.loginBtn);
@@ -78,21 +60,10 @@ function Filter({difficultyChild, musclesChild, typeChild}) {
   const [styleStrong, setStyleStrong] = useState(newStyles.loginBtn);
 
   const [difficulty, setDifficulty] = useState(""); 
-  const [muscles, setMuscles] = useState([])
+  const [muscles, setMuscles] = useState("")
   const [type, setType] = useState("")
   
-  const addToArray = (name) => {
-    const musclesRef = muscles.slice()
-    if (musclesRef.indexOf(name) === -1) {
-      musclesRef.push(name)
-      setMuscles(musclesRef)
-    }
-  }
 
-  const deletefromArray = (name) => {
-    const indexToRemove = muscles.indexOf(name)
-    muscles.splice(indexToRemove, 1)
-  }
 
   const recieveButtonClicks = (input) => {
 
@@ -106,15 +77,15 @@ function Filter({difficultyChild, musclesChild, typeChild}) {
           setDifficulty("beginner")
         } else { 
           setStyleBeginner(newStyles.loginBtn)
-          setDifficulty("")
-        }
+          setDifficulty(null)
+         }
       } else if (input == 2) {
         if(styleIntermediate == newStyles.loginBtn) {
           setStyleIntermediate(newStyles.loginBtnClicked)
           setDifficulty("intermediate")
         } else { 
           setStyleIntermediate(newStyles.loginBtn)
-          setDifficulty("")
+          setDifficulty(null)
         }
       } else if (input == 3) {
         if(styleExpert == newStyles.loginBtn) {
@@ -122,138 +93,156 @@ function Filter({difficultyChild, musclesChild, typeChild}) {
           setDifficulty("expert")
         } else { 
           setStyleExpert(newStyles.loginBtn)
-          setDifficulty("")
+          setDifficulty(null)
         }
       }
     
 
    } else if (input < 20) {
+    setStyleAbdom(newStyles.loginBtn)
+    setStyleAbduct(newStyles.loginBtn)
+    setStyleAdd(newStyles.loginBtn)
+    setStyleBiceps(newStyles.loginBtn)
+    setStyleTriceps(newStyles.loginBtn)
+    setStyleLats(newStyles.loginBtn)
+    setStyleFore(newStyles.loginBtn)
+    setStyleTraps(newStyles.loginBtn)
+    setStyleChest(newStyles.loginBtn)
+    setStyleNeck(newStyles.loginBtn)
+    setStyleLowBack(newStyles.loginBtn)
+    setStyleMidBack(newStyles.loginBtn)
+    setStyleCalves(newStyles.loginBtn)
+    setStyleGlutes(newStyles.loginBtn)
+    setStyleHams(newStyles.loginBtn)
+    setStyleQuads(newStyles.loginBtn)
+
+
       if (input == 4) { 
         if (styleAbdom == newStyles.loginBtn ) {
           setStyleAbdom(newStyles.loginBtnClicked)
-          addToArray("abdominals")
+          setMuscles("abdominals")
         } else {
-          deletefromArray("abdominals")
+          setMuscles(null)
           setStyleAbdom(newStyles.loginBtn)
         }
       } else if (input == 5) { 
         if (styleAbduct == newStyles.loginBtn) {
           setStyleAbduct(newStyles.loginBtnClicked)
-          addToArray("abductors")
+          setMuscles("abductors")
         } else {
-          deletefromArray("abductors")
+          setMuscles(null)
           setStyleAbduct(newStyles.loginBtn)
         }        
       } else if (input == 6) { 
         if (styleAdd == newStyles.loginBtn) {
           setStyleAdd(newStyles.loginBtnClicked)
-          addToArray("adductors")
+          setMuscles("adductors")
         } else {
-          deletefromArray("adductors")
+          setMuscles(null)
           setStyleAdd(newStyles.loginBtn)
         }   
       } else if (input == 7) { 
         if (styleBiceps == newStyles.loginBtn) {
           setStyleBiceps(newStyles.loginBtnClicked)
-          addToArray("biceps")
+          setMuscles("biceps")
         } else {
-          deletefromArray("biceps")
+          setMuscles(null)
           setStyleBiceps(newStyles.loginBtn)
         }  
       } else if (input == 8) { 
         if (styleTriceps == newStyles.loginBtn) {
           setStyleTriceps(newStyles.loginBtnClicked)
-          addToArray("triceps")
+          setMuscles("triceps")
         } else {
-          deletefromArray("triceps")
+          setMuscles(null)
           setStyleTriceps(newStyles.loginBtn)
         }
       } else if (input == 9) { 
         if (styleLats == newStyles.loginBtn) {
           setStyleLats(newStyles.loginBtnClicked)
-          addToArray("lats")
+          setMuscles("lats")
         } else {
-          deletefromArray("lats")
+          setMuscles(null)
           setStyleLats(newStyles.loginBtn)
         }
       } else if (input == 10) { 
         if (styleFore == newStyles.loginBtn) {
           setStyleFore(newStyles.loginBtnClicked)
-          addToArray("forearms")
+          setMuscles("forearms")
         } else {
-          deletefromArray("forearms")
+          setMuscles(null)
           setStyleFore(newStyles.loginBtn)
         }
       } else if (input == 11) { 
         if (styleTraps == newStyles.loginBtn) {
           setStyleTraps(newStyles.loginBtnClicked)
-          addToArray("traps")
+          setMuscles("traps")
         } else {
-          deletefromArray("traps")
+          setMuscles(null)
           setStyleTraps(newStyles.loginBtn)
         }
       } else if (input == 12) { 
         if (styleChest == newStyles.loginBtn) {
           setStyleChest(newStyles.loginBtnClicked)
-          addToArray("chest")
+          setMuscles("chest")
         } else {
-          deletefromArray("chest")
+          setMuscles(null)
           setStyleChest(newStyles.loginBtn)
         }
       } else if (input == 13) { 
         if (styleNeck == newStyles.loginBtn) {
           setStyleNeck(newStyles.loginBtnClicked)
-          addToArray("neck")
+          setMuscles("neck")
         } else {
-          deletefromArray("neck")
+          setMuscles(null)
           setStyleNeck(newStyles.loginBtn)
         }
       } else if (input == 14) { 
         if (styleLowBack == newStyles.loginBtn) {
           setStyleLowBack(newStyles.loginBtnClicked)
-          addToArray("lower_back")
+          setMuscles("lower_back")
         } else {
-          deletefromArray("lower_back")
+          setMuscles(null)
           setStyleLowBack(newStyles.loginBtn)
         }
       } else if (input == 15) { 
         if (styleMidBack == newStyles.loginBtn) {
           setStyleMidBack(newStyles.loginBtnClicked)
-          addToArray("middle_back")
+          setMuscles("middle_back")
         } else {
-          deletefromArray("middle_back")
+          setMuscles(null)
           setStyleMidBack(newStyles.loginBtn)
         }
       } else if (input == 16) { 
         if (styleCalves == newStyles.loginBtn) {
           setStyleCalves(newStyles.loginBtnClicked)
-          addToArray("calves")
+          setMuscles("calves")
         } else {
-          deletefromArray("calves")
+          setMuscles(null)
           setStyleCalves(newStyles.loginBtn)
         }
       } else if (input == 17) { 
         if (styleGlutes == newStyles.loginBtn) {
           setStyleGlutes(newStyles.loginBtnClicked)
-          addToArray("glutes")
+          setMuscles("glutes")
         } else {
-          deletefromArray("glutes")
+          setMuscles(null)
           setStyleGlutes(newStyles.loginBtn)
         }
       } else if (input == 18) { 
         if (styleHams == newStyles.loginBtn) {
           setStyleHams(newStyles.loginBtnClicked)
-          addToArray("hamstrings")
+          setMuscles("hamstrings")
         } else {
-          deletefromArray("hamstrings")
+          setMuscles(null)
           setStyleHams(newStyles.loginBtn)
         }
       } else if (input == 19) { 
         if (styleQuads == newStyles.loginBtn) {
           setStyleQuads(newStyles.loginBtnClicked)
-          addToArray("quadriceps")
+          setMuscles("quadriceps")
         } else {
-          deletefromArray("quadriceps")
+          setMuscles(null)
           setStyleQuads(newStyles.loginBtn)
         }
       }
@@ -271,7 +260,7 @@ function Filter({difficultyChild, musclesChild, typeChild}) {
           setType("cardio")
         } else {
           setStyleCardio(newStyles.loginBtn)
-          setType("")
+          setType(null)
         }
       } else if (input == 21) { 
         if (styleOly == newStyles.loginBtn) {
@@ -279,7 +268,7 @@ function Filter({difficultyChild, musclesChild, typeChild}) {
           setType("olympic_weightlifting")
         } else {
           setStyleOly(newStyles.loginBtn)
-          setType("")
+          setType(null)
         }
       } else if (input == 22) { 
         if (stylePlyo == newStyles.loginBtn) {
@@ -287,7 +276,7 @@ function Filter({difficultyChild, musclesChild, typeChild}) {
           setType("plyometrics")
         } else {
           setStylePlyo(newStyles.loginBtn)
-          setType("")
+          setType(null)
         }
       } else if (input == 23) { 
         if (stylePower == newStyles.loginBtn) {
@@ -295,7 +284,7 @@ function Filter({difficultyChild, musclesChild, typeChild}) {
           setType("powerlifting")
         } else {
           setStylePower(newStyles.loginBtn)
-          setType("")
+          setType(null)
         }
       } else if (input == 24) { 
         if (styleStrength == newStyles.loginBtn) {
@@ -303,7 +292,7 @@ function Filter({difficultyChild, musclesChild, typeChild}) {
           setType("strength")
         } else {
           setStyleStrength(newStyles.loginBtn)
-          setType("")
+          setType(null)
         }
       } else if (input == 25) { 
         if (styleStretch == newStyles.loginBtn) {
@@ -312,7 +301,7 @@ function Filter({difficultyChild, musclesChild, typeChild}) {
 
         } else {
           setStyleStretch(newStyles.loginBtn)
-          setType("")
+          setType(null)
         }
       } 
       else if (input == 26) { 
@@ -321,7 +310,7 @@ function Filter({difficultyChild, musclesChild, typeChild}) {
           setType("strongman")
         } else {
           setStyleStrong(newStyles.loginBtn)
-          setType("")
+          setType(null)
         }
       } else if (input == 27) { 
         console.log(muscles)
@@ -329,142 +318,24 @@ function Filter({difficultyChild, musclesChild, typeChild}) {
     }
   }
 
-  return (
-    <View style={newStyles.container}>
-      <View style={newStyles.dividerView}>
-          <Divider style={{ width: "80%", margin: 10 }} borderColor="#a3a3bf" color="#a3a3bf" orientation="center" width={3}>
-            Search By
-          </Divider>
-      </View>
+//_______________________________________________________________________________________________________________________________________________________________________________
+//_______________________________________________________________________________________________________________________________________________________________________________
 
-      <Text style={newStyles.filterHeader}>Difficulty</Text>
-      <View style={{flexDirection: 'row', marginBottom: 5}}>
-        <View> 
-        <TouchableOpacity style={styleBeginner} onPress={() => recieveButtonClicks(1)} >
-            <Text style={newStyles.loginText}>Beginner</Text> 
-        </TouchableOpacity>
-        </View> 
-        <TouchableOpacity style={styleIntermediate} onPress={() => recieveButtonClicks(2)}>
-            <Text style={newStyles.loginText}>Intermediate</Text> 
-        </TouchableOpacity> 
-        <TouchableOpacity style={styleExpert} onPress={() => recieveButtonClicks(3)}>
-            <Text style={newStyles.loginText}>Expert</Text> 
-        </TouchableOpacity> 
-      </View>
+//WORKOUT PAGE
 
-      <Text style={newStyles.filterHeader}>Muscle Group</Text>
-      <View style={{flexDirection: 'row'}}>
-        <TouchableOpacity style={styleAbdom} onPress={() => recieveButtonClicks(4)}>
-            <Text style={newStyles.loginText}>Abdominals</Text> 
-        </TouchableOpacity> 
-        <TouchableOpacity style={styleAbduct} onPress={() => recieveButtonClicks(5)}>
-            <Text style={newStyles.loginText}>Abductors</Text> 
-        </TouchableOpacity> 
-        <TouchableOpacity style={styleAdd} onPress={() => recieveButtonClicks(6)}>
-            <Text style={newStyles.loginText}>Adductors</Text> 
-        </TouchableOpacity> 
-      </View>
+const [userUID, setUserUID] = useState("");
+const [workoutNum, setWorkoutNum] = useState(1);
+const [workoutString, setWorkoutString] = useState("Workouts Here");
+const [counter, setCount] = useState(3);
+const [modalVisible, setModalVisible] = useState(false);
+const [modalDirections, setModalDirections] = useState("");
+const [modalInfo, setModalInfo] = useState("");
 
-      <View style={{flexDirection: 'row'}}>
-        <TouchableOpacity style={styleBiceps} onPress={() => recieveButtonClicks(7)}>
-            <Text style={newStyles.loginText}>Biceps</Text> 
-        </TouchableOpacity> 
-        <TouchableOpacity style={styleTriceps} onPress={() => recieveButtonClicks(8)}>
-            <Text style={newStyles.loginText}>Triceps</Text> 
-        </TouchableOpacity> 
-        <TouchableOpacity style={styleLats} onPress={() => recieveButtonClicks(9)}>
-            <Text style={newStyles.loginText}>Lats</Text> 
-        </TouchableOpacity> 
-        <TouchableOpacity style={styleFore} onPress={() => recieveButtonClicks(10)}>
-            <Text style={newStyles.loginText}>Forearms</Text> 
-        </TouchableOpacity> 
-      </View>
+const [exerciseArr, setExerciseArr] = useState([]);
+const [apiResponseArr, setApiResponseArr] = useState([]);
 
-      <View style={{flexDirection: 'row'}}>
-        <TouchableOpacity style={styleTraps} onPress={() => recieveButtonClicks(11)}>
-            <Text style={newStyles.loginText}>Traps</Text> 
-        </TouchableOpacity> 
-        <TouchableOpacity style={styleChest} onPress={() => recieveButtonClicks(12)}>
-            <Text style={newStyles.loginText}>Chest</Text> 
-        </TouchableOpacity> 
-        <TouchableOpacity style={styleNeck} onPress={() => recieveButtonClicks(13)}>
-            <Text style={newStyles.loginText}>Neck</Text> 
-        </TouchableOpacity> 
-        <TouchableOpacity style={styleLowBack} onPress={() => recieveButtonClicks(14)}>
-            <Text style={newStyles.loginText}>Lower Back</Text> 
-        </TouchableOpacity>
-      </View>
 
-      <View style={{flexDirection: 'row'}}>
-        <TouchableOpacity style={styleMidBack} onPress={() => recieveButtonClicks(15)}>
-            <Text style={newStyles.loginText}>Middle Back</Text> 
-        </TouchableOpacity> 
-        <TouchableOpacity style={styleCalves} onPress={() => recieveButtonClicks(16)}>
-            <Text style={newStyles.loginText}>Calves</Text> 
-        </TouchableOpacity> 
-        <TouchableOpacity style={styleGlutes} onPress={() => recieveButtonClicks(17)}>
-            <Text style={newStyles.loginText}>Glutes</Text> 
-        </TouchableOpacity> 
-      </View>
-
-      <View style={{flexDirection: 'row'}}>
-        <TouchableOpacity style={styleHams} onPress={() => recieveButtonClicks(18)}>
-            <Text style={newStyles.loginText}>Hamstrings</Text> 
-        </TouchableOpacity> 
-        <TouchableOpacity style={styleQuads} onPress={() => recieveButtonClicks(19)}>
-            <Text style={newStyles.loginText}>Quadriceps</Text> 
-        </TouchableOpacity> 
-      </View>
-
-      <Text style={newStyles.filterHeader}>Type</Text>
-      <View style={{flexDirection: 'row'}}>
-        <TouchableOpacity style={styleCardio} onPress={() => recieveButtonClicks(20)}>
-            <Text style={newStyles.loginText}>Cardio</Text> 
-        </TouchableOpacity> 
-        <TouchableOpacity style={styleOly} onPress={() => recieveButtonClicks(21)}>
-            <Text style={newStyles.loginText}>Olympic Weightlifting</Text> 
-        </TouchableOpacity> 
-      </View>
-
-      <View style={{flexDirection: 'row'}}>
-        <TouchableOpacity style={stylePlyo} onPress={() => recieveButtonClicks(22)}>
-            <Text style={newStyles.loginText}>Plyometrics</Text> 
-        </TouchableOpacity> 
-        <TouchableOpacity style={stylePower} onPress={() => recieveButtonClicks(23)}>
-            <Text style={newStyles.loginText}>Powerlifting</Text> 
-        </TouchableOpacity> 
-        <TouchableOpacity style={styleStrength} onPress={() => recieveButtonClicks(24)}>
-            <Text style={newStyles.loginText}>Strength</Text> 
-        </TouchableOpacity> 
-      </View>
-
-      <View style={{flexDirection: 'row'}}>
-        <TouchableOpacity style={styleStretch} onPress={() => recieveButtonClicks(25)}>
-            <Text style={newStyles.loginText}>Stretching</Text> 
-        </TouchableOpacity> 
-        <TouchableOpacity style={styleStrong} onPress={() => recieveButtonClicks(26)}>
-            <Text style={newStyles.loginText}>Strongman</Text> 
-        </TouchableOpacity> 
-      </View>
-
-      <TouchableOpacity style={newStyles.loginBtn} onPress={() => recieveButtonClicks(27)}>
-            <Text style={newStyles.loginText}>booty call</Text> 
-        </TouchableOpacity> 
-    </View>
-  )
-} 
-
-function WorkoutPage ({navigation}) {
-  const [userUID, setUserUID] = useState("");
-  const [workoutNum, setWorkoutNum] = useState(1);
-  const [workoutString, setWorkoutString] = useState("Workouts Here");
-  const [counter, setCount] = useState(3);
-  const [modalVisible, setModalVisible] = useState(false);
-  const [modalDirections, setModalDirections] = useState("");
-  const [modalInfo, setModalInfo] = useState("");
-  const [exerciseArr, setExerciseArr] = useState([]);
-
-  async function saveExercise(index) {
+async function saveExercise(index) {
     const temp1 = exerciseArr.filter(a => a.id === index);
     const docRef = await setDoc(doc(db, "exercises", temp1[0].name), {
       difficulty: temp1[0].difficulty,
@@ -484,39 +355,39 @@ function WorkoutPage ({navigation}) {
 
   //Search
   const submitInput = () => {
-
-    //for loop
-      const options = {
-        method: 'GET',
-        url: 'https://exercises-by-api-ninjas.p.rapidapi.com/v1/exercises',
-        params: { muscle: indexfromarray,
-                  difficulty: difficulty,
-                  type: type
-                },
-        headers: {
-          'X-RapidAPI-Key': 'd1b21c7c74msh10859b8b93cc3adp10d1c8jsncacbeda663df',
-          'X-RapidAPI-Host': 'exercises-by-api-ninjas.p.rapidapi.com'
-        }
-      };
-      axios.request(options).then(function (response) {
-        displayData(response.data);
-      }).catch(function (error) {
-        console.error(error);
-      });
-    } 
-
+    setApiResponseArr([])
+        const options = {
+          method: 'GET',
+          url: 'https://exercises-by-api-ninjas.p.rapidapi.com/v1/exercises',
+          params: { muscle: muscles,
+                    difficulty: difficulty,
+                    type: type
+                  },
+          headers: {
+            'X-RapidAPI-Key': 'd1b21c7c74msh10859b8b93cc3adp10d1c8jsncacbeda663df',
+            'X-RapidAPI-Host': 'exercises-by-api-ninjas.p.rapidapi.com'
+          }
+        };
+        axios.request(options).then(function (response) {
+          collectExerciseData(response.data);
+        }).catch(function (error) {
+          console.error(error);
+        });
+    }
+   
 
   const openFilterPage = () => {
-    navigation.navigate('Filter')
+    setfilterModalVis(true)
   }
 
-  //change loop baseed on total calls
-  const displayData = (input) => {
-    for(var i = 0; i < 10; i++){
-      input[i].id = counter + i;
+  const closeFilterPage = () => {
+    setfilterModalVis(false)
+  }
+
+  const collectExerciseData = (data) => {
+    for (let i = 0; i < data.length; i++) {
+      setApiResponseArr(apiResponseArr => [...apiResponseArr, data[i]])
     }
-    setCount(counter + 10);
-    setExerciseArr(input);
   }
 
   async function selectWorkout(num) {
@@ -541,10 +412,12 @@ function WorkoutPage ({navigation}) {
   }
 
   const [isSelected, setSelection] = useState(false);
+//_______________________________________________________________________________________________________________________________________________________________________________
+
 
   return (
     <View style={newStyles.container}>
-    <View style={styles.searchView}>
+      <View style={styles.searchView}>
 
       {/* <TextInput
         style={styles.searchInput}
@@ -562,7 +435,8 @@ function WorkoutPage ({navigation}) {
         onChangeText={(search2) => setSearch2(search2)
         }
       />  */}
-      
+
+      {/* Open Filter Page Stuff */}
       <TouchableOpacity style = {{paddingRight:10}} onPress={openFilterPage}>
           <Image source={ require('../assets/filter1.png') } style={ { width: 35, height: 35 } } />
       </TouchableOpacity>
@@ -575,11 +449,13 @@ function WorkoutPage ({navigation}) {
           onChangeText={(email) => setEmail(email)}
         /> 
       </View> 
+      
    
-      <TouchableOpacity style = {{paddingLeft:6}} onPress={openFilterPage}>
+      <TouchableOpacity style = {{paddingLeft:6}} onPress={submitInput}>
           <Image source={ require('../assets/search.png') } style={ { width: 40, height: 40 } } />
       </TouchableOpacity>
     </View> 
+    {/* __________________________________________________________________________________________________________________________________________________________*/}
 
 
     {/* <View style={styles.playlist}>
@@ -598,7 +474,7 @@ function WorkoutPage ({navigation}) {
       <Text style={styles.playlistText}> {workoutString} </Text>
     </View> */}
 
-    <Modal
+    {/* <Modal
       animationType="slide"
       transparent={true}
       visible={modalVisible}
@@ -617,11 +493,12 @@ function WorkoutPage ({navigation}) {
             </Pressable>
         </View>  
       </View>
-    </Modal>
+    </Modal> */}
     
+    {/* Display Calls */}
     <ScrollView style={newStyles.scrollContainer1}>
       <View style={newStyles.scrollContainer2}>
-        {exerciseArr.map((info, index) => (
+        {apiResponseArr.map((info, index) => (
           <View key={index} style={newStyles.cardComp}>
             <View style={newStyles.cardTextView}>
               <Text style={newStyles.cardText1}> {info.name} </Text>
@@ -650,16 +527,167 @@ function WorkoutPage ({navigation}) {
           </View>
           ))}
       </View>
+    {/* __________________________________________________________________________________________________________________________________________________________*/}
+
+
+      <Modal
+        animationType="slide"
+        visible={filterModalVis}
+        onRequestClose={() => {
+          Alert.alert('Modal has been closed.');
+          setModalVisible(!modalVisible);
+        }}>
+
+    <View style={newStyles.container}>
+     <View style={{marginTop:75}}>
+      <View style={{marginRight:210, flexDirection: 'row'}}>
+        <Text style={newStyles.titleText}>Filters</Text>
+            <Image source={ require('../assets/filter1.png') } style={ { width: 35, height: 35, paddingRight:10, marginTop:5 } } />
+      </View>
+    </View>
+      <View style={newStyles.filterContainer}>
+      
+        <Text style={newStyles.filterHeader}>Difficulty</Text>
+        <View style={{flexDirection: 'row', marginBottom: 5}}>
+          <View> 
+          <TouchableOpacity style={styleBeginner} onPress={() => recieveButtonClicks(1)} >
+              <Text style={newStyles.loginText}>Beginner</Text> 
+          </TouchableOpacity>
+          </View> 
+          <TouchableOpacity style={styleIntermediate} onPress={() => recieveButtonClicks(2)}>
+              <Text style={newStyles.loginText}>Intermediate</Text> 
+          </TouchableOpacity> 
+          <TouchableOpacity style={styleExpert} onPress={() => recieveButtonClicks(3)}>
+              <Text style={newStyles.loginText}>Expert</Text> 
+          </TouchableOpacity> 
+        </View>
+
+        <Text style={newStyles.filterHeader}>Muscle Group</Text>
+        <View style={{flexDirection: 'row'}}>
+          <TouchableOpacity style={styleAbdom} onPress={() => recieveButtonClicks(4)}>
+              <Text style={newStyles.loginText}>Abdominals</Text> 
+          </TouchableOpacity> 
+          <TouchableOpacity style={styleAbduct} onPress={() => recieveButtonClicks(5)}>
+              <Text style={newStyles.loginText}>Abductors</Text> 
+          </TouchableOpacity> 
+          <TouchableOpacity style={styleAdd} onPress={() => recieveButtonClicks(6)}>
+              <Text style={newStyles.loginText}>Adductors</Text> 
+          </TouchableOpacity> 
+        </View>
+
+        <View style={{flexDirection: 'row'}}>
+          <TouchableOpacity style={styleBiceps} onPress={() => recieveButtonClicks(7)}>
+              <Text style={newStyles.loginText}>Biceps</Text> 
+          </TouchableOpacity> 
+          <TouchableOpacity style={styleTriceps} onPress={() => recieveButtonClicks(8)}>
+              <Text style={newStyles.loginText}>Triceps</Text> 
+          </TouchableOpacity> 
+          <TouchableOpacity style={styleLats} onPress={() => recieveButtonClicks(9)}>
+              <Text style={newStyles.loginText}>Lats</Text> 
+          </TouchableOpacity> 
+          <TouchableOpacity style={styleFore} onPress={() => recieveButtonClicks(10)}>
+              <Text style={newStyles.loginText}>Forearms</Text> 
+          </TouchableOpacity> 
+        </View>
+
+        <View style={{flexDirection: 'row'}}>
+          <TouchableOpacity style={styleTraps} onPress={() => recieveButtonClicks(11)}>
+              <Text style={newStyles.loginText}>Traps</Text> 
+          </TouchableOpacity> 
+          <TouchableOpacity style={styleChest} onPress={() => recieveButtonClicks(12)}>
+              <Text style={newStyles.loginText}>Chest</Text> 
+          </TouchableOpacity> 
+          <TouchableOpacity style={styleNeck} onPress={() => recieveButtonClicks(13)}>
+              <Text style={newStyles.loginText}>Neck</Text> 
+          </TouchableOpacity> 
+          <TouchableOpacity style={styleLowBack} onPress={() => recieveButtonClicks(14)}>
+              <Text style={newStyles.loginText}>Lower Back</Text> 
+          </TouchableOpacity>
+        </View>
+
+        <View style={{flexDirection: 'row'}}>
+          <TouchableOpacity style={styleMidBack} onPress={() => recieveButtonClicks(15)}>
+              <Text style={newStyles.loginText}>Middle Back</Text> 
+          </TouchableOpacity> 
+          <TouchableOpacity style={styleCalves} onPress={() => recieveButtonClicks(16)}>
+              <Text style={newStyles.loginText}>Calves</Text> 
+          </TouchableOpacity> 
+          <TouchableOpacity style={styleGlutes} onPress={() => recieveButtonClicks(17)}>
+              <Text style={newStyles.loginText}>Glutes</Text> 
+          </TouchableOpacity> 
+        </View>
+
+        <View style={{flexDirection: 'row'}}>
+          <TouchableOpacity style={styleHams} onPress={() => recieveButtonClicks(18)}>
+              <Text style={newStyles.loginText}>Hamstrings</Text> 
+          </TouchableOpacity> 
+          <TouchableOpacity style={styleQuads} onPress={() => recieveButtonClicks(19)}>
+              <Text style={newStyles.loginText}>Quadriceps</Text> 
+          </TouchableOpacity> 
+        </View>
+
+        <Text style={newStyles.filterHeader}>Type</Text>
+        <View style={{flexDirection: 'row'}}>
+          <TouchableOpacity style={styleCardio} onPress={() => recieveButtonClicks(20)}>
+              <Text style={newStyles.loginText}>Cardio</Text> 
+          </TouchableOpacity> 
+          <TouchableOpacity style={styleOly} onPress={() => recieveButtonClicks(21)}>
+              <Text style={newStyles.loginText}>Olympic Weightlifting</Text> 
+          </TouchableOpacity> 
+        </View>
+
+        <View style={{flexDirection: 'row'}}>
+          <TouchableOpacity style={stylePlyo} onPress={() => recieveButtonClicks(22)}>
+              <Text style={newStyles.loginText}>Plyometrics</Text> 
+          </TouchableOpacity> 
+          <TouchableOpacity style={stylePower} onPress={() => recieveButtonClicks(23)}>
+              <Text style={newStyles.loginText}>Powerlifting</Text> 
+          </TouchableOpacity> 
+          <TouchableOpacity style={styleStrength} onPress={() => recieveButtonClicks(24)}>
+              <Text style={newStyles.loginText}>Strength</Text> 
+          </TouchableOpacity> 
+        </View>
+
+        <View style={{flexDirection: 'row'}}>
+          <TouchableOpacity style={styleStretch} onPress={() => recieveButtonClicks(25)}>
+              <Text style={newStyles.loginText}>Stretching</Text> 
+          </TouchableOpacity> 
+          <TouchableOpacity style={styleStrong} onPress={() => recieveButtonClicks(26)}>
+              <Text style={newStyles.loginText}>Strongman</Text> 
+          </TouchableOpacity> 
+        </View>
+      
+        <View style={{flexDirection: 'row', marginTop: 45, marginRight: 265}}>
+          <TouchableOpacity onPress={closeFilterPage}>
+              <Text style={newStyles.returnText}>Back</Text> 
+          </TouchableOpacity> 
+        </View>
+
+      </View>
+    </View>
+      </Modal>
+     
     </ScrollView>
-  </View>
+  </View> 
   )
 }
+
 
 const newStyles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
     backgroundColor: '#0d0d12',
+  },
+  filterContainer: { 
+    alignItems: "center",
+  },
+  titleText: {
+    color: "#8e8efa",
+    fontWeight: "500",
+    fontSize: 35,
+    alignSelf: "left",
+    marginBottom: 25,
   },
   filterHeader: {
     fontSize: 20,
@@ -704,6 +732,13 @@ const newStyles = StyleSheet.create({
     fontWeight: "600",
     fontSize: 15,
   },
+  returnText: {
+    fontWeight: "600",
+    fontSize: 35,
+    color: "#FF0101",
+    alignSelf: "left",
+  },
+
   inputView: {
     borderColor: "#404057",
     borderWidth: 2,
