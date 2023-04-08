@@ -96,8 +96,7 @@ export default function Workout () {
           setDifficulty(null)
         }
       }
-    
-
+  
    } else if (input < 20) {
     setStyleAbdom(newStyles.loginBtn)
     setStyleAbduct(newStyles.loginBtn)
@@ -335,23 +334,23 @@ const [exerciseArr, setExerciseArr] = useState([]);
 const [apiResponseArr, setApiResponseArr] = useState([]);
 
 
-async function saveExercise(index) {
-    const temp1 = exerciseArr.filter(a => a.id === index);
-    const docRef = await setDoc(doc(db, "exercises", temp1[0].name), {
-      difficulty: temp1[0].difficulty,
-      equipment: temp1[0].equipment,
-      muscle: temp1[0].muscle,
-      name: temp1[0].name,
-      type: temp1[0].type,
-      instructions: temp1[0].instructions,
-    });
-    const newExerciseArr = exerciseArr.filter(a => a.id !== index);
-    setExerciseArr(newExerciseArr);
-    const collectionName = "workout" + workoutNum;
-    const docRef2 = await setDoc(doc(db, "accounts", userUID, collectionName, temp1[0].name), {
-    });
-    selectWorkout(workoutNum);
-  };
+// async function saveExercise(index) {
+//     const temp1 = exerciseArr.filter(a => a.id === index);
+//     const docRef = await setDoc(doc(db, "exercises", temp1[0].name), {
+//       difficulty: temp1[0].difficulty,
+//       equipment: temp1[0].equipment,
+//       muscle: temp1[0].muscle,
+//       name: temp1[0].name,
+//       type: temp1[0].type,
+//       instructions: temp1[0].instructions,
+//     });
+//     const newExerciseArr = exerciseArr.filter(a => a.id !== index);
+//     setExerciseArr(newExerciseArr);
+//     const collectionName = "workout" + workoutNum;
+//     const docRef2 = await setDoc(doc(db, "accounts", userUID, collectionName, temp1[0].name), {
+//     });
+//     selectWorkout(workoutNum);
+//   };
 
   //Search
   const submitInput = () => {
@@ -390,30 +389,27 @@ async function saveExercise(index) {
     }
   }
 
-  async function selectWorkout(num) {
-    setWorkoutNum(num);
-    const auth = getAuth();
-    const user = auth.currentUser;
-    setUserUID(user.uid);
-    const docNameArr = []; //every account doc ID
-    const collectionName = "workout" + num;
-    const querySnapshot = await getDocs(collection(db, "accounts", user.uid, collectionName));
-    querySnapshot.forEach((doc) => {
-      if(doc.id != "temp"){
-        docNameArr.push(doc.id);
-      }
-    });
-    let tempString = "";
-    for(var i = 0; i < docNameArr.length; i++){
-      tempString += docNameArr[i] + " | "
-    }
-    tempString = tempString.substring(0, tempString.length - 3);
-    setWorkoutString(tempString);
-  }
-
-  const [isSelected, setSelection] = useState(false);
+  // async function selectWorkout(num) {
+  //   setWorkoutNum(num);
+  //   const auth = getAuth();
+  //   const user = auth.currentUser;
+  //   setUserUID(user.uid);
+  //   const docNameArr = []; //every account doc ID
+  //   const collectionName = "workout" + num;
+  //   const querySnapshot = await getDocs(collection(db, "accounts", user.uid, collectionName));
+  //   querySnapshot.forEach((doc) => {
+  //     if(doc.id != "temp"){
+  //       docNameArr.push(doc.id);
+  //     }
+  //   });
+  //   let tempString = "";
+  //   for(var i = 0; i < docNameArr.length; i++){
+  //     tempString += docNameArr[i] + " | "
+  //   }
+  //   tempString = tempString.substring(0, tempString.length - 3);
+  //   setWorkoutString(tempString);
+  // }
 //_______________________________________________________________________________________________________________________________________________________________________________
-
 
   return (
     <View style={newStyles.container}>
@@ -497,6 +493,7 @@ async function saveExercise(index) {
     
     {/* Display Calls */}
     <ScrollView style={newStyles.scrollContainer1}>
+  
       <View style={newStyles.scrollContainer2}>
         {apiResponseArr.map((info, index) => (
           <View key={index} style={newStyles.cardComp}>
