@@ -11,6 +11,9 @@ import { Icon } from '@rneui/themed';
 import { CheckBox } from '@rneui/themed';
 import FlipCard from 'react-native-flip-card'
 
+var modalMusclePath1 = require("./muscleImages/biceps1.png");
+var modalMusclePath2 = require("./muscleImages/biceps2.png");
+
 export default function Workout() {
   const [search1, setSearch1] = useState("biceps");
   const [search2, setSearch2] = useState("muscle");
@@ -56,13 +59,13 @@ export default function Workout() {
   };
 
   const addInfo = () => {
-    console.log("Adding Info");
+    // console.log("Adding Info");
     // fruits.push({
     //   id: counter, equipment: "tools", muscle: "lats",
     // });
     setExerciseArr([...exerciseArr, {id: counter, equipment: "tools", muscle: "lats",}])
     setCount(counter + 1)
-    console.log(counter);
+    // console.log(counter);
   }
 
   const submitInput = () => {
@@ -155,6 +158,23 @@ export default function Workout() {
     setWorkoutString(tempString);
   }
 
+  const setPath = (muscleName) =>{
+    switch(muscleName) { 
+      case "biceps":
+        modalMusclePath1 = require("./muscleImages/biceps1.png");
+        modalMusclePath2 = require("./muscleImages/biceps2.png");
+        break;
+      case "triceps":
+        modalMusclePath1 = require("./muscleImages/triceps1.png");
+        modalMusclePath2 = require("./muscleImages/triceps2.png");
+        break;
+      default: 
+        modalMusclePath1 = require("./muscleImages/default1.png");
+        modalMusclePath2 = require("./muscleImages/default2.png");
+
+      } 
+  }
+
   const modalButtons = (action) => {
     var tempIndex = modalIndex; 
     if(fixModalIndex){
@@ -194,6 +214,7 @@ export default function Workout() {
 
     if(update) {
       setModalIndex(tempIndex);
+      setPath(exerciseArr[tempIndex + count].muscle);
       setModalInfo({
         id: exerciseArr[tempIndex + count].id,
         name: exerciseArr[tempIndex + count].name, 
@@ -226,10 +247,6 @@ export default function Workout() {
           <Text>Call API</Text>
         </TouchableOpacity>
       </View>
-
-      {/* <TouchableOpacity style={styles.button2} onPress={() => addInfo()}>
-        <Text>Add Info</Text>
-      </TouchableOpacity> */}
 
       <View style={styles.playlist}>
         <Text style={styles.playlistText}>Save to playlist</Text>
@@ -264,46 +281,59 @@ export default function Workout() {
         <View style={modalStyles.modalContainer}>
           <View style={modalStyles.modalView}>
             <View style={modalStyles.titleView}>
-              <Text style={modalStyles.titleText}>{modalInfo.name} — {modalInfo.id}</Text>
+              <Text style={modalStyles.titleText}>{modalInfo.name}</Text>
             </View>
 
             <View style={modalStyles.flipCardView}>
-            <FlipCard style={modalStyles.flipCard}
-              friction={6}
-              perspective={10000}
-              flipHorizontal={true}
-              flipVertical={false}
-              flip={false}
-              clickable={true}>
-              <View style={modalStyles.imageContainer}>
-                <Image source={ require('./resources/body1.png') } style={modalStyles.imageStyle} />
-              </View>
-              <View style={modalStyles.imageContainer}>
-                <Image source={ require('./resources/body2.png') } style={modalStyles.imageStyle} />
-              </View>
-            </FlipCard>
+              <FlipCard style={modalStyles.flipCard}
+                friction={6}
+                perspective={10000}
+                flipHorizontal={true}
+                flipVertical={false}
+                flip={false}
+                clickable={true}>
+                <View style={modalStyles.flipContainers}>
+                  <Image source={ modalMusclePath1 } style={modalStyles.imageStyle} />
+                </View>
+                <View style={modalStyles.flipContainers}>
+                  <Image source={ modalMusclePath2 } style={modalStyles.imageStyle} />
+                </View>
+              </FlipCard>
+            <Text style={modalStyles.flipMuscleText}>{ modalInfo.muscle }</Text>
+
             </View>
 
-            <Text>{modalInfo.equipment}</Text>
+           <Text>{modalInfo.equipment}</Text>
 
             <View style={modalStyles.controlView}>
               <TouchableOpacity style={modalStyles.controlImg1} onPress={() => modalButtons("LEFT")}>
-                {/* <Image source={require('./resources/google4.png')} styles={modalStyles.controlImg1}/> */}
-                {/* <Image source={require('./google1.png')} styles={modalStyles.controlImg1}/> */}
                 <Text style={{color: "#fff", fontSize: "20", alignSelf: "center"}}> Left </Text>
+                <Icon
+                  name="arrow-left-thin-circle-outline"
+                  type="material-community"
+                  size={80}
+                />
               </TouchableOpacity> 
               <TouchableOpacity style={modalStyles.controlImg1} onPress={() => modalButtons("ADD")}>
                 <Text style={{color: "#fff", fontSize: "20", alignSelf: "center"}}> Add </Text>
+                <Icon
+                  name="plus-circle-outline"
+                  type="material-community"
+                  size={60}
+                />
               </TouchableOpacity> 
               <TouchableOpacity style={modalStyles.controlImg1} onPress={() => modalButtons("RIGHT")}>
                 <Text style={{color: "#fff", fontSize: "20", alignSelf: "center"}} > Right </Text>
+                <Icon
+                  name="add-circle"
+                  type="material"
+                  size={60}
+                />
               </TouchableOpacity> 
-
-
             </View>
 
             <TouchableOpacity style={[styles.modalButton, styles.buttonClose]} onPress={() => setModalVisible(!modalVisible)}>
-              <Text style={modalStyles.closeText}>Return</Text>
+              <Text style={modalStyles.closeText}> Return </Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -327,6 +357,7 @@ export default function Workout() {
                     setModalVisible(true);
                     setModalIndex(info.id);
                     setFixModalIndex(true);
+                    setPath(info.muscle);
                     setModalInfo({
                       id: info.id,
                       name: info.name, 
@@ -364,7 +395,7 @@ const modalStyles = StyleSheet.create({
   },
   modalView: {
     margin: 20,
-    backgroundColor: "#8b8bc7", //'#404057', //0d0d12
+    backgroundColor: "#1a1a29", //'#404057', //0d0d12
     // padding: 15,
     alignItems: 'center',
     shadowColor: '#000',
@@ -396,8 +427,8 @@ const modalStyles = StyleSheet.create({
   flipCardView: {
     backgroundColor: "grey", 
     flex: 1, 
-    maxHeight: 200*1.8 + 10, 
-    width: 250,
+    // maxHeight: 200*2 + 10, 
+    // width: 250,
     alignItems: "center",
   },
   flipCard: {
@@ -410,16 +441,26 @@ const modalStyles = StyleSheet.create({
     borderWidth: 3,
     borderRadius: 10,
     backgroundColor: "white",
+    alignItems: "center",
   },
-  imageContainer: {
-    maxHeight: 200 * 1.7,
-    maxWidth: 100 * 1.7,
-    marginTop: 20,
+  flipContainers: {
+    // maxHeight: 200 * 1.7,
+    // maxWidth: 100 * 1.7,
+    // marginTop: 20,
+    backgroundColor: "cyan",
+    borderRadius: 10,
   },
   imageStyle: {
-    maxHeight: "95%",
-    maxWidth: "95%",
-    backgroundColor: "red",
+    maxHeight: "100%",
+    maxWidth: "100%",
+    // height: "95%",
+    // width: "95%",
+    backgroundColor: "#e9ccff",
+    borderRadius: 10,
+  },
+  flipMuscleText: {
+    fontSize: 20,
+
   },
 
   controlView: {
@@ -436,7 +477,7 @@ const modalStyles = StyleSheet.create({
     maxWidth: 100,
     height: 60,
     width: 60,
-    backgroundColor: "black",
+    backgroundColor: "grey",
     marginHorizontal: 15,
   },
 

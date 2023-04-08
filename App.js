@@ -46,8 +46,8 @@ function Impulse() {
               <Icon
               name="home"
               type="material"
-                size={27}
-                color={tabInfo.focused ? "#7d7dfa" : "#fff"}
+              size={27}
+              color={tabInfo.focused ? "#7d7dfa" : "#fff"}
               />
             );
           },
