@@ -1,22 +1,33 @@
+// Tweak list
+// - Change text based on time (Good Morning/Good Afternoon)
+
 import React, { useState } from 'react'
-import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity } from "react-native";
+import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity, ScrollView } from "react-native";
 import Card1 from "./components/card1";
 import Card2 from "./components/card2";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
 import { addDoc, doc, enableNetwork, setDoc, getCountFromServer, collection, getDocs, namedQuery, updateDoc,getDoc} from "firebase/firestore"; 
 import {db} from './firebase';
 
+import HomeCards from './homeCards';
+
 export default function Home({ navigation }) {
+  const auth = getAuth();
+  const user = auth.currentUser;
 
 const [workoutQuery, setWorkoutQuery] = useState("")
 const [currExercise, setCurrExercise] = useState("")
 const [index, setIndex] = useState(0)
 const [exercises, setExercises] = useState([]);
+const [userID, setUserUID] = useState(user.email)
+
+
 
   async function queryWorkoutCols() {
     const exercisesTemp = []
     const auth = getAuth();
     const user = auth.currentUser;
+
     console.log(workoutQuery)
     const workoutRef = collection(db, "accounts", user.uid, workoutQuery); 
     const querySnapshot = await getDocs(workoutRef);
@@ -28,71 +39,56 @@ const [exercises, setExercises] = useState([]);
     setExercises(exercisesTemp)
   }
 
-    async function showExercise(num) {
-      setIndex(index + num)
-      if (index >= exercises.length - 1) { 
-         setIndex(0)
-      }
-      setCurrExercise(exercises[index])
+  async function showExercise(num) {
+    setIndex(index + num)
+    if (index >= exercises.length - 1) { 
+        setIndex(0)
     }
+    setCurrExercise(exercises[index])
+  }
 
-    return (
-    <View style={styles.container}>
-      <View style={styles.search}>
-        <TextInput
-            style={styles.TextInput}
-            placeholder="Workout Name"
-            placeholderTextColor="#003f5c"
-            onChangeText={(workoutQuery) => setWorkoutQuery(workoutQuery)}
-        /> 
-        <TouchableOpacity style={styles.loginBtn} onPress={queryWorkoutCols} >
-          <Text style={styles.loginText}>Select</Text> 
-        </TouchableOpacity> 
-      </View>
 
-      <View>
-        <View style={styles.playlist}>
-          
-          <Text style={styles.playlistText}>Exercise</Text>
 
-          <Text style={styles.playlistText1}>{currExercise}</Text>
+  return (
+    <View style={backgroundStyle.container}>
+        <Text style={backgroundStyle.titleText}> Welcome, {userID.substring(0, userID.indexOf("@"))} </Text>
+        <ScrollView horizontal={true} alignSelf={'left'} marginLeft={10}>
+        
+           <HomeCards></HomeCards>
+           <HomeCards></HomeCards>
+           <HomeCards></HomeCards>
+           <HomeCards></HomeCards>
+            
+        </ScrollView>
+       
 
-            <View style={styles.buttons}>
-              <TouchableOpacity style={styles.button1} onPress={() => showExercise(1)}>
-                <Text> Next Exercise --{'>'} </Text>
-              </TouchableOpacity>
-            </View>
 
-          </View>
-
-        </View>
-      </View>
+     </View>
   )
 }
 
-const styles = StyleSheet.create({
+const backgroundStyle = StyleSheet.create({
 
   container: {
     flex: 1,
     alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: '#adc9db',
+    backgroundColor: '#0d0d12',
+  },
+
+  titleText: {
+    color: "#8e8efa",
+    fontWeight: "500",
+    fontSize: 25,
+    alignSelf: "left",
+    marginTop: 20,
+    marginLeft: 10
+  },
+
+  cardView: {
+    flex: 1,
   },
 
   //————————————————————————————————————————————————————————————————
-
-  search: {
-    flexDirection: "row",
-    marginBottom: 60,
-    backgroundColor: "#7ab3d6",
-
-  },
-  TextInput: {
-    height: 40,
-    flex: 1,
-    padding: 10,
-    marginLeft: 40,
-  },
   loginBtn: {
     width: "40%",
     borderRadius: 25,
