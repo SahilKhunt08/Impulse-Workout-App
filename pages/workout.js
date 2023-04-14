@@ -560,75 +560,98 @@ export default function Workout({ navigation }) {
         onRequestClose={() => {Alert.alert("Modal has been closed."); setModalVisible(!modalVisible); }}>
         <View style={modalStyles.modalContainer}>
           <View style={modalStyles.modalView}>
-            <View style={modalStyles.titleView}>
-              <Text style={modalStyles.titleText}>{modalInfo.name}</Text>
-            </View>
+            <ScrollView showsVerticalScrollIndicator={false}>
+              <View style={{alignItems: "center"}}>
+                <View style={modalStyles.titleView}>
+                  <Text style={modalStyles.titleText}>{modalInfo.name}</Text>
+                </View>
 
-            <View style={modalStyles.mainContentView}>
-              <View style={modalStyles.modalInfoView}>
-                <View style={modalStyles.infoTextView}>
-                  <Text style={modalStyles.infoText1}> Difficulty </Text>
-                  <Text style={modalStyles.infoText2}>{ modalInfo.difficulty }</Text>
-                </View>
-                <View style={modalStyles.infoTextView}>
-                  <Text style={modalStyles.infoText1}> Muscle </Text>
-                  <Text style={modalStyles.infoText2}>{ modalInfo.muscle }</Text>
-                </View>
-                <View style={modalStyles.infoTextView}>
-                  <Text style={modalStyles.infoText1}> Equipment </Text>
-                  <Text style={modalStyles.infoText2}>{ modalInfo.equipment }</Text>
-                </View>
-              </View>
-
-              <View style={modalStyles.flipCardView1}>
-                <View style={modalStyles.flipCardView2}>
-                  <FlipCard style={modalStyles.flipCard}
-                    friction={6}
-                    perspective={100000}
-                    flipHorizontal={true}
-                    flipVertical={false}
-                    flip={false}
-                    clickable={true}>
-                    <View style={modalStyles.flipContainers}>
-                      <Image source={ modalMusclePath1 } style={modalStyles.imageStyle} />
+                <View style={modalStyles.mainContentView}>
+                  <View style={modalStyles.modalInfoView}>
+                    <View style={modalStyles.infoTextContainer}>
+                      <View style={modalStyles.infoTextView1}>
+                        <Text style={modalStyles.infoText1}> Difficulty </Text>
+                      </View>
+                      <Text style={modalStyles.infoText2}>{ modalInfo.difficulty }</Text>
                     </View>
-                    <View style={modalStyles.flipContainers}>
-                      <Image source={ modalMusclePath2 } style={modalStyles.imageStyle} />
+                    <View style={modalStyles.infoTextContainer}>
+                      <View style={modalStyles.infoTextView1}>
+                        <Text style={modalStyles.infoText1}> Muscle </Text>
+                      </View>
+                      <Text style={modalStyles.infoText2}>{ modalInfo.muscle }</Text>
                     </View>
-                  </FlipCard>
-                  <View style={modalStyles.flipMuscleView}>
-                    <Text style={modalStyles.flipMuscleText}>{ modalInfo.muscle }</Text>
+                    <View style={[modalStyles.infoTextContainer, modalStyles.infoTextViewTweak]}>
+                      <View style={modalStyles.infoTextView1}>
+                        <Text style={modalStyles.infoText1}> Equipment </Text>
+                      </View>
+                      <Text style={modalStyles.infoText2}>{ modalInfo.equipment }</Text>
+                    </View>
                   </View>
-                </View>
-              </View>  
-            </View>
-            <View style={modalStyles.controlView}>
-              <TouchableOpacity style={modalStyles.controlImg1} onPress={() => modalButtons("LEFT")}>
-                <Icon 
-                  name="chevron-right"
-                  type="material"
-                  size={40}
-                />
-              </TouchableOpacity> 
-              <TouchableOpacity style={modalStyles.controlImg1} onPress={() => modalButtons("ADD")}>
-                <Icon
-                  name="plus-circle-outline"
-                  type="material-community"
-                  size={60}
-                />
-              </TouchableOpacity> 
-              <TouchableOpacity style={modalStyles.controlImg1} onPress={() => modalButtons("RIGHT")}>
-                <Icon
-                  name="add-circle"
-                  type="material"
-                  size={40}
-                />
-              </TouchableOpacity> 
-            </View>
 
-            <TouchableOpacity style={[styles.modalButton, styles.buttonClose]} onPress={() => setModalVisible(!modalVisible)}>
-              <Text style={modalStyles.closeText}> Return </Text>
-            </TouchableOpacity>
+                  <View style={modalStyles.flipCardView1}>
+                    <View style={modalStyles.flipCardView2}>
+                      <FlipCard style={modalStyles.flipCard}
+                        friction={6}
+                        perspective={100000}
+                        flipHorizontal={true}
+                        flipVertical={false}
+                        flip={false}
+                        clickable={true}>
+                        <View style={modalStyles.flipContainers}>
+                          <Image source={ modalMusclePath1 } style={modalStyles.imageStyle} />
+                        </View>
+                        <View style={modalStyles.flipContainers}>
+                          <Image source={ modalMusclePath2 } style={modalStyles.imageStyle} />
+                        </View>
+                      </FlipCard>
+                      <View style={modalStyles.flipMuscleView}>
+                        <Text style={modalStyles.flipMuscleText}>{ modalInfo.muscle }</Text>
+                      </View>
+                    </View>
+                  </View>  
+                </View>
+                <View style={modalStyles.controlView}>
+                  <TouchableOpacity style={modalStyles.controlButtons} onPress={() => modalButtons("LEFT")}>
+                    <Icon 
+                      name="arrow-left-drop-circle"
+                      type="material-community"
+                      size={55}
+                      color="#fff"
+                    />
+                  </TouchableOpacity> 
+                  <TouchableOpacity style={modalStyles.controlButtons} onPress={() => modalButtons("ADD")}>
+                    <Icon
+                      name="plus-circle"
+                      type="material-community"
+                      size={70}
+                      color="#fff"
+                    />
+                  </TouchableOpacity> 
+                  <TouchableOpacity style={modalStyles.controlButtons} onPress={() => modalButtons("RIGHT")}>
+                    <Icon
+                      name="arrow-right-drop-circle"
+                      type="material-community"
+                      size={55}
+                      color="#fff"
+                    />
+                  </TouchableOpacity> 
+                </View>
+                
+                <TouchableOpacity style={modalStyles.returnButton} onPress={() => setModalVisible(!modalVisible)}>
+                  <Text style={modalStyles.returnText}>Return</Text>
+                </TouchableOpacity>
+
+                <View style={modalStyles.directionsView}>
+                  <ScrollView showsVerticalScrollIndicator={false}>
+                    <View>
+                      <Text style={modalStyles.directionsTitle}>Directions</Text>
+                      <Text style={modalStyles.directionsBody}>{modalInfo.instructions}</Text>
+                    </View>
+                  </ScrollView>
+                </View>
+
+              </View>
+            </ScrollView>
           </View>
         </View>
       </Modal>
@@ -862,12 +885,10 @@ const modalStyles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 12,
-    // height: 100,
   },
   modalView: {
     margin: 20,
     backgroundColor: "#1a1a29", //'#404057', //0d0d12
-    // padding: 15,
     alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: {
@@ -889,9 +910,9 @@ const modalStyles = StyleSheet.create({
     alignContent: "center",
     marginTop: 10,
     marginBottom: 10,
-    width: "90%",
     maxHeight: 60,
-
+    width: "90%",
+    flexDirection: "row",
     shadowColor: '#fff',
     shadowOffset: {
       width: 0,
@@ -909,47 +930,57 @@ const modalStyles = StyleSheet.create({
 
   mainContentView:{
     flexDirection: "row",
-    backgroundColor: "#3e3e57",
+    // backgroundColor: "#3e3e57",
     height: 400,
     alignItems: "center",
     marginTop: 10,
     marginBottom: 15,
+    width: "100%",
   },
   modalInfoView: {
-    // backgroundColor: "red",
     width: "50%",
     height: 400,
+    alignItems: "center",
     justifyContent: "center",
+    borderWidth: 3,
+    borderColor: "#7c6f9e",
+    borderRadius: 7,
   },
 
-  infoTextView: {
-    // backgroundColor: "grey",
-    padding: 6,
-    marginHorizontal: 5,
-    marginVertical: 15,
+  infoTextContainer: {
     borderColor: "black",
-    borderWidth: 3,
-    borderRadius: 3,
     alignItems: "center",
-    borderBottomLeftRadius: 10,
-    borderBottomRightRadius: 10,
+    // backgroundColor: "grey",
+    borderBottomWidth: 3,
+    borderColor: "#7c6f9e",
+    paddingVertical: 20,
+    width: "90%",
+  },
+  infoTextView1: {
+    width: "80%",
+    borderTopColor: "8e8efa",
+    borderBottomColor: "8e8efa",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 10,
+    borderColor: "white",
+  },
+  infoTextViewTweak: {
+    borderBottomWidth: 0,
   },
   infoText1: {
-    fontSize: 22,
-    fontWeight: "500",
-    marginBottom: 5,
+    fontSize: 25,
+    fontWeight: "400",
     color: "#fff",
-    borderBottomColor: "#fff",
-    borderBottomWidth: 3,
-    marginBottom: 10,
+    letterSpacing: 1.5,
   },
   infoText2: {
     fontSize: 18,
     marginBottom: 5,
     color: "#d0d1d6",
   },
+
   flipMuscleView: {
-    // backgroundColor: "red",
     width: "100%",
     minWidth: "95%",
     height: "9%",
@@ -966,63 +997,106 @@ const modalStyles = StyleSheet.create({
     maxHeight: 200*2, 
     width: "50%",
     alignItems: "center",
+    
   },
   flipCardView2: {
-    backgroundColor: "#d8b3f5", 
+    backgroundColor: "#8e8efa",
     alignItems: "center",
     borderWidth: 3,
-    borderRadius: 10,
+    borderRadius: 7,
   },
   flipCard: {
     height: 200 * 1.8,
     width: 100 * 1.8,
     maxHeight: 200 * 1.8,
     maxWidth: 180 * 1.8,
-    bordercolor: "#fff",
-    // borderWidth: 3,
-    borderTopLeftRadius: 10,
-    borderTopRightRadius: 10,
-    backgroundColor: "#e9ccff",
+    backgroundColor: "#babaf7",
     alignItems: "center",
-    borderBottomColor: "black",
-    // borderBottomWidth: 3,
+    borderTopLeftRadius: 7,
+    borderTopRightRadius: 7,
   },
   flipContainers: {
     marginTop: 10,
-    backgroundColor: "cyan",
-    borderRadius: 10,
     maxHeight: "95%",
     maxWidth: "95%",
   },
   imageStyle: {
     maxHeight: "100%",
     maxWidth: "100%",
-    backgroundColor: "#e9ccff",
-    borderRadius: 10,
+    backgroundColor: "#babaf7",
   },
 
   controlView: {
-    marginTop: 20,
     flexDirection: "row",
-    backgroundColor: "red",
+    backgroundColor: "#393b63",
+    // borderColor: "#393b63",
+    // borderWidth: 1.5,
     width: 300,
-    height: 100,
+    height: 80,
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: 10
+    borderRadius: 10,
+    marginTop: 10,
+    marginBottom: 10,
   },
-  controlImg1: {
+  controlButtons: {
     maxHeight: 100,
     maxWidth: 100,
-    height: 60,
-    width: 60,
-    backgroundColor: "grey",
+    height: 80,
+    width: 80,
     marginHorizontal: 15,
+    alignItems: "center",
+    justifyContent: "center",
+    shadowColor: '#fff',
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowOpacity: 0.15,
+    shadowRadius: 5,
+  },
+  returnButton: {
+    marginTop: 15,
+    backgroundColor: "#393b63",
+    width: 100,
+    height: 40,
+    borderRadius: 5,
+    // borderColor: "#393b63",
+    // borderWidth: 1.5,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  returnText: {
+    fontSize: 20,
+    fontWeight: "300",
+    color: "#fff",
   },
 
-  closeText: {
-    color: 'white',
-    fontWeight: 'bold',
+  directionsView: {
+    marginTop: 30,
+    height: 450,
+    width: "90%",
+    borderRadius: 4,
+    backgroundColor: "#2e2645",
+    paddingVertical: 10,
+    marginBottom: 20,
+  },
+  directionsTitle: {
+    fontSize: 25,
+    color: "#d1ced9",
+    fontWeight: "600",
+    marginLeft: 20,
+    marginTop: 10,
+    letterSpacing: 2,
+  },
+  directionsBody: {
+    fontSize: 20,
+    color: "#d1ced9",
+    fontWeight: "300",
+    marginTop: 15,
+    marginLeft: 20,
+    marginRight: 10,
+    lineHeight: 25,
   },
 })
 
