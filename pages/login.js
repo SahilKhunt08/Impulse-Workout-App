@@ -9,20 +9,18 @@ import { async } from "@firebase/util";
 import Divider from 'react-native-divider';
 
 async function newDoc() {
+  
   const auth = getAuth();
   const user = auth.currentUser   
   const usernameString = auth.currentUser.email.substring(0, auth.currentUser.email.indexOf("@"));
-  const friendsRef = await setDoc(doc(db, "accounts", user.uid, "friends", "temp"), {
+
+  await setDoc(doc(db, "accounts", user.uid, "friends", "temp"), {
   });
-  const requestsRef = await setDoc(doc(db, "accounts", user.uid, "requests", "temp"), {
+  await setDoc(doc(db, "accounts", user.uid, "requests", "temp"), {
   });
-  const workout1Ref = await setDoc(doc(db, "accounts", user.uid, "workout1", "temp"), {
+  await setDoc(doc(db, "accounts", user.uid, "workouts", "temp"), {
   });
-  const workout2Ref = await setDoc(doc(db, "accounts", user.uid, "workout2", "temp"), {
-  });
-  const workout3Ref = await setDoc(doc(db, "accounts", user.uid, "workout3", "temp"), {
-  });
-  const setTempField = await setDoc(doc(db, "accounts", user.uid), {
+  await setDoc(doc(db, "accounts", user.uid), {
     username: usernameString,
   })
 
@@ -31,6 +29,8 @@ async function newDoc() {
 export default function Login({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("")  
+  console.log("fd")
+  
   const handleRegister = () => {
     createUserWithEmailAndPassword(auth, email, password).then(() => {
         newDoc();
@@ -40,9 +40,7 @@ export default function Login({ navigation }) {
       .catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
-        // ..
       });
-
   }
 
   const handleLogin = () => {
@@ -100,6 +98,10 @@ export default function Login({ navigation }) {
 
       <TouchableOpacity style={newStyles.loginBtn} onPress={handleLogin}>
         <Text style={newStyles.loginText}>LOGIN</Text> 
+      </TouchableOpacity> 
+
+      <TouchableOpacity style={newStyles.loginBtn} onPress={handleRegister}>
+        <Text style={newStyles.loginText}>REGISTER</Text> 
       </TouchableOpacity> 
 
       <View style={newStyles.dividerView}>

@@ -30,10 +30,15 @@ const cardStyle = StyleSheet.create({
     container: {
       backgroundColor: '#404057',
       marginTop: 30,
-      margin: 10,
+      margin: 6,
       height: 160,
       width: 255,
-      borderRadius: 10
+      shadowColor: 'rgba(215, 215, 250, 0.2)',
+      borderRadius: 10,
+      shadowOpacity: 0.5,
+      elevation: 6,
+      shadowRadius: 15,
+      shadowOffset : { width: 0, height: 5},
     },
 
     image: {
