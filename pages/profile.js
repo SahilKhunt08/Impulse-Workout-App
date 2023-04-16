@@ -6,6 +6,7 @@ import { auth } from './firebase';
 import {db} from './firebase';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
 import { addDoc, getDoc, doc, enableNetwork, setDoc, getCountFromServer, collection, getDocs, namedQuery, query, deleteDoc} from "firebase/firestore"; 
+
 export default function Profile({ navigation }) {
   React.useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
