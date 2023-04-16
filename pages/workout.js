@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { StyleSheet, Text, View, TouchableOpacity, TextInput, FlatList, Modal, Pressable, ScrollView, Image } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, TextInput, FlatList, ScrollView, Pressable, Modal, Image } from 'react-native';
 import { Button } from 'react-native-paper';
 import axios from "axios";
 import { Card } from 'react-native-paper';
@@ -14,15 +14,13 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { makeStyles } from "@rneui/base";
 import { isEmpty } from "@firebase/util";
-import { Divider } from '@rneui/themed';
+import Divider from 'react-native-divider';
+import { BlurView } from 'expo-blur';
 
-var modalMusclePath1 = require("./muscleImages/biceps1.png");
-var modalMusclePath2 = require("./muscleImages/biceps2.png");
+var modalMusclePath1 = require("./muscleImages/default1.png");
+var modalMusclePath2 = require("./muscleImages/default2.png");
 
 export default function Workout({ navigation }) {
-  const [search1, setSearch1] = useState("biceps");
-  const [search2, setSearch2] = useState("muscle");
-  const [workoutNum, setWorkoutNum] = useState(1);
   const [counter, setCount] = useState(3);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalInfo, setModalInfo] = useState([]);
@@ -33,6 +31,16 @@ export default function Workout({ navigation }) {
   const [workoutSelected, setWorkoutSelected] = useState("");
   const [workoutBtnStyleArr, setWorkoutBtnStyleArr] = useState([]);
   const [searchBarText, setSearchBarText] = useState([]);
+  const [modalAddVisible, setModalAddVisible] = useState(false);
+
+  const [setting1, setSetting1] = useState(0);
+  const [setting2, setSetting2] = useState(0);
+  const [setting3, setSetting3] = useState(0);
+  const [settingStyleArr1, setSettingStyleArr1] = useState([]);
+  const [settingStyleArr2, setSettingStyleArr2] = useState([]);
+  const [settingStyleArr3, setSettingStyleArr3] = useState([]);
+  const setNumArr = [1, 2, 3, 4, 5, 6];
+  const timeArr = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90];
 
   const auth = getAuth();
   const user = auth.currentUser;
@@ -375,7 +383,40 @@ export default function Workout({ navigation }) {
     console.log(temp1[0].name + " ||| " + workoutSelected);
     const docRef2 = await setDoc(doc(db, "accounts", user.uid, workoutSelected, temp1[0].name), {
     });
+  }
 
+  async function saveExercise2() {
+    console.log("YUH");
+    console.log(setting1 + " " + setting2)
+    console.log(modalInfo.name)
+    const name = modalInfo.name;
+
+    setModalAddVisible(false);
+    var index = -1;
+    for(var i = 0; i < exerciseArr.length; i++){
+      if(name == exerciseArr[i].name){
+        index = exerciseArr[i].id;
+        i = exerciseArr.length;
+      }
+    }
+
+    const temp1 = exerciseArr.filter(a => a.id === index);
+    const docRef = await setDoc(doc(db, "exercises", temp1[0].name), {
+      difficulty: temp1[0].difficulty,
+      equipment: temp1[0].equipment,
+      muscle: temp1[0].muscle,
+      name: temp1[0].name,
+      type: temp1[0].type,
+      instructions: temp1[0].instructions,
+    });
+
+    const newExerciseArr = exerciseArr.filter(a => a.id !== index);
+    setExerciseArr(newExerciseArr);
+
+    const docRef2 = await setDoc(doc(db, "accounts", user.uid, "workouts", workoutSelected, "exercises", temp1[0].name), {
+      setsNum: setting1,
+      restNum: setting2,  
+    });
   }
 
   const addInfo = () => {
@@ -433,7 +474,6 @@ export default function Workout({ navigation }) {
 
   const closeFilterPage = () => {
     setfilterModalVis(false)
-    console.log(exerciseArr);
   }
 
   const displayData = (input) => {
@@ -455,20 +495,79 @@ export default function Workout({ navigation }) {
     workoutBtnStyleArr[index] = buttonRowStyles.buttonOn;
   }
 
-  const setPath = (muscleName) =>{
+  const setPath = (muscleName) => {
     switch(muscleName) { 
+      case "abdominals":
+        modalMusclePath1 = require("./muscleImages/abdominals1.png");
+        modalMusclePath2 = require("./muscleImages/default2.png");
+        break;
+      case "abductors":
+        modalMusclePath1 = require("./muscleImages/default1.png");
+        modalMusclePath2 = require("./muscleImages/abductors1.png");
+        break;  
+      case "adductors":
+        modalMusclePath1 = require("./muscleImages/adductors1.png");
+        modalMusclePath2 = require("./muscleImages/adductors2.png");
+        break;
       case "biceps":
         modalMusclePath1 = require("./muscleImages/biceps1.png");
-        modalMusclePath2 = require("./muscleImages/biceps2.png");
+        modalMusclePath2 = require("./muscleImages/default2.png");
+        break;
+      case "calves":
+        modalMusclePath1 = require("./muscleImages/calves1.png");
+        modalMusclePath2 = require("./muscleImages/calves2.png");
+        break;
+      case "chest":
+        modalMusclePath1 = require("./muscleImages/chest1.png");
+        modalMusclePath2 = require("./muscleImages/default2.png");
+        break;
+      case "forearms":
+        modalMusclePath1 = require("./muscleImages/forearms1.png");
+        modalMusclePath2 = require("./muscleImages/forearms2.png");
+        break;
+      case "glutes":
+        modalMusclePath1 = require("./muscleImages/default1.png");
+        modalMusclePath2 = require("./muscleImages/glutes1.png");
+        break;
+      case "hamstrings":
+        modalMusclePath1 = require("./muscleImages/default1.png");
+        modalMusclePath2 = require("./muscleImages/hamstrings1.png");
+        break;
+      case "lats":
+        modalMusclePath1 = require("./muscleImages/default1.png");
+        modalMusclePath2 = require("./muscleImages/lats1.png");
+        break;
+      case "lower_back":
+        modalMusclePath1 = require("./muscleImages/default1.png");
+        modalMusclePath2 = require("./muscleImages/lower_back1.png");
+        break;
+      case "middle_back":
+        modalMusclePath1 = require("./muscleImages/default1.png");
+        modalMusclePath2 = require("./muscleImages/middle_back1.png");
+        break;                  
+      case "neck":
+        modalMusclePath1 = require("./muscleImages/neck1.png");
+        modalMusclePath2 = require("./muscleImages/neck2.png");
+        break;
+      case "quadriceps":
+        modalMusclePath1 = require("./muscleImages/quadriceps1.png");
+        modalMusclePath2 = require("./muscleImages/default2.png");
+        break;
+      case "shoulders":
+        modalMusclePath1 = require("./muscleImages/shoulders1.png");
+        modalMusclePath2 = require("./muscleImages/shoulders2.png");
+        break;
+      case "traps":
+        modalMusclePath1 = require("./muscleImages/traps1.png");
+        modalMusclePath2 = require("./muscleImages/traps2.png");
         break;
       case "triceps":
-        modalMusclePath1 = require("./muscleImages/triceps1.png");
-        modalMusclePath2 = require("./muscleImages/triceps2.png");
+        modalMusclePath1 = require("./muscleImages/default1.png");
+        modalMusclePath2 = require("./muscleImages/triceps1.png");
         break;
       default: 
         modalMusclePath1 = require("./muscleImages/default1.png");
         modalMusclePath2 = require("./muscleImages/default2.png");
-
       } 
   }
 
@@ -480,7 +579,22 @@ export default function Workout({ navigation }) {
     }
 
     if (action == "ADD"){
-      saveExercise(exerciseArr[tempIndex].name);
+      // saveExercise(exerciseArr[tempIndex].name);
+      setModalAddVisible(true);
+      setSetting1(setNumArr[0])
+      setSetting2(timeArr[0]);
+      setSetting3(timeArr[0]);
+      for(var i = 0; i < setNumArr.length; i++){
+        settingStyleArr1[i] = modalAddStyles.timeButtonOff;
+      }
+      for(var i = 0; i < timeArr.length; i++){
+        settingStyleArr2[i] = modalAddStyles.timeButtonOff;
+        settingStyleArr3[i] = modalAddStyles.timeButtonOff;
+      }
+      settingStyleArr1[0] = modalAddStyles.timeButtonOn;
+      settingStyleArr2[0] = modalAddStyles.timeButtonOn;
+      settingStyleArr3[0] = modalAddStyles.timeButtonOn;
+      
     } 
     else if (action == "LEFT"){
       tempIndex--;
@@ -497,28 +611,51 @@ export default function Workout({ navigation }) {
 
     var update = true;
     var count = 0;
-    if(exerciseArr.length == 1 && action == "ADD"){ 
-      setModalVisible(!modalVisible);
-      update = false;
-    } 
-    else if (action == "ADD") {
-      if(tempIndex + 1> exerciseArr.length - 1){
-        tempIndex = 0;
-      } else {
-        count = 1;
-      }
-    } 
+    // if(exerciseArr.length == 1 && action == "ADD"){ 
+    //   setModalVisible(!modalVisible);
+    //   update = false;
+    // } 
+    // else if (action == "ADD") {
+    //   if(tempIndex + 1> exerciseArr.length - 1){
+    //     tempIndex = 0;
+    //   } else {
+    //     count = 1;
+    //   }
+    // } 
     if(update) {
       setModalIndex(tempIndex);
       setPath(exerciseArr[tempIndex + count].muscle);
       setModalInfo({
         id: exerciseArr[tempIndex + count].id,
         name: exerciseArr[tempIndex + count].name, 
+        type: exerciseArr[tempIndex + count].type,
         muscle: exerciseArr[tempIndex + count].muscle, 
         equipment: exerciseArr[tempIndex + count].equipment, 
         difficulty: exerciseArr[tempIndex + count].difficulty, 
         instructions: exerciseArr[tempIndex + count].instructions
       }); 
+    }
+  }
+
+  const selectSetting = (type, index) => {
+    if(type == 1){
+      setSetting1(setNumArr[index]);
+      for(var i = 0; i < setNumArr.length; i++){
+        settingStyleArr1[i] = modalAddStyles.timeButtonOff;
+      }
+      settingStyleArr1[index] = modalAddStyles.timeButtonOn;
+    } else if (type == 2) {
+      setSetting2(timeArr[index]);
+      for(var i = 0; i < timeArr.length; i++){
+        settingStyleArr2[i] = modalAddStyles.timeButtonOff;
+      }
+      settingStyleArr2[index] = modalAddStyles.timeButtonOn;
+    } else if (type == 3) {
+      setSetting3(timeArr[index]);
+      for(var i = 0; i < timeArr.length; i++){
+        settingStyleArr3[i] = modalAddStyles.timeButtonOff;
+      }
+      settingStyleArr3[index] = modalAddStyles.timeButtonOn;
     }
   }
 
@@ -576,9 +713,9 @@ export default function Workout({ navigation }) {
                     </View>
                     <View style={modalStyles.infoTextContainer}>
                       <View style={modalStyles.infoTextView1}>
-                        <Text style={modalStyles.infoText1}> Muscle </Text>
+                        <Text style={modalStyles.infoText1}> Category </Text>
                       </View>
-                      <Text style={modalStyles.infoText2}>{ modalInfo.muscle }</Text>
+                      <Text style={modalStyles.infoText2}>{ modalInfo.type }</Text>
                     </View>
                     <View style={[modalStyles.infoTextContainer, modalStyles.infoTextViewTweak]}>
                       <View style={modalStyles.infoTextView1}>
@@ -654,6 +791,78 @@ export default function Workout({ navigation }) {
             </ScrollView>
           </View>
         </View>
+
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalAddVisible}
+          onRequestClose={() => {Alert.alert('Modal has been closed.'); setModalAddVisible(!modalAddVisible); }}>
+          <BlurView intensity={65} tint="dark" style={modalAddStyles.modalContainer}>
+            <View style={modalAddStyles.modalView}>
+              <View style={modalAddStyles.titleView1}>
+                <View style={modalAddStyles.titleView2}>
+                  <Text style={modalAddStyles.titleText}>Exercise Settings</Text>
+                </View>
+                <Icon
+                  onPress={() => setModalAddVisible(!modalAddVisible)}
+                  style={modalAddStyles.closeButton}
+                  color="#8a7ed9"
+                  name="close-box-outline"
+                  type="material-community"
+                  size="40"
+                />
+              </View>
+              <View style={modalAddStyles.dividerView}>
+                <Divider borderColor="#8a7ed9" color="#e2deff" orientation="center">Number of Sets</Divider>
+              </View>
+              <View style={modalAddStyles.scrollContainer1}>
+                <ScrollView horizontal={true} style={modalAddStyles.scrollContainer2} showsHorizontalScrollIndicator={false}>
+                  <View style={modalAddStyles.scrollContainer3}> 
+                    {setNumArr.map((info, index) => (
+                      <TouchableOpacity key={index} style={settingStyleArr1[index]} onPress={() => {selectSetting(1, index)}}>
+                        <Text style={modalAddStyles.timeButtonText}>{info}</Text>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                </ScrollView>
+              </View>
+              <View style={modalAddStyles.dividerView}>
+                <Divider borderColor="#8a7ed9" color="#e2deff" orientation="center">Rest Per Set</Divider>
+              </View>
+              <View style={modalAddStyles.scrollContainer1}>
+                <ScrollView horizontal={true} style={modalAddStyles.scrollContainer2} showsHorizontalScrollIndicator={false}>
+                  <View style={modalAddStyles.scrollContainer3}> 
+                    {timeArr.map((info, index) => (
+                      <TouchableOpacity
+                        key={index} style={settingStyleArr2[index]} onPress={() => {selectSetting(2, index)}}>
+                        <Text style={modalAddStyles.timeButtonText}>{info}</Text>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                </ScrollView>
+              </View>
+              {/* <View style={modalAddStyles.dividerView}>
+                <Divider borderColor="#8a7ed9" color="#e2deff" orientation="center">Rest After All</Divider>
+              </View>
+              <View style={modalAddStyles.scrollContainer1}>
+                <ScrollView horizontal={true} style={modalAddStyles.scrollContainer2} showsHorizontalScrollIndicator={false}>
+                  <View style={modalAddStyles.scrollContainer3}> 
+                    {timeArr.map((info, index) => (
+                      <TouchableOpacity
+                        key={index} style={settingStyleArr3[index]} onPress={() => {selectSetting(3, index)}}>
+                        <Text style={modalAddStyles.timeButtonText}>{info}</Text>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                </ScrollView>
+              </View>  */}
+              <TouchableOpacity style={modalAddStyles.saveButton} onPress={saveExercise2}>
+                <Text style={modalAddStyles.saveText}>SAVE</Text>
+              </TouchableOpacity>
+            </View>
+          </BlurView>
+
+        </Modal>
       </Modal>
 
       <Modal
@@ -812,6 +1021,7 @@ export default function Workout({ navigation }) {
                     setModalInfo({
                       id: info.id,
                       name: info.name, 
+                      type: info.type,
                       muscle: info.muscle, 
                       equipment: info.equipment, 
                       difficulty: info.difficulty, 
@@ -943,7 +1153,7 @@ const modalStyles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 3,
-    borderColor: "#7c6f9e",
+    borderColor: "#7c6f9e",//8e8efa//7c6f9e
     borderRadius: 7,
   },
 
@@ -969,15 +1179,17 @@ const modalStyles = StyleSheet.create({
     borderBottomWidth: 0,
   },
   infoText1: {
-    fontSize: 25,
+    fontSize: 25, //25
     fontWeight: "400",
     color: "#fff",
     letterSpacing: 1.5,
   },
   infoText2: {
-    fontSize: 18,
+    fontSize: 19, //18
     marginBottom: 5,
     color: "#d0d1d6",
+    maxWidth: 160,
+    maxHeight: 30,
   },
 
   flipMuscleView: {
@@ -1097,6 +1309,110 @@ const modalStyles = StyleSheet.create({
     marginLeft: 20,
     marginRight: 10,
     lineHeight: 25,
+  },
+})
+
+const modalAddStyles = StyleSheet.create({
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalView: {
+    alignItems: 'center',
+    height: "42%",
+    width: "70%",
+    backgroundColor: "#404057",//'#404057', //0d0d12 //26, 26, 41
+    borderRadius: 15,
+    borderWidth: 2,
+    borderColor: "#8a7ed9",
+  },
+  titleView1: {
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 7,
+  },
+  titleView2: {
+    width: 190,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  titleText: {
+    color: "#e2deff",
+    fontSize: 20,
+    fontWeight: "300",
+    letterSpacing: 1.5,
+  },
+  closeButton: {
+    // marginTop: 7,
+    // marginRight: 7,
+    marginLeft: 20,
+  },
+
+  scrollContainer1: {
+    flex: 1,
+    maxHeight: 45,
+    width: "90%",
+    backgroundColor: "#2b2b40",
+    paddingHorizontal: 5,
+    borderRadius: 3,
+  },
+  scrollContainer2: {
+    maxHeight: 45,
+  },
+  scrollContainer3: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "red",
+    paddingHorizontal: 5,
+    borderRadius: 3,
+    backgroundColor: "#2b2b40",
+  },
+  timeButtonOff: {
+    width: 40,
+    height: 30,
+    borderRightWidth: 1,
+    borderLeftWidth: 1,
+    borderColor: "white",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  timeButtonOn : {
+    width: 40,
+    height: 30,
+    borderRightWidth: 1,
+    borderLeftWidth: 1,
+    borderColor: "white",
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#67678f",
+  },
+  timeButtonText: {
+    color: "white",
+    fontSize: 20,
+    fontWeight: "300",
+  },
+    dividerView: {
+    width: "92%",
+    marginVertical: 10,
+  },
+
+  saveButton: {
+    borderRadius: 5,
+    borderWidth: 3,
+    borderColor: "#8a7ed9",
+    backgroundColor: "#67678f",
+    marginTop: 22,
+    paddingHorizontal: 20,
+    paddingVertical: 8,
+  },
+  saveText: {
+    letterSpacing: 2,
+    fontSize: 23,
+    fontWeight: "300",
+    color: "#f1f0fc",
   },
 })
 
