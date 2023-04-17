@@ -104,9 +104,6 @@ export default function Workout({ navigation }) {
     } else {
       console.log("loadWorkouts function error");
     }
-    console.log(exerciseArr);
-    setExerciseArr([]);
-    console.log(exerciseArr);
   }
 
   const recieveButtonClicks = (input) => {
