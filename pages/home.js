@@ -21,7 +21,15 @@ import { async } from "@firebase/util";
 import HomeCards from './homeCards';
 import RedirectCards from './RedirectCards';
 
-export default function Home() {
+export default function Home({navigation}) {
+
+  React.useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      loadWorkouts();       
+    });
+    return unsubscribe;
+  }, []);
+
   const auth = getAuth();
   const user = auth.currentUser;
 
@@ -49,10 +57,9 @@ export default function Home() {
   const [workoutName, setWorkoutName] = useState("")
   const [workoutDesc, setWorkoutDesc] = useState("")
 
-  const [totalWorkoutsArr, setTotalWorkoutsArr] = useState("")
+  const [totalWorkoutsArr, setTotalWorkoutsArr] = useState([])
 
-
-
+  const [openSpecWorkout, setOpenSpecWorkout] = useState([])
 
   async function queryWorkoutCols() {
     const exercisesTemp = []
@@ -72,32 +79,41 @@ export default function Home() {
     const auth = getAuth();
     const user = auth.currentUser
     const usernameString = auth.currentUser.email.substring(0, auth.currentUser.email.indexOf("@"));
-   
+    
     setOpenNewWorkoutPage(false)
-    await setDoc(doc(db, "accounts", user.uid, "workouts", workoutName, "exercises", "temp"));
 
     await setDoc(doc(db, "accounts", user.uid, "workouts", workoutName), {
-      exercisesBreak: breakTime,
-      workoutDesc: workoutDesc
+      description: workoutDesc,
+      breakTime: breakTime,
+      name: workoutName
+    });
+
+    const docSnap = await getDoc(doc(db, "accounts", user.uid));
+    const tempArr1 = docSnap.data().workouts;  
+    tempArr1.push(workoutName)
+    await setDoc(doc(db, "accounts", user.uid), {
+      username: usernameString,
+      workouts: tempArr1
     })
-
-
-    const docRef = doc(db, "accounts", user.uid);
-    const docSnap = await getDoc(docRef);
-    if (docSnap.exists()) {
-      const tempArr1 = docSnap.data().workouts;
-      tempArr1.push(workoutName)
-      const colRef = collection(db, "accounts", );
-      setTotalWorkoutsArr()
-      await setDoc(doc(db, "accounts", user.uid), {
-        username: usernameString,
-        workouts: tempArr1
-      })
-    }
-    //Create Firebase Collection 
-    //Add name to workout array
-  
   }
+
+  async function loadWorkouts() {
+    const allWorkoutsArr = []
+      const workoutRef = collection(db, "accounts", user.uid, "workouts");
+      const workoutDocs = await getDocs(workoutRef);
+      workoutDocs.forEach(doc => {
+        if (doc.id != "temp") {
+          allWorkoutsArr.push(doc.data())
+        }
+      })        
+      setTotalWorkoutsArr(allWorkoutsArr)
+  }
+
+  const openSpecificWorkout = () => {
+    setOpenSpecWorkout(true);
+  }
+
+  
 
   const recieveBreakTimes = (input) => {
     setBut5(newWorkout.breakButton)
@@ -233,7 +249,6 @@ export default function Home() {
 
       }
     }
-    
   }
 
   return (
@@ -241,15 +256,30 @@ export default function Home() {
         <View>
           <View flexDirection='row'>
             <Text style={backgroundStyle.titleText}> Welcome, {userID.substring(0, userID.indexOf("@"))} </Text>
-            <TouchableOpacity style = {{marginLeft:72, marginTop:13}}>
+            <TouchableOpacity style = {{marginLeft:72, marginTop:13}} onPress={openSpecificWorkout}>
               <Image source={ require('../assets/person3.png') } style={ { width: 60, height: 60 } } />
             </TouchableOpacity>
           </View>
           <ScrollView horizontal={true} alignSelf={'left'} marginLeft={0} marginBottom={10}>
-            <HomeCards></HomeCards>
-            <HomeCards></HomeCards>
-            <HomeCards></HomeCards>
-            <HomeCards></HomeCards>          
+            
+            {totalWorkoutsArr.map((info, index) => (
+            <View key={index}>
+              <View style={cardStyle.container}>
+                <Text style={cardStyle.titleText}>{info.name}</Text>
+
+                <View style={cardStyle.image}>
+                    <TouchableOpacity style = {{paddingRight:10, left:'315%', marginTop: 105}} onPress={openSpecificWorkout}>
+                        <Image source={ require('../assets/arrow2.png') } style={ { width: 50, height: 55 } } />
+                    </TouchableOpacity>         
+                </View>
+                <View>
+                    <Text style={cardStyle.subText}>{info.description}</Text>
+                </View>
+                <Text style={cardStyle.arrowText}>Jump In</Text>         
+              </View>
+            </View> 
+            ))}  
+
           </ScrollView>
 
           
@@ -375,6 +405,19 @@ export default function Home() {
           </View>
         
       </Modal>
+
+      <Modal
+        animationType="slide"
+        visible={openSpecWorkout}
+        onRequestClose={() => {
+          Alert.alert('Modal has been closed.');
+          setOpenNewWorkoutPage(!openNewWorkoutPage);
+        }}>
+          <View style={newWorkout.container}>
+
+          </View>
+      </Modal>
+
     </View>
    
   )
@@ -686,3 +729,56 @@ const newWorkout = StyleSheet.create({
     color: "#ffffff",
   },
 })
+
+const cardStyle = StyleSheet.create({
+
+  container: {
+    backgroundColor: '#404057',
+    marginTop: 30,
+    margin: 6,
+    height: 160,
+    width: 255,
+    shadowColor: 'rgba(215, 215, 250, 0.2)',
+    borderRadius: 10,
+    shadowOpacity: 0.5,
+    elevation: 6,
+    shadowRadius: 15,
+    shadowOffset : { width: 0, height: 5},
+  },
+
+  image: {
+      position: 'absolute'
+  },
+
+  titleText: {
+      color: "#ffffff",
+      fontWeight: "500",
+      fontSize: 20,
+      alignSelf: "left",
+      marginTop: 12,
+      marginLeft: 12,
+      marginRight: 5
+  },
+
+  subText: {
+      color: "#ffffff",
+      marginTop: 10,
+      marginLeft: 10,
+      marginRight: 5
+
+  },
+
+  arrowText: {
+      color: "#0d0d12",
+      fontSize: 18,
+      fontWeight: '300%',
+      fontStyle: 'italic',
+      marginTop: 121,
+      marginLeft: 122,
+      marginRight: 20,
+      position: 'absolute'
+
+  }
+
+})
+

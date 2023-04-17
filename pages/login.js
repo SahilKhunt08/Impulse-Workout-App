@@ -19,9 +19,11 @@ async function newDoc() {
   await setDoc(doc(db, "accounts", user.uid, "requests", "temp"), {
   });
   await setDoc(doc(db, "accounts", user.uid, "workouts", "temp"), {
+    temp: 'temp'
   });
   await setDoc(doc(db, "accounts", user.uid), {
     username: usernameString,
+    workouts: []
   })
 
 }
@@ -29,9 +31,10 @@ async function newDoc() {
 export default function Login({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("")  
-  console.log("fd")
   
   const handleRegister = () => {
+    console.log("fd")
+
     createUserWithEmailAndPassword(auth, email, password).then(() => {
         newDoc();
       }).then(() => {
