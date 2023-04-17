@@ -93,7 +93,7 @@ export default function Workout({ navigation }) {
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
-      var tempArr1 = docSnap.data().workouts;
+      var tempArr1 = docSnap.data().workoutArr;
       setWorkoutNameArr(tempArr1);
       setWorkoutSelected(tempArr1[0]);
       var tempArr2 = [buttonRowStyles.buttonOn];
@@ -104,6 +104,9 @@ export default function Workout({ navigation }) {
     } else {
       console.log("loadWorkouts function error");
     }
+    console.log(exerciseArr);
+    setExerciseArr([]);
+    console.log(exerciseArr);
   }
 
   const recieveButtonClicks = (input) => {
