@@ -9,24 +9,6 @@ import { async } from "@firebase/util";
 import Divider from 'react-native-divider';
 import { Icon } from '@rneui/themed';
 
-async function newDoc() {
-  
-  const auth = getAuth();
-  const user = auth.currentUser   
-  const usernameString = auth.currentUser.email.substring(0, auth.currentUser.email.indexOf("@"));
-
-  await setDoc(doc(db, "accounts", user.uid, "friends", "temp"), {
-  });
-  await setDoc(doc(db, "accounts", user.uid, "requests", "temp"), {
-  });
-  await setDoc(doc(db, "accounts", user.uid, "workouts", "temp"), {
-    temp: 'temp'
-  });
-  await setDoc(doc(db, "accounts", user.uid), {
-    username: usernameString,
-    workouts: []
-    }
-    }
 export default function Login({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("")  
@@ -36,10 +18,26 @@ export default function Login({ navigation }) {
   const [modalVisible, setModalVisible] = useState(false);
 
 async function makeNewDoc() {
+  const auth = getAuth();
+  const user = auth.currentUser   
+  const usernameString = auth.currentUser.email.substring(0, auth.currentUser.email.indexOf("@"));
+  const friendsRef = await setDoc(doc(db, "accounts", user.uid, "friends", "temp"), {});
+  const requestsRef = await setDoc(doc(db, "accounts", user.uid, "requests", "temp"), {});
+  const workoutRef = await setDoc(doc(db, "accounts", user.uid, "workouts", "temp"), {});
+  const workout1Ref = await setDoc(doc(db, "accounts", user.uid, "workouts", "workout1"), {name: "workout1"});
+  const workout2Ref = await setDoc(doc(db, "accounts", user.uid, "workouts", "workout2"), {name: "workout2"});
+  const workout3Ref = await setDoc(doc(db, "accounts", user.uid, "workouts", "workout3"), {name: "workout3"});
+  const workout4Ref = await setDoc(doc(db, "accounts", user.uid, "workouts", "workout4"), {name: "workout4"});
+  const workout5Ref = await setDoc(doc(db, "accounts", user.uid, "workouts", "workout5"), {name: "workout5"});
+  const setTempField = await setDoc(doc(db, "accounts", user.uid), {
+    username: newUsername,
+    workoutsArr: ["workout1", "workout2", "workout3", "workout4", "workout5"]
+  })
+  // navigation.replace('Impulse')
   navigation.navigate('Impulse') //Old version
   setModalVisible(false);
 }
-  
+
   const handleRegister = () => {
     createUserWithEmailAndPassword(auth, newEmail, newPassword).then(() => {
         makeNewDoc();
@@ -49,6 +47,7 @@ async function makeNewDoc() {
       .catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
+        // ..
       });
   }
 
@@ -107,10 +106,6 @@ async function makeNewDoc() {
 
       <TouchableOpacity style={newStyles.loginBtn} onPress={handleLogin}>
         <Text style={newStyles.loginText}>LOGIN</Text> 
-      </TouchableOpacity> 
-
-      <TouchableOpacity style={newStyles.loginBtn} onPress={handleRegister}>
-        <Text style={newStyles.loginText}>REGISTER</Text> 
       </TouchableOpacity> 
 
       <View style={newStyles.dividerView}>
