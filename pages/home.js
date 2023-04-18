@@ -1,25 +1,19 @@
-// Tweak list
-// - Change text based on time (Good Morning/Good Afternoon)
-
-
-//TO DO
-//--Fix it so that the user uid col has fields for each workout, move friend requests and friends arrays in the field
-//--Loop through all the collections in each user uid document 
-//--Display in card
 
 //--Start the jump in page with 
+
 
 import React, { useState } from 'react'
 import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity, ScrollView, Button, Modal} from "react-native";
 import Card1 from "./components/card1";
 import Card2 from "./components/card2";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
-import { addDoc, doc, enableNetwork, setDoc, getCountFromServer, collection, getDocs, namedQuery, updateDoc,getDoc} from "firebase/firestore"; 
+import { addDoc, doc, enableNetwork, setDoc, getCountFromServer, collection, getDocs, namedQuery, updateDoc,getDoc, deleteDoc} from "firebase/firestore"; 
 import {db} from './firebase';
 import { async } from "@firebase/util";
 
 import HomeCards from './homeCards';
 import RedirectCards from './RedirectCards';
+
 
 export default function Home({navigation}) {
 
@@ -61,6 +55,7 @@ export default function Home({navigation}) {
 
   const [openSpecWorkout, setOpenSpecWorkout] = useState([])
 
+
   async function queryWorkoutCols() {
     const exercisesTemp = []
     const auth = getAuth();
@@ -79,13 +74,13 @@ export default function Home({navigation}) {
     const auth = getAuth();
     const user = auth.currentUser
     const usernameString = auth.currentUser.email.substring(0, auth.currentUser.email.indexOf("@"));
-    
     setOpenNewWorkoutPage(false)
-
+    const uID = Math.random()
     await setDoc(doc(db, "accounts", user.uid, "workouts", workoutName), {
       description: workoutDesc,
       breakTime: breakTime,
-      name: workoutName
+      name: workoutName,
+      workoutID: uID
     });
 
     const docSnap = await getDoc(doc(db, "accounts", user.uid));
@@ -93,8 +88,9 @@ export default function Home({navigation}) {
     tempArr1.push(workoutName)
     await setDoc(doc(db, "accounts", user.uid), {
       username: usernameString,
-      workouts: tempArr1
+      workoutsArr: tempArr1
     })
+    loadWorkouts()
   }
 
   async function loadWorkouts() {
@@ -113,8 +109,42 @@ export default function Home({navigation}) {
     setOpenSpecWorkout(true);
   }
 
+  const temp = () => {
+    console.log(totalWorkoutsArr)
+  }
   
+  async function deleteWorkout(index) {
+    const auth = getAuth();
+    const user = auth.currentUser;
 
+    let deleteID = -1;
+    let tempWorkoutArr = totalWorkoutsArr
+    let deleteName = ""
+
+    for (let i = 0; i < totalWorkoutsArr.length; i++) {
+      if (totalWorkoutsArr[i].workoutID == index) { 
+        deleteID = i;
+        deleteName = totalWorkoutsArr[i].name
+      }
+    }
+
+    const docSnap = await getDoc(doc(db, "accounts", user.uid));
+    const tempArr1 = docSnap.data().workouts;  
+    const deleteIndex = tempArr1.indexOf(deleteName)
+    const usernameString = auth.currentUser.email.substring(0, auth.currentUser.email.indexOf("@"));
+
+    tempArr1.splice(deleteIndex, deleteIndex+1)
+    await setDoc(doc(db, "accounts", user.uid), {
+      username: usernameString,
+      workoutsArr: tempArr1
+    })
+
+    await deleteDoc(doc(db, "accounts", user.uid, "workouts", deleteName));
+
+    loadWorkouts()
+    
+  }
+  
   const recieveBreakTimes = (input) => {
     setBut5(newWorkout.breakButton)
     setBut10(newWorkout.breakButton)
@@ -256,7 +286,7 @@ export default function Home({navigation}) {
         <View>
           <View flexDirection='row'>
             <Text style={backgroundStyle.titleText}> Welcome, {userID.substring(0, userID.indexOf("@"))} </Text>
-            <TouchableOpacity style = {{marginLeft:72, marginTop:13}} onPress={openSpecificWorkout}>
+            <TouchableOpacity style = {{marginLeft:72, marginTop:13}} onPress={temp}>
               <Image source={ require('../assets/person3.png') } style={ { width: 60, height: 60 } } />
             </TouchableOpacity>
           </View>
@@ -266,6 +296,9 @@ export default function Home({navigation}) {
             <View key={index}>
               <View style={cardStyle.container}>
                 <Text style={cardStyle.titleText}>{info.name}</Text>
+                <TouchableOpacity style = {{position: 'absolute', paddingRight:10, marginTop: 10, marginLeft: 215}} onPress={() => deleteWorkout(info.workoutID)}>
+                        <Image source={ require('../assets/trashIcon.png') } style={ { width: 30, height: 35 } } />
+                    </TouchableOpacity> 
 
                 <View style={cardStyle.image}>
                     <TouchableOpacity style = {{paddingRight:10, left:'315%', marginTop: 105}} onPress={openSpecificWorkout}>
