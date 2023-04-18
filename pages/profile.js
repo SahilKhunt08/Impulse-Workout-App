@@ -8,6 +8,7 @@ import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, on
 import { addDoc, getDoc, doc, enableNetwork, setDoc, getCountFromServer, collection, getDocs, namedQuery, query, deleteDoc} from "firebase/firestore"; 
 
 export default function Profile({ navigation }) {
+
   
   React.useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
@@ -16,54 +17,94 @@ export default function Profile({ navigation }) {
     return unsubscribe;
   }, []);
 
+
   const [username, setUsername] = useState("");
-  // const [requestArr, setRequestArr] = useState([{name: "temp", id: "temp"}]);
+  const [requestName, setRequestName] = useState("");
   const [requestArr, setRequestArr] = useState([]);
   const [count, setCount] = useState(0);
+  const [workoutNamesArr, setWorkoutNamesArr] = useState([]);
   const auth = getAuth();
   const user = auth.currentUser;
   const LeftContent = props => <Avatar.Icon {...props} icon="human" />
 
-  async function saveProfile() {
-    const allDocInfo = [];
-    const docRef1 = doc(db, "accounts", user.uid);
-    const docSnap = await getDoc(docRef1);
-
-    if (docSnap.exists()) {
-      // allDocInfo[0] = docSnap.data().var1; //name of field
-      // allDocInfo[1] = docSnap.data().var2; //name of field
-      allDocInfo[2] = docSnap.data().username;
-    } else {
-      console.log("No such document!");
-    }
-
-    const docRef2 = await setDoc(doc(db, "accounts", user.uid), {
-      // var1: allDocInfo[0],
-      // var2: allDocInfo[1],
-      username: username,
+  React.useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      initialize();
     });
-  }
+    return unsubscribe;
+  }, []);
 
-  async function loadRequests() {
+  async function initialize() {
     const docIdArr = [];
     const requestInfoArr = [];
     const querySnapshot = await getDocs(collection(db, "accounts", user.uid, "requests"));
     querySnapshot.forEach((doc) => {
       if(doc.id != "temp"){
-        docIdArr.push(doc.id); //Doc IDs of every friend request
+        docIdArr.push(doc.id);
       }
     });
 
     let currentNum = count;
     for(var i = 0; i < docIdArr.length; i++){
-      const docRef = doc(db, "accounts", docIdArr[i]);
-      const docSnap = await getDoc(docRef);
-      requestInfoArr.push({name: docSnap.data().username, id:currentNum});
+      const docRef1 = doc(db, "accounts", docIdArr[i]);
+      const docSnap1 = await getDoc(docRef1);
+      requestInfoArr.push({name: docSnap1.data().username, id:currentNum});
       currentNum++;
     }
 
     setCount(currentNum);
     setRequestArr(requestInfoArr);
+
+    const docRef2 = doc(db, "accounts", user.uid);
+    const docSnap2 = await getDoc(docRef2);
+
+    if (docSnap2.exists()) {
+      setUsername(docSnap2.data().username);
+      setWorkoutNamesArr(docSnap2.data().workoutsArr);
+    } else {
+      console.log("No such document!");
+    }
+  }
+
+  async function saveProfile() {
+    const docRef2 = await setDoc(doc(db, "accounts", user.uid), {
+      username: username,
+      workoutsArr: workoutNamesArr,
+    });
+  }
+
+  async function sendFriendRequest() {
+    const auth = getAuth();
+    const user = auth.currentUser;
+    const docRef = doc(db, "accounts", user.uid);
+    const docSnap = await getDoc(docRef);
+    let accountUsername = "";
+    if (docSnap.exists()) {
+      accountUsername = docSnap.data().username;
+    } else {
+      console.log("No such document!");
+    }
+
+    const accountsColRef = collection(db, "accounts"); 
+    const querySnapshot = await getDocs(accountsColRef);
+    if(requestName !== accountUsername){
+    querySnapshot.forEach(doc => {
+        if (requestName === doc.data().username){
+          addFriendToUserDoc(doc.id)
+          requestName("");
+          console.log("matches")
+        }
+      });
+    }
+  }
+
+  async function addFriendToUserDoc(friendID) {
+    const auth = getAuth()
+    const user = auth.currentUser
+
+    await setDoc(doc(db, "accounts", friendID, "requests", user.uid), {
+      id: user.uid
+    })
   }
 
   async function addButton(index) { 
@@ -118,29 +159,22 @@ export default function Profile({ navigation }) {
         <TouchableOpacity  onPress={saveProfile}>
             <Image source={ require('../assets/settingsIcon.png') } style={ { width: 35, height: 35 } } />
         </TouchableOpacity>
-        
       </View>
 
       <View style={styles.profilePicture}>
-        <Avatar
-          size={150}
-          rounded
-          source={require('../assets/person2.png')}
-        ></Avatar>
-       
+        <Avatar size={150} rounded source={require('../assets/person2.png')}></Avatar>
       </View>
 
-      <View style={{flexDirection: "row", alignItems: "center",}}>
-          <TextInput
-              style={styles.paragraph}
-              placeholder="Username"
-              placeholderTextColor= "#ffffff"
-              onChangeText={(username) => setUsername(username)}
-            /> 
-          <TouchableOpacity  onPress={saveProfile}>
-            <Image source={ require('../assets/checkmark1.png') } style={ { width: 40, height: 40 } } />
-
-          </TouchableOpacity>
+      <View style={styles.usernameView}>
+        <TextInput
+            style={styles.usernameInput}
+            placeholder={username}
+            placeholderTextColor= "#ffffff"
+            onChangeText={(username) => setUsername(username)}
+          /> 
+        <TouchableOpacity  onPress={saveProfile}>
+          <Image source={ require('../assets/checkmark1.png') } style={ { width: 40, height: 40 } } />
+        </TouchableOpacity>
       </View>
 
       <View style={styles.requestContainer}>
@@ -148,24 +182,38 @@ export default function Profile({ navigation }) {
          <Text style={styles.requestTitle}> Friend Requests</Text>
         </View>
 
+        <View style={styles.sendRequestView}>
+          <TextInput
+            style={styles.requestNameInput}
+            placeholder= "Name Here"
+            placeholderTextColor= "#f2e6ff"
+            onChangeText={(requestName) => setRequestName(requestName)}
+          /> 
+          <TouchableOpacity style={styles.sendRequestBtn} onPress={sendFriendRequest}>
+            <Text style={styles.sendRequestBtnText}>Send Request</Text>
+          </TouchableOpacity>
+        </View>
+
         <ScrollView style={styles.scrollStyle}>
           <View style={styles.container2}>
           {requestArr.map((info, index) => (
           <View key={index} style={styles.workoutCard}>
-            <Text> {info.name} </Text>
-            <View style={{alignItems: "center", flexDirection: "row",}}>
-              <TouchableOpacity style={styles.requestButton} onPress={() => addButton(info.id)}>
-                <Text> Add </Text>
+            <View style={styles.friendNameView}>
+              <Text style={styles.friendNameText}> {info.name} </Text>
+            </View>
+            <View style={styles.twoButtonView}>
+              <TouchableOpacity style={styles.requestButton1} onPress={() => addButton(info.id)}>
+                <Text style={styles.requestText}>Add</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.requestButton} onPress={() => denyButton(info.id)}>
-                <Text> Deny </Text>
+              <TouchableOpacity style={styles.requestButton2} onPress={() => denyButton(info.id)}>
+                <Text style={styles.requestText}>Deny</Text>
               </TouchableOpacity>
             </View>
           </View>
           ))}
           </View>
         </ScrollView>
- 
+
       </View>
     </View>
 
@@ -219,6 +267,7 @@ const styles = StyleSheet.create({
     padding: 10,
     marginTop: 5,
     marginHorizontal: 5,
+    color: "#fff",
    
 
   },
@@ -242,11 +291,21 @@ const styles = StyleSheet.create({
     maxHeight: 495,
     alignContent: "center"
   },
-  requestButton: {
-    borderRadius: 15,
+  requestButton1: {
+    borderRadius: 8,
     borderWidth: 3,
     alignItems: "center",
-    backgroundColor: "white",
+    backgroundColor: "#70a17e",
+    margin: 5,
+    height: 40,
+    width: 60,
+    justifyContent: "center",
+  },
+  requestButton2: {
+    borderRadius: 8,
+    borderWidth: 3,
+    alignItems: "center",
+    backgroundColor: "#c76565",
     margin: 5,
     height: 40,
     width: 60,
@@ -255,13 +314,87 @@ const styles = StyleSheet.create({
   workoutCard: {
     marginTop: 10,
     width: "90%",
-    backgroundColor: "white",
+    backgroundColor: "#463e4f",
     bordercolor: "black",
     borderWidth: 2,
     borderRadius: 5,
     justifyContent: "center",
-    alignContent: "center",
+    alignItems: "center",
+    flexDirection: "row",
   }, 
+
+  usernameView: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    width: "90%",
+  },
+  usernameInput: {
+    borderRadius: 5,
+    borderWidth: 2,
+    borderColor: "#404057",
+    fontSize: 15,
+    fontWeight: 'bold',
+    textAlign: "center",
+    backgroundColor: '#0d0d12',
+    padding: 10,
+    marginLeft: 50,
+    marginRight: 10,
+    color: "#fff",
+    width: "50%",
+  },
+  friendNameView: {
+    width: "55%",
+    justifyContent: "center",
+    height: 30,
+  },
+  friendNameText: {
+    fontSize: 20,
+    color: "#f2e6ff",
+    marginLeft: 5,
+  },
+  twoButtonView: {
+    alignItems: "center",
+    flexDirection: "row",
+  },
+  requestText: {
+    fontSize: 17,
+    fontWeight: "600",
+  },
+
+  sendRequestView: {
+    marginTop: 10,
+    width: "90%",
+    backgroundColor: "#463e4f",
+    bordercolor: "black",
+    borderWidth: 2,
+    borderRadius: 5,
+    justifyContent: "center",
+    alignItems: "center",
+    flexDirection: "row",
+  },
+  requestNameInput: {
+    width: "52%",
+    fontSize: 20,
+    color: "#f2e6ff",
+    marginLeft: 4,
+    marginRight: 1,
+  },
+  sendRequestBtn: {
+    borderRadius: 8,
+    borderWidth: 3,
+    alignItems: "center",
+    backgroundColor: "#70a17e",
+    margin: 5,
+    marginRight: 2,
+    height: 40,
+    paddingHorizontal: 10,
+    justifyContent: "center",
+  },
+  sendRequestBtnText: {
+    fontSize: 17,
+    fontWeight: "600",
+  },
 });
 
 //Code for box shadows
@@ -269,4 +402,3 @@ const styles = StyleSheet.create({
 // shadowOffset: {width: -2, height: 4},
 // shadowOpacity: 0.2,
 // shadowRadius: 3,
-

@@ -41,14 +41,15 @@ function Impulse() {
           headerTitleStyle: {
             fontWeight: 'bold',
             fontSize: 20,
+            letterSpacing: 2,
           },
           tabBarIcon: (tabInfo) => {
             return (
               <Icon
               name="home"
               type="material"
-                size={27}
-                color={tabInfo.focused ? "#7d7dfa" : "#fff"}
+              size={27}
+              color={tabInfo.focused ? "#7d7dfa" : "#fff"}
               />
             );
           },
@@ -68,6 +69,7 @@ function Impulse() {
           headerTitleStyle: {
             fontWeight: 'bold',
             fontSize: 20,
+            letterSpacing: 2,
           },
           tabBarIcon: (tabInfo) => {
             return (
@@ -95,6 +97,7 @@ function Impulse() {
           headerTitleStyle: {
             fontWeight: 'bold',
             fontSize: 20,
+            letterSpacing: 2,
           },
           tabBarIcon: (tabInfo) => {
             return (
@@ -122,6 +125,7 @@ function Impulse() {
           headerTitleStyle: {
             fontWeight: 'bold',
             fontSize: 20,
+            letterSpacing: 2,
           },
           tabBarIcon: (tabInfo) => {
             return (
@@ -153,6 +157,7 @@ export default function App() {
             headerTitleStyle: {
               fontWeight: 'bold',
               fontSize: 20,
+              letterSpacing: 2,
             },
           }}
         />
