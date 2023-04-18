@@ -37,21 +37,21 @@ export default function Profile({ navigation }) {
 
     let currentNum = count;
     for(var i = 0; i < docIdArr.length; i++){
-      const docRef = doc(db, "accounts", docIdArr[i]);
-      const docSnap = await getDoc(docRef);
-      requestInfoArr.push({name: docSnap.data().username, id:currentNum});
+      const docRef1 = doc(db, "accounts", docIdArr[i]);
+      const docSnap1 = await getDoc(docRef1);
+      requestInfoArr.push({name: docSnap1.data().username, id:currentNum});
       currentNum++;
     }
 
     setCount(currentNum);
     setRequestArr(requestInfoArr);
 
-    const docRef = doc(db, "accounts", user.uid);
-    const docSnap = await getDoc(docRef);
+    const docRef2 = doc(db, "accounts", user.uid);
+    const docSnap2 = await getDoc(docRef2);
 
-    if (docSnap.exists()) {
-      setUsername(docSnap.data().username);
-      setWorkoutNamesArr(docSnap.data().workoutsArr);
+    if (docSnap2.exists()) {
+      setUsername(docSnap2.data().username);
+      setWorkoutNamesArr(docSnap2.data().workoutsArr);
     } else {
       console.log("No such document!");
     }
@@ -365,10 +365,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   requestNameInput: {
-    width: "55%",
+    width: "52%",
     fontSize: 20,
     color: "#f2e6ff",
-    marginLeft: 5,
+    marginLeft: 4,
+    marginRight: 1,
   },
   sendRequestBtn: {
     borderRadius: 8,
@@ -376,9 +377,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#70a17e",
     margin: 5,
+    marginRight: 2,
     height: 40,
-    // width: 90,
-    paddingHorizontal: 7,
+    paddingHorizontal: 10,
     justifyContent: "center",
   },
   sendRequestBtnText: {
