@@ -1,39 +1,46 @@
 // import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
-import { StyleSheet, Text, View, Image, TextInput, Button, TouchableOpacity, StatusBar } from "react-native";
+import { StyleSheet, Text, View, Image, TextInput, Button, TouchableOpacity, StatusBar, Modal} from "react-native";
 import { auth } from './firebase';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
 import { addDoc, doc, enableNetwork, setDoc, collection, getDoc, getDocs, deleteDoc } from "firebase/firestore"; 
 import {db} from './firebase';
 import { async } from "@firebase/util";
 import Divider from 'react-native-divider';
-
-async function newDoc() {
-  const auth = getAuth();
-  const user = auth.currentUser   
-  const usernameString = auth.currentUser.email.substring(0, auth.currentUser.email.indexOf("@"));
-  const friendsRef = await setDoc(doc(db, "accounts", user.uid, "friends", "temp"), {
-  });
-  const requestsRef = await setDoc(doc(db, "accounts", user.uid, "requests", "temp"), {
-  });
-  const workout1Ref = await setDoc(doc(db, "accounts", user.uid, "workout1", "temp"), {
-  });
-  const workout2Ref = await setDoc(doc(db, "accounts", user.uid, "workout2", "temp"), {
-  });
-  const workout3Ref = await setDoc(doc(db, "accounts", user.uid, "workout3", "temp"), {
-  });
-  const setTempField = await setDoc(doc(db, "accounts", user.uid), {
-    username: usernameString,
-  })
-
-}
+import { Icon } from '@rneui/themed';
 
 export default function Login({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("")  
+  const [newUsername, setNewUsername] = useState("");
+  const [newEmail, setNewEmail] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [modalVisible, setModalVisible] = useState(false);
+
+async function makeNewDoc() {
+  const auth = getAuth();
+  const user = auth.currentUser   
+  const usernameString = auth.currentUser.email.substring(0, auth.currentUser.email.indexOf("@"));
+  const friendsRef = await setDoc(doc(db, "accounts", user.uid, "friends", "temp"), {});
+  const requestsRef = await setDoc(doc(db, "accounts", user.uid, "requests", "temp"), {});
+  const workoutRef = await setDoc(doc(db, "accounts", user.uid, "workouts", "temp"), {});
+  const workout1Ref = await setDoc(doc(db, "accounts", user.uid, "workouts", "workout1"), {});
+  const workout2Ref = await setDoc(doc(db, "accounts", user.uid, "workouts", "workout2"), {});
+  const workout3Ref = await setDoc(doc(db, "accounts", user.uid, "workouts", "workout3"), {});
+  const workout4Ref = await setDoc(doc(db, "accounts", user.uid, "workouts", "workout4"), {});
+  const workout5Ref = await setDoc(doc(db, "accounts", user.uid, "workouts", "workout5"), {});
+  const setTempField = await setDoc(doc(db, "accounts", user.uid), {
+    username: newUsername,
+    workout: ["workout1", "workout2", "workout3", "workout4", "workout5"]
+  })
+  // navigation.replace('Impulse')
+  navigation.navigate('Impulse') //Old version
+  setModalVisible(false);
+}
+
   const handleRegister = () => {
-    createUserWithEmailAndPassword(auth, email, password).then(() => {
-        newDoc();
+    createUserWithEmailAndPassword(auth, newEmail, newPassword).then(() => {
+        makeNewDoc();
       }).then(() => {
         console.log("userMade")
       }) 
@@ -42,7 +49,6 @@ export default function Login({ navigation }) {
         const errorMessage = error.message;
         // ..
       });
-
   }
 
   const handleLogin = () => {
@@ -108,16 +114,75 @@ export default function Login({ navigation }) {
         </Divider>
       </View>
 
-      <TouchableOpacity style={newStyles.extraView} >
-        <Image source={require('./google1.png')} style={newStyles.googleImg}/>
-        <Text style={newStyles.extraText}>Continue with Google</Text> 
+      <TouchableOpacity style={newStyles.extraView} onPress={() => setModalVisible(true)}>
+        {/* onPress={setModalVisible(true)} */}
+        <Icon 
+          name="account-plus-outline"
+          type="material-community"
+          size={31}
+          color="#8e8efa"
+        />
+        <Text style={newStyles.extraText1}>REGISTER</Text> 
+      </TouchableOpacity> 
+
+      {/* <TouchableOpacity style={newStyles.extraView} >
+        <Image source={require('./resources/google1.png')} style={newStyles.googleImg}/>
+        <Text style={newStyles.extraText2}>Continue with Google</Text> 
       </TouchableOpacity> 
 
       <TouchableOpacity style={newStyles.extraView} >
-        <Image source={require('./google1.png')} style={newStyles.googleImg}/>
-        <Text style={newStyles.extraText}>Continue with Blank</Text> 
-      </TouchableOpacity> 
+        <Image source={require('./resources/google1.png')} style={newStyles.googleImg}/>
+        <Text style={newStyles.extraText2}>Continue with Blank</Text> 
+      </TouchableOpacity>  */}
 
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {Alert.alert("Modal has been closed."); setModalVisible(!modalVisible); }}>
+        <View style={modalStyles.modalContainer}>
+          <View style={modalStyles.modalView}>
+            <View style={newStyles.loginContainer}>
+              <Text style={newStyles.titleText}> Register to Impulse</Text>
+              <Text style={newStyles.infoText}> Username </Text>
+              <View style={newStyles.inputView}>
+                <TextInput
+                  style={newStyles.inputText}
+                  placeholder="Example"
+                  placeholderTextColor="#cccccc"
+                  onChangeText={(newUsername) => setNewUsername(newUsername)}
+                /> 
+              </View> 
+              <Text style={newStyles.infoText}> Email </Text>
+              <View style={newStyles.inputView}>
+                <TextInput
+                  style={newStyles.inputText}
+                  placeholder="someone@example.com"
+                  placeholderTextColor="#cccccc"
+                  onChangeText={(newEmail) => setNewEmail(newEmail)}
+                /> 
+              </View> 
+              <Text style={newStyles.infoText}> Password </Text>
+              <View style={newStyles.inputView}>
+                <TextInput
+                  style={newStyles.inputText}
+                  placeholder="Your Password"
+                  placeholderTextColor="#cccccc"
+                  secureTextEntry={true}
+                  onChangeText={(newPassword) => setNewPassword(newPassword)}
+                /> 
+              </View> 
+            </View>
+            <TouchableOpacity style={modalStyles.loginBtn} onPress={handleRegister}>
+              <Text style={newStyles.loginText}>REGISTER</Text> 
+            </TouchableOpacity> 
+            <Text style={modalStyles.loginText1}>Already have an Account?</Text>
+            <TouchableOpacity onPress={() => setModalVisible(false)}>
+              <Text style={modalStyles.loginText2}>Login</Text>
+            </TouchableOpacity>
+          </View>  
+        </View>
+      </Modal>
     </View> 
   );
 }
@@ -161,7 +226,7 @@ const newStyles = StyleSheet.create({
     height: 50,
     width: "100%",
     flex: 1,
-    padding: 15,
+    paddingHorizontal: 15,
     color: "#ffffff",
   },
   forgotView: {
@@ -210,7 +275,15 @@ const newStyles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  extraText: {
+    extraText1: {
+    color: "#ffffff",
+    fontWeight: "500",
+    fontSize: 16,
+    paddingHorizontal: 115,
+    marginLeft: -20,
+    letterSpacing: 0.9,
+  },
+  extraText2: {
     color: "#ffffff",
     fontWeight: "500",
     fontSize: 16,
@@ -223,4 +296,42 @@ const newStyles = StyleSheet.create({
     // backgroundColor: "#fff",
   }
   
+})
+
+const modalStyles = StyleSheet.create({
+  modalContainer: {
+    flex: 1,
+    alignItems: 'center',
+    marginTop: -20,
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: '#0d0d12',
+    alignItems: 'center',
+    height: "80.5%",
+    width: "100%",
+  },
+
+  loginText1: {
+    color: "#d6d6d6",
+    fontSize: 16,
+    marginTop: 75
+  },
+  loginText2: {
+    color: "#8e8efa",
+    fontSize: 16,
+    marginTop: 30,
+  },
+    loginBtn: {
+    marginTop:  15,
+    borderRadius:7,
+    paddingHorizontal: 130,
+    paddingVertical: 16,
+    backgroundColor: '#FFFFFF',
+    shadowColor: 'rgba(227, 227, 255, 0.2)',
+    shadowOpacity: 0.8,
+    elevation: 6,
+    shadowRadius: 15,
+    shadowOffset : { width: 1, height: 13},
+  },
 })
