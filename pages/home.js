@@ -84,7 +84,7 @@ export default function Home({navigation}) {
     });
 
     const docSnap = await getDoc(doc(db, "accounts", user.uid));
-    const tempArr1 = docSnap.data().workouts;  
+    const tempArr1 = docSnap.data().workoutsArr;  
     tempArr1.push(workoutName)
     await setDoc(doc(db, "accounts", user.uid), {
       username: usernameString,
@@ -129,7 +129,7 @@ export default function Home({navigation}) {
     }
 
     const docSnap = await getDoc(doc(db, "accounts", user.uid));
-    const tempArr1 = docSnap.data().workouts;  
+    const tempArr1 = docSnap.data().workoutsArr;  
     const deleteIndex = tempArr1.indexOf(deleteName)
     const usernameString = auth.currentUser.email.substring(0, auth.currentUser.email.indexOf("@"));
 
@@ -286,7 +286,7 @@ export default function Home({navigation}) {
         <View>
           <View flexDirection='row'>
             <Text style={backgroundStyle.titleText}> Welcome, {userID.substring(0, userID.indexOf("@"))} </Text>
-            <TouchableOpacity style = {{marginLeft:72, marginTop:13}} onPress={temp}>
+            <TouchableOpacity style = {{marginLeft:72, marginTop:13}} onPress={() => setOpenSpecWorkout(true)}>
               <Image source={ require('../assets/person3.png') } style={ { width: 60, height: 60 } } />
             </TouchableOpacity>
           </View>
@@ -301,8 +301,8 @@ export default function Home({navigation}) {
                     </TouchableOpacity> 
 
                 <View style={cardStyle.image}>
-                    <TouchableOpacity style = {{paddingRight:10, left:'315%', marginTop: 105}} onPress={openSpecificWorkout}>
-                        <Image source={ require('../assets/arrow2.png') } style={ { width: 50, height: 55 } } />
+                    <TouchableOpacity style = {{paddingRight:10, left:'415%', marginTop: 105}} onPress={openSpecificWorkout}>
+                        <Image source={ require('../assets/arrow4.png') } style={ { width: 40, height: 45 } } />
                     </TouchableOpacity>         
                 </View>
                 <View>
@@ -333,6 +333,7 @@ export default function Home({navigation}) {
           Alert.alert('Modal has been closed.');
           setOpenNewWorkoutPage(!openNewWorkoutPage);
         }}>
+
           <View style={newWorkout.container}>
 
           <View style={{flexDirection: 'row', marginTop: 10, marginLeft: 25}}>
@@ -440,13 +441,18 @@ export default function Home({navigation}) {
       </Modal>
 
       <Modal
-        animationType="slide"
+        animationType="fade"
         visible={openSpecWorkout}
         onRequestClose={() => {
           Alert.alert('Modal has been closed.');
           setOpenNewWorkoutPage(!openNewWorkoutPage);
         }}>
-          <View style={newWorkout.container}>
+          <View style={specWorkout.container}>
+            <TouchableOpacity style={{marginTop: 0, marginRight: 45}} onPress={() => setOpenSpecWorkout(false)} >
+                  <Text style={newWorkout.returnText}>x</Text> 
+            </TouchableOpacity> 
+            <Text style={specWorkout.title}>Impulse</Text> 
+
 
           </View>
       </Modal>
@@ -802,16 +808,33 @@ const cardStyle = StyleSheet.create({
   },
 
   arrowText: {
-      color: "#0d0d12",
-      fontSize: 18,
+      color: "#8e8efa",
+      fontSize: 22,
       fontWeight: '300%',
       fontStyle: 'italic',
-      marginTop: 121,
-      marginLeft: 122,
-      marginRight: 20,
+      marginTop: 115,
+      marginLeft: 127,
+      marginRight: 30,
       position: 'absolute'
 
   }
 
 })
 
+const specWorkout = StyleSheet.create({
+
+  container: {
+    flex: 1,
+    alignItems: "center",
+    backgroundColor: '#0d0d12',
+    flexDirection: 'row'
+  },
+  
+  title: {
+    fontSize: 62,
+    fontWeight: '900%',
+    color: "#8e8efa",
+
+  }
+
+})
