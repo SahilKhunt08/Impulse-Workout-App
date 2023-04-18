@@ -9,14 +9,6 @@ import { addDoc, getDoc, doc, enableNetwork, setDoc, getCountFromServer, collect
 
 export default function Profile({ navigation }) {
 
-  
-  React.useEffect(() => {
-    const unsubscribe = navigation.addListener('focus', () => {
-      loadRequests();
-    });
-    return unsubscribe;
-  }, []);
-
 
   const [username, setUsername] = useState("");
   const [requestName, setRequestName] = useState("");
