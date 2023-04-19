@@ -31,7 +31,8 @@ async function makeNewDoc() {
   const workout5Ref = await setDoc(doc(db, "accounts", user.uid, "workouts", "workout5"), {name: "workout5"});
   const setTempField = await setDoc(doc(db, "accounts", user.uid), {
     username: newUsername,
-    workoutsArr: ["workout1", "workout2", "workout3", "workout4", "workout5"]
+    workoutsArr: ["workout1", "workout2", "workout3", "workout4", "workout5"],
+    leaderboardsArr: ["temp"],
   })
   // navigation.replace('Impulse')
   navigation.navigate('Impulse') //Old version

@@ -40,7 +40,8 @@ export default function Workout({ navigation }) {
   const [settingStyleArr2, setSettingStyleArr2] = useState([]);
   const [settingStyleArr3, setSettingStyleArr3] = useState([]);
   const setNumArr = [1, 2, 3, 4, 5, 6];
-  const timeArr = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90];
+  const timeArr = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60];
+
 
   const auth = getAuth();
   const user = auth.currentUser;
@@ -386,9 +387,6 @@ export default function Workout({ navigation }) {
   }
 
   async function saveExercise2() {
-    console.log("YUH");
-    console.log(setting1 + " " + setting2)
-    console.log(modalInfo.name)
     const name = modalInfo.name;
 
     setModalAddVisible(false);
@@ -416,6 +414,7 @@ export default function Workout({ navigation }) {
     const docRef2 = await setDoc(doc(db, "accounts", user.uid, "workouts", workoutSelected, "exercises", temp1[0].name), {
       setsNum: setting1,
       restNum: setting2,  
+
     });
   }
 
@@ -793,7 +792,7 @@ export default function Workout({ navigation }) {
         </View>
 
         <Modal
-          animationType="slide"
+          animationType="fade"
           transparent={true}
           visible={modalAddVisible}
           onRequestClose={() => {Alert.alert('Modal has been closed.'); setModalAddVisible(!modalAddVisible); }}>
@@ -813,6 +812,21 @@ export default function Workout({ navigation }) {
                 />
               </View>
               <View style={modalAddStyles.dividerView}>
+                <Divider borderColor="#8a7ed9" color="#e2deff" orientation="center">Time On</Divider>
+              </View>
+              <View style={modalAddStyles.scrollContainer1}>
+                <ScrollView horizontal={true} style={modalAddStyles.scrollContainer2} showsHorizontalScrollIndicator={false}>
+                  <View style={modalAddStyles.scrollContainer3}> 
+                    {timeArr.map((info, index) => (
+                      <TouchableOpacity
+                        key={index} style={settingStyleArr2[index]} onPress={() => {selectSetting(2, index)}}>
+                        <Text style={modalAddStyles.timeButtonText}>{info}</Text>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                </ScrollView>
+              </View>
+              <View style={modalAddStyles.dividerView}>
                 <Divider borderColor="#8a7ed9" color="#e2deff" orientation="center">Number of Sets</Divider>
               </View>
               <View style={modalAddStyles.scrollContainer1}>
@@ -827,21 +841,6 @@ export default function Workout({ navigation }) {
                 </ScrollView>
               </View>
               <View style={modalAddStyles.dividerView}>
-                <Divider borderColor="#8a7ed9" color="#e2deff" orientation="center">Rest Per Set</Divider>
-              </View>
-              <View style={modalAddStyles.scrollContainer1}>
-                <ScrollView horizontal={true} style={modalAddStyles.scrollContainer2} showsHorizontalScrollIndicator={false}>
-                  <View style={modalAddStyles.scrollContainer3}> 
-                    {timeArr.map((info, index) => (
-                      <TouchableOpacity
-                        key={index} style={settingStyleArr2[index]} onPress={() => {selectSetting(2, index)}}>
-                        <Text style={modalAddStyles.timeButtonText}>{info}</Text>
-                      </TouchableOpacity>
-                    ))}
-                  </View>
-                </ScrollView>
-              </View>
-              {/* <View style={modalAddStyles.dividerView}>
                 <Divider borderColor="#8a7ed9" color="#e2deff" orientation="center">Rest After All</Divider>
               </View>
               <View style={modalAddStyles.scrollContainer1}>
@@ -855,7 +854,7 @@ export default function Workout({ navigation }) {
                     ))}
                   </View>
                 </ScrollView>
-              </View>  */}
+              </View> 
               <TouchableOpacity style={modalAddStyles.saveButton} onPress={saveExercise2}>
                 <Text style={modalAddStyles.saveText}>SAVE</Text>
               </TouchableOpacity>
@@ -1320,7 +1319,7 @@ const modalAddStyles = StyleSheet.create({
   },
   modalView: {
     alignItems: 'center',
-    height: "42%",
+    height: "54%",
     width: "70%",
     backgroundColor: "#404057",//'#404057', //0d0d12 //26, 26, 41
     borderRadius: 15,
