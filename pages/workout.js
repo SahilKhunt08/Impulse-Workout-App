@@ -387,9 +387,6 @@ export default function Workout({ navigation }) {
   }
 
   async function saveExercise2() {
-    console.log("YUH");
-    console.log(setting1 + " " + setting2)
-    console.log(modalInfo.name)
     const name = modalInfo.name;
 
     setModalAddVisible(false);
@@ -796,7 +793,7 @@ export default function Workout({ navigation }) {
         </View>
 
         <Modal
-          animationType="slide"
+          animationType="fade"
           transparent={true}
           visible={modalAddVisible}
           onRequestClose={() => {Alert.alert('Modal has been closed.'); setModalAddVisible(!modalAddVisible); }}>
@@ -858,7 +855,8 @@ export default function Workout({ navigation }) {
                     ))}
                   </View>
                 </ScrollView>
-              </View>
+              </View> 
+
               <TouchableOpacity style={modalAddStyles.saveButton} onPress={saveExercise2}>
                 <Text style={modalAddStyles.saveText}>SAVE</Text>
               </TouchableOpacity>
