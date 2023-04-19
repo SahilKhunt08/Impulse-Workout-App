@@ -110,9 +110,7 @@ async function makeNewDoc() {
         <Text style={newStyles.loginText}>LOGIN</Text> 
       </TouchableOpacity> 
 
-      <TouchableOpacity style={newStyles.loginBtn} onPress={handleRegister}>
-        <Text style={newStyles.loginText}>REGISTER</Text> 
-      </TouchableOpacity> 
+     
 
       <View style={newStyles.dividerView}>
         <Divider borderColor="#a3a3bf" color="#a3a3bf" orientation="center">

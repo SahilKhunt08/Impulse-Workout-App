@@ -1,5 +1,16 @@
 
-//--Start the jump in page with 
+//Countdown
+
+//Loop based on num exercises 
+
+//Loop based on sets(if only one then only time on, add time on at the end)
+//Time on
+
+//Rest Set
+//Time on
+
+// Rest Exercise
+
 
 
 import React, { useState } from 'react'
@@ -10,6 +21,11 @@ import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, on
 import { addDoc, doc, enableNetwork, setDoc, getCountFromServer, collection, getDocs, namedQuery, updateDoc,getDoc, deleteDoc} from "firebase/firestore"; 
 import {db} from './firebase';
 import { async } from "@firebase/util";
+
+import Divider from 'react-native-divider';
+
+
+import { CountdownCircleTimer } from 'react-native-countdown-circle-timer'
 
 import HomeCards from './homeCards';
 import RedirectCards from './RedirectCards';
@@ -53,22 +69,16 @@ export default function Home({navigation}) {
 
   const [totalWorkoutsArr, setTotalWorkoutsArr] = useState([])
 
-  const [openSpecWorkout, setOpenSpecWorkout] = useState([])
+  const [currExercisesArr, setCurrExercisesArr] = useState([])
 
+  const [timeConfigs, setTimeConfigs] = useState([])
+  const [nameConfigs, setNameConfigs] = useState([])
+  const [nextNameConfigs, setNextNameConfigs] = useState([])
+  const [currStep, setCurrStep] = useState(0)
 
-  async function queryWorkoutCols() {
-    const exercisesTemp = []
-    const auth = getAuth();
-    const user = auth.currentUser;
-    const workoutRef = collection(db, "accounts", user.uid, workoutQuery); 
-    const querySnapshot = await getDocs(workoutRef);
-    querySnapshot.forEach(doc => {
-        if (doc.id !== "temp") {
-            exercisesTemp.push(doc.id)
-        }
-      });
-    setExercises(exercisesTemp)
-  }
+  const [currDuration, setCurrDuration] = useState(0)
+
+  const [openSpecWorkout, setOpenSpecWorkout] = useState(false)
 
   async function createWorkout() {
     const auth = getAuth();
@@ -105,25 +115,75 @@ export default function Home({navigation}) {
       setTotalWorkoutsArr(allWorkoutsArr)
   }
 
-  const openSpecificWorkout = () => {
+  async function openSpecificWorkout(index) {
+    const auth = getAuth();
+    const user = auth.currentUser;
+    const exercises = []
+    let selectedName = ""
+    let selectedRestTime = 0
+
+    for (let i = 0; i < totalWorkoutsArr.length; i++) {
+      if (totalWorkoutsArr[i].workoutID == index) { 
+        selectedName = totalWorkoutsArr[i].name
+        selectedRestTime = totalWorkoutsArr[i].breakTime
+      }
+    }
+
+    const exerciseRef = collection(db, "accounts", user.uid, "workouts", selectedName, "exercises");
+    const exerciseDocs = await getDocs(exerciseRef)
+    exerciseDocs.forEach(doc => {
+      exercises.push(doc.data());
+    })
+
+    setCurrExercisesArr(exercises)
     setOpenSpecWorkout(true);
+
+let timerConfig = []
+let nameConfig = []
+let nextConfig = []
+    //config timing for timer
+    //all exercises
+    timerConfig.push(5)
+    nameConfig.push("Get Ready")
+    nextConfig.push("Get Ready")
+    for (let i = 0; i < exercises.length; i++) {
+      //specific exercise
+      for (let x = 0; x < exercises[i].setsNum; x++) {
+        timerConfig.push(exercises[i].activeNum)
+        nameConfig.push(exercises[i].name)
+        nextConfig.push(exercises[i].name)
+        timerConfig.push(exercises[i].restNum)
+        nameConfig.push("Rest")
+        nextConfig.push("Rest")
+      }
+      timerConfig.push(selectedRestTime)
+      nameConfig.push("Rest")
+      nextConfig.push("Rest")
+    }
+    nextConfig.shift()
+    nextConfig.push("")
+    setTimeConfigs(timerConfig)
+    setNameConfigs(nameConfig)
+    setNextNameConfigs(nextConfig)
+    console.log(timerConfig)
   }
 
   const temp = () => {
-    console.log(totalWorkoutsArr)
+    console.log(currExercisesArr)
   }
   
+  const advanceTimer = () => {
+
+  }
+
   async function deleteWorkout(index) {
     const auth = getAuth();
     const user = auth.currentUser;
 
-    let deleteID = -1;
-    let tempWorkoutArr = totalWorkoutsArr
     let deleteName = ""
 
     for (let i = 0; i < totalWorkoutsArr.length; i++) {
       if (totalWorkoutsArr[i].workoutID == index) { 
-        deleteID = i;
         deleteName = totalWorkoutsArr[i].name
       }
     }
@@ -140,9 +200,7 @@ export default function Home({navigation}) {
     })
 
     await deleteDoc(doc(db, "accounts", user.uid, "workouts", deleteName));
-
     loadWorkouts()
-    
   }
   
   const recieveBreakTimes = (input) => {
@@ -286,7 +344,7 @@ export default function Home({navigation}) {
         <View>
           <View flexDirection='row'>
             <Text style={backgroundStyle.titleText}> Welcome, {userID.substring(0, userID.indexOf("@"))} </Text>
-            <TouchableOpacity style = {{marginLeft:72, marginTop:13}} onPress={() => setOpenSpecWorkout(true)}>
+            <TouchableOpacity style = {{marginLeft:72, marginTop:13}} onPress={temp}>
               <Image source={ require('../assets/person3.png') } style={ { width: 60, height: 60 } } />
             </TouchableOpacity>
           </View>
@@ -301,7 +359,7 @@ export default function Home({navigation}) {
                     </TouchableOpacity> 
 
                 <View style={cardStyle.image}>
-                    <TouchableOpacity style = {{paddingRight:10, left:'415%', marginTop: 105}} onPress={openSpecificWorkout}>
+                    <TouchableOpacity style = {{paddingRight:10, left:'415%', marginTop: 105}} onPress={() => openSpecificWorkout(info.workoutID)}>
                         <Image source={ require('../assets/arrow4.png') } style={ { width: 40, height: 45 } } />
                     </TouchableOpacity>         
                 </View>
@@ -448,13 +506,44 @@ export default function Home({navigation}) {
           setOpenNewWorkoutPage(!openNewWorkoutPage);
         }}>
           <View style={specWorkout.container}>
-            <TouchableOpacity style={{marginTop: 0, marginRight: 45}} onPress={() => setOpenSpecWorkout(false)} >
+         
+          <View style={{flexDirection: 'row', marginTop: 50}}>           
+            <TouchableOpacity style={{marginTop: 0, marginRight: 25}} onPress={() => setOpenSpecWorkout(false)} >
                   <Text style={newWorkout.returnText}>x</Text> 
-            </TouchableOpacity> 
+            </TouchableOpacity>        
             <Text style={specWorkout.title}>Impulse</Text> 
+          </View>
 
+          <Divider borderColor="#a3a3bf" color="#a3a3bf" orientation="center">
+          Workout
+          </Divider>
+
+          <View marginTop={50}>
+              <Text style={specWorkout.header}>Current Exercise: {nameConfigs[currStep]}</Text> 
 
           </View>
+            
+          <View marginTop={40} >
+            <CountdownCircleTimer
+              key={currStep}
+              isPlaying
+              duration={timeConfigs[currStep]}
+              colors={['#004777','#F7B801', '#A30000', '#A30000 ']}   
+              colorsTime={[timeConfigs[currStep], timeConfigs[currStep]/2, timeConfigs[currStep]/3, 0]}
+              onComplete={() => setCurrStep(currStep+1)} 
+              updateInterval={1}>
+              {({remainingTime, color}) => (
+                <Text style={{color, fontSize: 40}}>{remainingTime}</Text>
+              )}   
+            </CountdownCircleTimer>
+          </View>
+
+          <View>
+              <Text style={specWorkout.header}>Next Exercise: {nextNameConfigs[currStep]}</Text> 
+
+          </View>
+        </View>
+           
       </Modal>
 
     </View>
@@ -827,14 +916,21 @@ const specWorkout = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     backgroundColor: '#0d0d12',
-    flexDirection: 'row'
   },
   
   title: {
     fontSize: 62,
     fontWeight: '900%',
     color: "#8e8efa",
+    marginRight: 55,
+    marginTop: 10
+  }, 
 
+  header: {
+    fontSize: 22,
+    fontWeight: '900%',
+    color: "#ffffff",
+    marginTop: 40,
   }
 
 })
