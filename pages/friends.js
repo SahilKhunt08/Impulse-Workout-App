@@ -250,30 +250,30 @@ export default function AddFriends({ navigation }) {
   }
 
   async function openMainModal(input){
-    var index = -1;
-    for(var i = 0; i < myLeaderboardsArr.length; i++){
-      if(input == myLeaderboardsArr[i].name){
-        setModalInfo(myLeaderboardsArr[i])
-        index = i;
-        setLeaderboardClicked(myLeaderboardsArr[i].name);
-        i = myLeaderboardsArr.length + 1;
-      }
-    }
-    var tempArr = [];
-    for(var j = 0; j < myLeaderboardsArr[index].membersArr.length; j++){
-      const docRef1 = doc(db, "accounts", myLeaderboardsArr[index].sortedMembersArr[j]);
-      const docSnap1 = await getDoc(docRef1);
-      var tempName = "TEMP";
-      if(docSnap1.exists()){
-        tempName = docSnap1.data().username;
-      }
-      tempArr.push({
-        member: myLeaderboardsArr[index].sortedMembersArr[j],
-        score: myLeaderboardsArr[index].sortedScoresArr[j],
-        name: tempName,
-      });
-    }
-    setDisplayingArr(tempArr);
+    // var index = -1;
+    // for(var i = 0; i < myLeaderboardsArr.length; i++){
+    //   if(input == myLeaderboardsArr[i].name){
+    //     setModalInfo(myLeaderboardsArr[i])
+    //     index = i;
+    //     setLeaderboardClicked(myLeaderboardsArr[i].name);
+    //     i = myLeaderboardsArr.length + 1;
+    //   }
+    // }
+    // var tempArr = [];
+    // for(var j = 0; j < myLeaderboardsArr[index].membersArr.length; j++){
+    //   const docRef1 = doc(db, "accounts", myLeaderboardsArr[index].sortedMembersArr[j]);
+    //   const docSnap1 = await getDoc(docRef1);
+    //   var tempName = "TEMP";
+    //   if(docSnap1.exists()){
+    //     tempName = docSnap1.data().username;
+    //   }
+    //   tempArr.push({
+    //     member: myLeaderboardsArr[index].sortedMembersArr[j],
+    //     score: myLeaderboardsArr[index].sortedScoresArr[j],
+    //     name: tempName,
+    //   });
+    // }
+    // setDisplayingArr(tempArr);
     setLeaderboardModalVisible(true);
   }
 
@@ -350,14 +350,14 @@ export default function AddFriends({ navigation }) {
             <Text style={makeStyles.scrollViewTitle}>Select Friends</Text>
             <ScrollView style={makeStyles.scrollContainer1} showsVerticalScrollIndicator={false}>
               <View style={makeStyles.scrollContainer2}>
-                {myLeaderboardsArr.map((info, index) => (
+                {/* {selectableFriendsArr.map((info, index) => (
                   <View style={makeStyles.mapView} key={index}>
                     <Text style={makeStyles.mapText}>{info.name}</Text>
                     <TouchableOpacity style={makeStyles.mapButton} onPress={() => selectFriend(info.id)}>
                       <Text style={makeStyles.mapButtonText}>ADD</Text>
                     </TouchableOpacity>
                   </View>
-                ))}
+                ))} */}
               </View>
             </ScrollView>
 

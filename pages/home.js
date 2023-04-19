@@ -116,6 +116,7 @@ export default function Home({navigation}) {
   }
 
   async function openSpecificWorkout(index) {
+    setCurrStep(0);
     const auth = getAuth();
     const user = auth.currentUser;
     const exercises = []

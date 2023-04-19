@@ -43,14 +43,14 @@ async function makeNewDoc() {
   const friendsRef = await setDoc(doc(db, "accounts", user.uid, "friends", "temp"), {});
   const requestsRef = await setDoc(doc(db, "accounts", user.uid, "requests", "temp"), {});
   const workoutRef = await setDoc(doc(db, "accounts", user.uid, "workouts", "temp"), {});
-  const workout1Ref = await setDoc(doc(db, "accounts", user.uid, "workouts", "workout1"), {name: "workout1"});
-  const workout2Ref = await setDoc(doc(db, "accounts", user.uid, "workouts", "workout2"), {name: "workout2"});
-  const workout3Ref = await setDoc(doc(db, "accounts", user.uid, "workouts", "workout3"), {name: "workout3"});
-  const workout4Ref = await setDoc(doc(db, "accounts", user.uid, "workouts", "workout4"), {name: "workout4"});
-  const workout5Ref = await setDoc(doc(db, "accounts", user.uid, "workouts", "workout5"), {name: "workout5"});
+  // const workout1Ref = await setDoc(doc(db, "accounts", user.uid, "workouts", "workout1"), {name: "workout1"});
+  // const workout2Ref = await setDoc(doc(db, "accounts", user.uid, "workouts", "workout2"), {name: "workout2"});
+  // const workout3Ref = await setDoc(doc(db, "accounts", user.uid, "workouts", "workout3"), {name: "workout3"});
+  // const workout4Ref = await setDoc(doc(db, "accounts", user.uid, "workouts", "workout4"), {name: "workout4"});
+  // const workout5Ref = await setDoc(doc(db, "accounts", user.uid, "workouts", "workout5"), {name: "workout5"});
   const setTempField = await setDoc(doc(db, "accounts", user.uid), {
     username: newUsername,
-    workoutsArr: ["workout1", "workout2", "workout3", "workout4", "workout5"],
+    workoutsArr: [],
     leaderboardsArr: ["temp"],
   })
   // navigation.replace('Impulse')
