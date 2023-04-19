@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { StyleSheet, Text, View, TouchableOpacity, TextInput, FlatList, ScrollView, Pressable, Modal, Image } from 'react-native';
 import { Button } from 'react-native-paper';
@@ -41,7 +42,6 @@ export default function Workout({ navigation }) {
   const [settingStyleArr3, setSettingStyleArr3] = useState([]);
   const setNumArr = [1, 2, 3, 4, 5, 6];
   const timeArr = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60];
-
 
   const auth = getAuth();
   const user = auth.currentUser;
@@ -413,8 +413,9 @@ export default function Workout({ navigation }) {
 
     const docRef2 = await setDoc(doc(db, "accounts", user.uid, "workouts", workoutSelected, "exercises", temp1[0].name), {
       setsNum: setting1,
-      restNum: setting2,  
-
+      restNum: setting2, 
+      activeNum: setting3,
+      name: temp1[0].name
     });
   }
 
@@ -819,13 +820,13 @@ export default function Workout({ navigation }) {
                   <View style={modalAddStyles.scrollContainer3}> 
                     {timeArr.map((info, index) => (
                       <TouchableOpacity
-                        key={index} style={settingStyleArr2[index]} onPress={() => {selectSetting(2, index)}}>
+                        key={index} style={settingStyleArr3[index]} onPress={() => {selectSetting(3, index)}}>
                         <Text style={modalAddStyles.timeButtonText}>{info}</Text>
                       </TouchableOpacity>
                     ))}
                   </View>
                 </ScrollView>
-              </View>
+              </View> 
               <View style={modalAddStyles.dividerView}>
                 <Divider borderColor="#8a7ed9" color="#e2deff" orientation="center">Number of Sets</Divider>
               </View>
@@ -841,20 +842,21 @@ export default function Workout({ navigation }) {
                 </ScrollView>
               </View>
               <View style={modalAddStyles.dividerView}>
-                <Divider borderColor="#8a7ed9" color="#e2deff" orientation="center">Rest After All</Divider>
+                <Divider borderColor="#8a7ed9" color="#e2deff" orientation="center">Rest Per Set</Divider>
               </View>
               <View style={modalAddStyles.scrollContainer1}>
                 <ScrollView horizontal={true} style={modalAddStyles.scrollContainer2} showsHorizontalScrollIndicator={false}>
                   <View style={modalAddStyles.scrollContainer3}> 
                     {timeArr.map((info, index) => (
                       <TouchableOpacity
-                        key={index} style={settingStyleArr3[index]} onPress={() => {selectSetting(3, index)}}>
+                        key={index} style={settingStyleArr2[index]} onPress={() => {selectSetting(2, index)}}>
                         <Text style={modalAddStyles.timeButtonText}>{info}</Text>
                       </TouchableOpacity>
                     ))}
                   </View>
                 </ScrollView>
               </View> 
+
               <TouchableOpacity style={modalAddStyles.saveButton} onPress={saveExercise2}>
                 <Text style={modalAddStyles.saveText}>SAVE</Text>
               </TouchableOpacity>

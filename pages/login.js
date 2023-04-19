@@ -9,6 +9,25 @@ import { async } from "@firebase/util";
 import Divider from 'react-native-divider';
 import { Icon } from '@rneui/themed';
 
+async function newDoc() {
+  
+  const auth = getAuth();
+  const user = auth.currentUser   
+  const usernameString = auth.currentUser.email.substring(0, auth.currentUser.email.indexOf("@"));
+
+  await setDoc(doc(db, "accounts", user.uid, "friends", "temp"), {
+  });
+  await setDoc(doc(db, "accounts", user.uid, "requests", "temp"), {
+  });
+  await setDoc(doc(db, "accounts", user.uid, "workouts", "temp"), {
+    temp: 'temp'
+  });
+  await setDoc(doc(db, "accounts", user.uid), {
+    username: usernameString,
+    workouts: []
+    }
+  )}
+
 export default function Login({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("")  
@@ -35,10 +54,11 @@ async function makeNewDoc() {
     leaderboardsArr: ["temp"],
   })
   // navigation.replace('Impulse')
+
   navigation.navigate('Impulse') //Old version
   setModalVisible(false);
 }
-
+  
   const handleRegister = () => {
     createUserWithEmailAndPassword(auth, newEmail, newPassword).then(() => {
         makeNewDoc();
@@ -48,7 +68,6 @@ async function makeNewDoc() {
       .catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
-        // ..
       });
   }
 
@@ -108,6 +127,8 @@ async function makeNewDoc() {
       <TouchableOpacity style={newStyles.loginBtn} onPress={handleLogin}>
         <Text style={newStyles.loginText}>LOGIN</Text> 
       </TouchableOpacity> 
+
+     
 
       <View style={newStyles.dividerView}>
         <Divider borderColor="#a3a3bf" color="#a3a3bf" orientation="center">
