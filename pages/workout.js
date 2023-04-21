@@ -9,32 +9,19 @@ import {db} from './firebase';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
 import { addDoc, doc, enableNetwork, setDoc, getCountFromServer, collection, getDocs, namedQuery, query, getDoc } from "firebase/firestore"; 
 import { Icon } from '@rneui/themed';
+import FlipCard from 'react-native-flip-card'
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { CheckBox } from '@rneui/themed';
-import Divider from 'react-native-divider';
 import { makeStyles } from "@rneui/base";
 import { isEmpty } from "@firebase/util";
-
-const Stack = createNativeStackNavigator();
-
-import FlipCard from 'react-native-flip-card'
+import Divider from 'react-native-divider';
 import { BlurView } from 'expo-blur';
 
 var modalMusclePath1 = require("./muscleImages/default1.png");
 var modalMusclePath2 = require("./muscleImages/default2.png");
 
-
-
 export default function Workout({ navigation }) {
-
-  React.useEffect(() => {
-    const listener = navigation.addListener('focus', () => {
-      loadWorkouts();
-    });
-    return listener;
-  }, []);
   const [counter, setCount] = useState(3);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalInfo, setModalInfo] = useState([]);
@@ -54,7 +41,7 @@ export default function Workout({ navigation }) {
   const [settingStyleArr2, setSettingStyleArr2] = useState([]);
   const [settingStyleArr3, setSettingStyleArr3] = useState([]);
   const setNumArr = [1, 2, 3, 4, 5, 6];
-  const timeArr = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90];
+  const timeArr = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60];
 
   const auth = getAuth();
   const user = auth.currentUser;
@@ -94,294 +81,13 @@ export default function Workout({ navigation }) {
   const [difficulty, setDifficulty] = useState(""); 
   const [muscles, setMuscles] = useState("")
   const [type, setType] = useState("")
-   
 
-  const recieveButtonClicks = (input) => {
-
-    if (input < 4) {
-      setStyleBeginner(newStyles.loginBtn)
-      setStyleIntermediate(newStyles.loginBtn)
-      setStyleExpert(newStyles.loginBtn)
-      if (input == 1) {
-        if(styleBeginner == newStyles.loginBtn) {
-          setStyleBeginner(newStyles.loginBtnClicked)
-          setDifficulty("beginner")
-        } else { 
-          setStyleBeginner(newStyles.loginBtn)
-          setDifficulty(null)
-         }
-      } else if (input == 2) {
-        if(styleIntermediate == newStyles.loginBtn) {
-          setStyleIntermediate(newStyles.loginBtnClicked)
-          setDifficulty("intermediate")
-        } else { 
-          setStyleIntermediate(newStyles.loginBtn)
-          setDifficulty(null)
-        }
-      } else if (input == 3) {
-        if(styleExpert == newStyles.loginBtn) {
-          setStyleExpert(newStyles.loginBtnClicked)
-          setDifficulty("expert")
-        } else { 
-          setStyleExpert(newStyles.loginBtn)
-          setDifficulty(null)
-        }
-      }
-  
-   } else if (input < 20) {
-    setStyleAbdom(newStyles.loginBtn)
-    setStyleAbduct(newStyles.loginBtn)
-    setStyleAdd(newStyles.loginBtn)
-    setStyleBiceps(newStyles.loginBtn)
-    setStyleTriceps(newStyles.loginBtn)
-    setStyleLats(newStyles.loginBtn)
-    setStyleFore(newStyles.loginBtn)
-    setStyleTraps(newStyles.loginBtn)
-    setStyleChest(newStyles.loginBtn)
-    setStyleNeck(newStyles.loginBtn)
-    setStyleLowBack(newStyles.loginBtn)
-    setStyleMidBack(newStyles.loginBtn)
-    setStyleCalves(newStyles.loginBtn)
-    setStyleGlutes(newStyles.loginBtn)
-    setStyleHams(newStyles.loginBtn)
-    setStyleQuads(newStyles.loginBtn)
-
-
-      if (input == 4) { 
-        if (styleAbdom == newStyles.loginBtn ) {
-          setStyleAbdom(newStyles.loginBtnClicked)
-          setMuscles("abdominals")
-        } else {
-          setMuscles(null)
-          setStyleAbdom(newStyles.loginBtn)
-        }
-      } else if (input == 5) { 
-        if (styleAbduct == newStyles.loginBtn) {
-          setStyleAbduct(newStyles.loginBtnClicked)
-          setMuscles("abductors")
-        } else {
-          setMuscles(null)
-          setStyleAbduct(newStyles.loginBtn)
-        }        
-      } else if (input == 6) { 
-        if (styleAdd == newStyles.loginBtn) {
-          setStyleAdd(newStyles.loginBtnClicked)
-          setMuscles("adductors")
-        } else {
-          setMuscles(null)
-          setStyleAdd(newStyles.loginBtn)
-        }   
-      } else if (input == 7) { 
-        if (styleBiceps == newStyles.loginBtn) {
-          setStyleBiceps(newStyles.loginBtnClicked)
-          setMuscles("biceps")
-        } else {
-          setMuscles(null)
-          setStyleBiceps(newStyles.loginBtn)
-        }  
-      } else if (input == 8) { 
-        if (styleTriceps == newStyles.loginBtn) {
-          setStyleTriceps(newStyles.loginBtnClicked)
-          setMuscles("triceps")
-        } else {
-          setMuscles(null)
-          setStyleTriceps(newStyles.loginBtn)
-        }
-      } else if (input == 9) { 
-        if (styleLats == newStyles.loginBtn) {
-          setStyleLats(newStyles.loginBtnClicked)
-          setMuscles("lats")
-        } else {
-          setMuscles(null)
-          setStyleLats(newStyles.loginBtn)
-        }
-      } else if (input == 10) { 
-        if (styleFore == newStyles.loginBtn) {
-          setStyleFore(newStyles.loginBtnClicked)
-          setMuscles("forearms")
-        } else {
-          setMuscles(null)
-          setStyleFore(newStyles.loginBtn)
-        }
-      } else if (input == 11) { 
-        if (styleTraps == newStyles.loginBtn) {
-          setStyleTraps(newStyles.loginBtnClicked)
-          setMuscles("traps")
-        } else {
-          setMuscles(null)
-          setStyleTraps(newStyles.loginBtn)
-        }
-      } else if (input == 12) { 
-        if (styleChest == newStyles.loginBtn) {
-          setStyleChest(newStyles.loginBtnClicked)
-          setMuscles("chest")
-        } else {
-          setMuscles(null)
-          setStyleChest(newStyles.loginBtn)
-        }
-      } else if (input == 13) { 
-        if (styleNeck == newStyles.loginBtn) {
-          setStyleNeck(newStyles.loginBtnClicked)
-          setMuscles("neck")
-        } else {
-          setMuscles(null)
-          setStyleNeck(newStyles.loginBtn)
-        }
-      } else if (input == 14) { 
-        if (styleLowBack == newStyles.loginBtn) {
-          setStyleLowBack(newStyles.loginBtnClicked)
-          setMuscles("lower_back")
-        } else {
-          setMuscles(null)
-          setStyleLowBack(newStyles.loginBtn)
-        }
-      } else if (input == 15) { 
-        if (styleMidBack == newStyles.loginBtn) {
-          setStyleMidBack(newStyles.loginBtnClicked)
-          setMuscles("middle_back")
-        } else {
-          setMuscles(null)
-          setStyleMidBack(newStyles.loginBtn)
-        }
-      } else if (input == 16) { 
-        if (styleCalves == newStyles.loginBtn) {
-          setStyleCalves(newStyles.loginBtnClicked)
-          setMuscles("calves")
-        } else {
-          setMuscles(null)
-          setStyleCalves(newStyles.loginBtn)
-        }
-      } else if (input == 17) { 
-        if (styleGlutes == newStyles.loginBtn) {
-          setStyleGlutes(newStyles.loginBtnClicked)
-          setMuscles("glutes")
-        } else {
-          setMuscles(null)
-          setStyleGlutes(newStyles.loginBtn)
-        }
-      } else if (input == 18) { 
-        if (styleHams == newStyles.loginBtn) {
-          setStyleHams(newStyles.loginBtnClicked)
-          setMuscles("hamstrings")
-        } else {
-          setMuscles(null)
-          setStyleHams(newStyles.loginBtn)
-        }
-      } else if (input == 19) { 
-        if (styleQuads == newStyles.loginBtn) {
-          setStyleQuads(newStyles.loginBtnClicked)
-          setMuscles("quadriceps")
-        } else {
-          setMuscles(null)
-          setStyleQuads(newStyles.loginBtn)
-        }
-      }
-    } else {
-      setStyleCardio(newStyles.loginBtn)
-      setStyleOly(newStyles.loginBtn)
-      setStylePlyo(newStyles.loginBtn)
-      setStylePower(newStyles.loginBtn)
-      setStyleStrength(newStyles.loginBtn)
-      setStyleStretch(newStyles.loginBtn)
-      setStyleStrong(newStyles.loginBtn)
-      if (input == 20) { 
-        if (styleCardio == newStyles.loginBtn) {
-          setStyleCardio(newStyles.loginBtnClicked)
-          setType("cardio")
-        } else {
-          setStyleCardio(newStyles.loginBtn)
-          setType(null)
-        }
-      } else if (input == 21) { 
-        if (styleOly == newStyles.loginBtn) {
-          setStyleOly(newStyles.loginBtnClicked)
-          setType("olympic_weightlifting")
-        } else {
-          setStyleOly(newStyles.loginBtn)
-          setType(null)
-        }
-      } else if (input == 22) { 
-        if (stylePlyo == newStyles.loginBtn) {
-          setStylePlyo(newStyles.loginBtnClicked)
-          setType("plyometrics")
-        } else {
-          setStylePlyo(newStyles.loginBtn)
-          setType(null)
-        }
-      } else if (input == 23) { 
-        if (stylePower == newStyles.loginBtn) {
-          setStylePower(newStyles.loginBtnClicked)
-          setType("powerlifting")
-        } else {
-          setStylePower(newStyles.loginBtn)
-          setType(null)
-        }
-      } else if (input == 24) { 
-        if (styleStrength == newStyles.loginBtn) {
-          setStyleStrength(newStyles.loginBtnClicked)
-          setType("strength")
-        } else {
-          setStyleStrength(newStyles.loginBtn)
-          setType(null)
-        }
-      } else if (input == 25) { 
-        if (styleStretch == newStyles.loginBtn) {
-          setStyleStretch(newStyles.loginBtnClicked)
-          setType("stretching")
-
-        } else {
-          setStyleStretch(newStyles.loginBtn)
-          setType(null)
-        }
-      } 
-      else if (input == 26) { 
-        if (styleStrong == newStyles.loginBtn) {
-          setStyleStrong(newStyles.loginBtnClicked)
-          setType("strongman")
-        } else {
-          setStyleStrong(newStyles.loginBtn)
-          setType(null)
-        }
-      } else if (input == 27) { 
-        console.log(muscles)
-      } 
-    }
-  }
-
-//WORKOUT PAGE
-
-const [userUID, setUserUID] = useState("");
-const [workoutNum, setWorkoutNum] = useState(1);
-const [workoutString, setWorkoutString] = useState("Workouts Here");
-const [counter, setCount] = useState(3);
-const [modalVisible, setModalVisible] = useState(false);
-const [modalDirections, setModalDirections] = useState("");
-const [modalInfo, setModalInfo] = useState("");
-
-const [exerciseArr, setExerciseArr] = useState([]);
-const [apiResponseArr, setApiResponseArr] = useState([]);
-
-
-// async function saveExercise(index) {
-//     const temp1 = exerciseArr.filter(a => a.id === index);
-//     const docRef = await setDoc(doc(db, "exercises", temp1[0].name), {
-//       difficulty: temp1[0].difficulty,
-//       equipment: temp1[0].equipment,
-//       muscle: temp1[0].muscle,
-//       name: temp1[0].name,
-//       type: temp1[0].type,
-//       instructions: temp1[0].instructions,
-//     });
-//     const newExerciseArr = exerciseArr.filter(a => a.id !== index);
-//     setExerciseArr(newExerciseArr);
-//     const collectionName = "workout" + workoutNum;
-//     const docRef2 = await setDoc(doc(db, "accounts", userUID, collectionName, temp1[0].name), {
-//     });
-//     selectWorkout(workoutNum);
-//   };
-
-  //Searc
-
+  React.useEffect(() => {
+    const listener = navigation.addListener('focus', () => {
+      loadWorkouts();
+    });
+    return listener;
+  }, []);
 
   async function loadWorkouts() {
     const docRef = doc(db, "accounts", user.uid);
@@ -398,6 +104,258 @@ const [apiResponseArr, setApiResponseArr] = useState([]);
       setWorkoutBtnStyleArr(tempArr2);
     } else {
       console.log("loadWorkouts function error");
+    }
+  }
+
+  const recieveButtonClicks = (input) => {
+
+    if (input < 4) {
+      setStyleBeginner(vedantStyles.loginBtn)
+      setStyleIntermediate(vedantStyles.loginBtn)
+      setStyleExpert(vedantStyles.loginBtn)
+      if (input == 1) {
+        if(styleBeginner == vedantStyles.loginBtn) {
+          setStyleBeginner(vedantStyles.loginBtnClicked)
+          setDifficulty("beginner")
+        } else { 
+          setStyleBeginner(vedantStyles.loginBtn)
+          setDifficulty(null)
+         }
+      } else if (input == 2) {
+        if(styleIntermediate == vedantStyles.loginBtn) {
+          setStyleIntermediate(vedantStyles.loginBtnClicked)
+          setDifficulty("intermediate")
+        } else { 
+          setStyleIntermediate(vedantStyles.loginBtn)
+          setDifficulty(null)
+        }
+      } else if (input == 3) {
+        if(styleExpert == vedantStyles.loginBtn) {
+          setStyleExpert(vedantStyles.loginBtnClicked)
+          setDifficulty("expert")
+        } else { 
+          setStyleExpert(vedantStyles.loginBtn)
+          setDifficulty(null)
+        }
+      }
+    
+
+   } else if (input < 20) {
+    setStyleAbdom(vedantStyles.loginBtn)
+    setStyleAbduct(vedantStyles.loginBtn)
+    setStyleAdd(vedantStyles.loginBtn)
+    setStyleBiceps(vedantStyles.loginBtn)
+    setStyleTriceps(vedantStyles.loginBtn)
+    setStyleLats(vedantStyles.loginBtn)
+    setStyleFore(vedantStyles.loginBtn)
+    setStyleTraps(vedantStyles.loginBtn)
+    setStyleChest(vedantStyles.loginBtn)
+    setStyleNeck(vedantStyles.loginBtn)
+    setStyleLowBack(vedantStyles.loginBtn)
+    setStyleMidBack(vedantStyles.loginBtn)
+    setStyleCalves(vedantStyles.loginBtn)
+    setStyleGlutes(vedantStyles.loginBtn)
+    setStyleHams(vedantStyles.loginBtn)
+    setStyleQuads(vedantStyles.loginBtn)
+
+      if (input == 4) { 
+        if (styleAbdom == vedantStyles.loginBtn ) {
+          setStyleAbdom(vedantStyles.loginBtnClicked)
+          setMuscles("abdominals")
+        } else {
+          setMuscles(null)
+          setStyleAbdom(vedantStyles.loginBtn)
+        }
+      } else if (input == 5) { 
+        if (styleAbduct == vedantStyles.loginBtn) {
+          setStyleAbduct(vedantStyles.loginBtnClicked)
+          setMuscles("abductors")
+        } else {
+          setMuscles(null)
+          setStyleAbduct(vedantStyles.loginBtn)
+        }        
+      } else if (input == 6) { 
+        if (styleAdd == vedantStyles.loginBtn) {
+          setStyleAdd(vedantStyles.loginBtnClicked)
+          setMuscles("adductors")
+        } else {
+          setMuscles(null)
+          setStyleAdd(vedantStyles.loginBtn)
+        }   
+      } else if (input == 7) { 
+        if (styleBiceps == vedantStyles.loginBtn) {
+          setStyleBiceps(vedantStyles.loginBtnClicked)
+          setMuscles("biceps")
+        } else {
+          setMuscles(null)
+          setStyleBiceps(vedantStyles.loginBtn)
+        }  
+      } else if (input == 8) { 
+        if (styleTriceps == vedantStyles.loginBtn) {
+          setStyleTriceps(vedantStyles.loginBtnClicked)
+          setMuscles("triceps")
+        } else {
+          setMuscles(null)
+          setStyleTriceps(vedantStyles.loginBtn)
+        }
+      } else if (input == 9) { 
+        if (styleLats == vedantStyles.loginBtn) {
+          setStyleLats(vedantStyles.loginBtnClicked)
+          setMuscles("lats")
+        } else {
+          setMuscles(null)
+          setStyleLats(vedantStyles.loginBtn)
+        }
+      } else if (input == 10) { 
+        if (styleFore == vedantStyles.loginBtn) {
+          setStyleFore(vedantStyles.loginBtnClicked)
+          setMuscles("forearms")
+        } else {
+          setMuscles(null)
+          setStyleFore(vedantStyles.loginBtn)
+        }
+      } else if (input == 11) { 
+        if (styleTraps == vedantStyles.loginBtn) {
+          setStyleTraps(vedantStyles.loginBtnClicked)
+          setMuscles("traps")
+        } else {
+          setMuscles(null)
+          setStyleTraps(vedantStyles.loginBtn)
+        }
+      } else if (input == 12) { 
+        if (styleChest == vedantStyles.loginBtn) {
+          setStyleChest(vedantStyles.loginBtnClicked)
+          setMuscles("chest")
+        } else {
+          setMuscles(null)
+          setStyleChest(vedantStyles.loginBtn)
+        }
+      } else if (input == 13) { 
+        if (styleNeck == vedantStyles.loginBtn) {
+          setStyleNeck(vedantStyles.loginBtnClicked)
+          setMuscles("neck")
+        } else {
+          setMuscles(null)
+          setStyleNeck(vedantStyles.loginBtn)
+        }
+      } else if (input == 14) { 
+        if (styleLowBack == vedantStyles.loginBtn) {
+          setStyleLowBack(vedantStyles.loginBtnClicked)
+          setMuscles("lower_back")
+        } else {
+          setMuscles(null)
+          setStyleLowBack(vedantStyles.loginBtn)
+        }
+      } else if (input == 15) { 
+        if (styleMidBack == vedantStyles.loginBtn) {
+          setStyleMidBack(vedantStyles.loginBtnClicked)
+          setMuscles("middle_back")
+        } else {
+          setMuscles(null)
+          setStyleMidBack(vedantStyles.loginBtn)
+        }
+      } else if (input == 16) { 
+        if (styleCalves == vedantStyles.loginBtn) {
+          setStyleCalves(vedantStyles.loginBtnClicked)
+          setMuscles("calves")
+        } else {
+          setMuscles(null)
+          setStyleCalves(vedantStyles.loginBtn)
+        }
+      } else if (input == 17) { 
+        if (styleGlutes == vedantStyles.loginBtn) {
+          setStyleGlutes(vedantStyles.loginBtnClicked)
+          setMuscles("glutes")
+        } else {
+          setMuscles(null)
+          setStyleGlutes(vedantStyles.loginBtn)
+        }
+      } else if (input == 18) { 
+        if (styleHams == vedantStyles.loginBtn) {
+          setStyleHams(vedantStyles.loginBtnClicked)
+          setMuscles("hamstrings")
+        } else {
+          setMuscles(null)
+          setStyleHams(vedantStyles.loginBtn)
+        }
+      } else if (input == 19) { 
+        if (styleQuads == vedantStyles.loginBtn) {
+          setStyleQuads(vedantStyles.loginBtnClicked)
+          setMuscles("quadriceps")
+        } else {
+          setMuscles(null)
+          setStyleQuads(vedantStyles.loginBtn)
+        }
+      }
+    } else {
+      setStyleCardio(vedantStyles.loginBtn)
+      setStyleOly(vedantStyles.loginBtn)
+      setStylePlyo(vedantStyles.loginBtn)
+      setStylePower(vedantStyles.loginBtn)
+      setStyleStrength(vedantStyles.loginBtn)
+      setStyleStretch(vedantStyles.loginBtn)
+      setStyleStrong(vedantStyles.loginBtn)
+      if (input == 20) { 
+        if (styleCardio == vedantStyles.loginBtn) {
+          setStyleCardio(vedantStyles.loginBtnClicked)
+          setType("cardio")
+        } else {
+          setStyleCardio(vedantStyles.loginBtn)
+          setType(null)
+        }
+      } else if (input == 21) { 
+        if (styleOly == vedantStyles.loginBtn) {
+          setStyleOly(vedantStyles.loginBtnClicked)
+          setType("olympic_weightlifting")
+        } else {
+          setStyleOly(vedantStyles.loginBtn)
+          setType(null)
+        }
+      } else if (input == 22) { 
+        if (stylePlyo == vedantStyles.loginBtn) {
+          setStylePlyo(vedantStyles.loginBtnClicked)
+          setType("plyometrics")
+        } else {
+          setStylePlyo(vedantStyles.loginBtn)
+          setType(null)
+        }
+      } else if (input == 23) { 
+        if (stylePower == vedantStyles.loginBtn) {
+          setStylePower(vedantStyles.loginBtnClicked)
+          setType("powerlifting")
+        } else {
+          setStylePower(vedantStyles.loginBtn)
+          setType(null)
+        }
+      } else if (input == 24) { 
+        if (styleStrength == vedantStyles.loginBtn) {
+          setStyleStrength(vedantStyles.loginBtnClicked)
+          setType("strength")
+        } else {
+          setStyleStrength(vedantStyles.loginBtn)
+          setType(null)
+        }
+      } else if (input == 25) { 
+        if (styleStretch == vedantStyles.loginBtn) {
+          setStyleStretch(vedantStyles.loginBtnClicked)
+          setType("stretching")
+
+        } else {
+          setStyleStretch(vedantStyles.loginBtn)
+          setType(null)
+        }
+      } 
+      else if (input == 26) { 
+        if (styleStrong == vedantStyles.loginBtn) {
+          setStyleStrong(vedantStyles.loginBtnClicked)
+          setType("strongman")
+        } else {
+          setStyleStrong(vedantStyles.loginBtn)
+          setType(null)
+        }
+      } else if (input == 27) { 
+        console.log(muscles)
+      } 
     }
   }
 
@@ -429,9 +387,6 @@ const [apiResponseArr, setApiResponseArr] = useState([]);
   }
 
   async function saveExercise2() {
-    console.log("YUH");
-    console.log(setting1 + " " + setting2)
-    console.log(modalInfo.name)
     const name = modalInfo.name;
 
     setModalAddVisible(false);
@@ -458,7 +413,9 @@ const [apiResponseArr, setApiResponseArr] = useState([]);
 
     const docRef2 = await setDoc(doc(db, "accounts", user.uid, "workouts", workoutSelected, "exercises", temp1[0].name), {
       setsNum: setting1,
-      restNum: setting2,  
+      restNum: setting2, 
+      activeNum: setting3,
+      name: temp1[0].name
     });
   }
 
@@ -732,65 +689,6 @@ const [apiResponseArr, setApiResponseArr] = useState([]);
           </View>
         </ScrollView>
       </View>
-      <Text style={styles.playlistText}> {workoutString} </Text>
-    </View> */}
-
-    {/* <Modal
-      animationType="slide"
-      transparent={true}
-      visible={modalVisible}
-      onRequestClose={() => {
-      Alert.alert('Modal has been closed.');
-      setModalVisible(!modalVisible);
-      }}>
-      <View style={styles.centeredView}>
-        <View style={styles.modalView}>
-          <Text style={newStyles.modalText}>{modalInfo}</Text>
-          <Text style={newStyles.modalText}>{modalDirections}</Text>
-            <Pressable
-              style={[styles.modalButton, styles.buttonClose]}
-              onPress={() => setModalVisible(!modalVisible)}>
-              <Text style={styles.textStyle}>Close Directions</Text>
-            </Pressable>
-        </View>  
-      </View>
-    </Modal> */}
-    
-    {/* Display Calls */}
-    <ScrollView style={newStyles.scrollContainer1}>
-  
-      <View style={newStyles.scrollContainer2}>
-        {apiResponseArr.map((info, index) => (
-          <View key={index} style={newStyles.cardComp}>
-            <View style={newStyles.cardTextView}>
-              <Text style={newStyles.cardText1}> {info.name} </Text>
-              <Text style={newStyles.cardText2}> {info.difficulty} </Text>
-            </View>
-            <View style={newStyles.buttonView}>
-              <TouchableOpacity
-                style={[newStyles.cardInfoBtn]}
-                onPress={() => {
-                setModalVisible(true);
-                setModalDirections(info.instructions)
-                setModalInfo(
-                  "Name: " + info.name + " \n" + 
-                  "Muscle: " + info.muscle + " \n " + 
-                  "Equipment: " + info.equipment + " \n " +
-                  "Type: " + info.type + " — " + info.difficulty)
-                }}>
-                <Icon style={{alignContent: "end",}}
-                  color='#ffffff'   
-                  name="information-outline"
-                  type="material-community"
-                  size="30"
-                />
-              </TouchableOpacity>
-            </View>
-          </View>
-          ))}
-      </View>
-    {/* __________________________________________________________________________________________________________________________________________________________*/}
-
 
       <Modal
         animationType="slide"
@@ -895,7 +793,7 @@ const [apiResponseArr, setApiResponseArr] = useState([]);
         </View>
 
         <Modal
-          animationType="slide"
+          animationType="fade"
           transparent={true}
           visible={modalAddVisible}
           onRequestClose={() => {Alert.alert('Modal has been closed.'); setModalAddVisible(!modalAddVisible); }}>
@@ -914,6 +812,21 @@ const [apiResponseArr, setApiResponseArr] = useState([]);
                   size="40"
                 />
               </View>
+              <View style={modalAddStyles.dividerView}>
+                <Divider borderColor="#8a7ed9" color="#e2deff" orientation="center">Time On</Divider>
+              </View>
+              <View style={modalAddStyles.scrollContainer1}>
+                <ScrollView horizontal={true} style={modalAddStyles.scrollContainer2} showsHorizontalScrollIndicator={false}>
+                  <View style={modalAddStyles.scrollContainer3}> 
+                    {timeArr.map((info, index) => (
+                      <TouchableOpacity
+                        key={index} style={settingStyleArr3[index]} onPress={() => {selectSetting(3, index)}}>
+                        <Text style={modalAddStyles.timeButtonText}>{info}</Text>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                </ScrollView>
+              </View> 
               <View style={modalAddStyles.dividerView}>
                 <Divider borderColor="#8a7ed9" color="#e2deff" orientation="center">Number of Sets</Divider>
               </View>
@@ -942,22 +855,8 @@ const [apiResponseArr, setApiResponseArr] = useState([]);
                     ))}
                   </View>
                 </ScrollView>
-              </View>
-              {/* <View style={modalAddStyles.dividerView}>
-                <Divider borderColor="#8a7ed9" color="#e2deff" orientation="center">Rest After All</Divider>
-              </View>
-              <View style={modalAddStyles.scrollContainer1}>
-                <ScrollView horizontal={true} style={modalAddStyles.scrollContainer2} showsHorizontalScrollIndicator={false}>
-                  <View style={modalAddStyles.scrollContainer3}> 
-                    {timeArr.map((info, index) => (
-                      <TouchableOpacity
-                        key={index} style={settingStyleArr3[index]} onPress={() => {selectSetting(3, index)}}>
-                        <Text style={modalAddStyles.timeButtonText}>{info}</Text>
-                      </TouchableOpacity>
-                    ))}
-                  </View>
-                </ScrollView>
-              </View>  */}
+              </View> 
+
               <TouchableOpacity style={modalAddStyles.saveButton} onPress={saveExercise2}>
                 <Text style={modalAddStyles.saveText}>SAVE</Text>
               </TouchableOpacity>
@@ -1029,7 +928,6 @@ const [apiResponseArr, setApiResponseArr] = useState([]);
 
         <View style={{flexDirection: 'row'}}>
           <TouchableOpacity style={styleTraps} onPress={() => recieveButtonClicks(11)}>
-
               <Text style={vedantStyles.loginText}>Traps</Text> 
           </TouchableOpacity> 
           <TouchableOpacity style={styleChest} onPress={() => recieveButtonClicks(12)}>
@@ -1045,7 +943,6 @@ const [apiResponseArr, setApiResponseArr] = useState([]);
 
         <View style={{flexDirection: 'row'}}>
           <TouchableOpacity style={styleMidBack} onPress={() => recieveButtonClicks(15)}>
-
               <Text style={vedantStyles.loginText}>Middle Back</Text> 
           </TouchableOpacity> 
           <TouchableOpacity style={styleCalves} onPress={() => recieveButtonClicks(16)}>
@@ -1089,7 +986,6 @@ const [apiResponseArr, setApiResponseArr] = useState([]);
 
         <View style={{flexDirection: 'row'}}>
           <TouchableOpacity style={styleStretch} onPress={() => recieveButtonClicks(25)}>
-
               <Text style={vedantStyles.loginText}>Stretching</Text> 
           </TouchableOpacity> 
           <TouchableOpacity style={styleStrong} onPress={() => recieveButtonClicks(26)}>
@@ -1099,7 +995,6 @@ const [apiResponseArr, setApiResponseArr] = useState([]);
       
         <View style={{flexDirection: 'row', marginTop: 45, marginRight: 265}}>
           <TouchableOpacity onPress={closeFilterPage}>
-
               <Text style={vedantStyles.returnText}>Back</Text> 
           </TouchableOpacity> 
         </View>
@@ -1146,8 +1041,7 @@ const [apiResponseArr, setApiResponseArr] = useState([]);
             </View>
           ))}
         </View>
-
-      </View>
+      </ScrollView>
     </View>
   );
 }
@@ -1427,7 +1321,7 @@ const modalAddStyles = StyleSheet.create({
   },
   modalView: {
     alignItems: 'center',
-    height: "42%",
+    height: "54%",
     width: "70%",
     backgroundColor: "#404057",//'#404057', //0d0d12 //26, 26, 41
     borderRadius: 15,
@@ -1457,85 +1351,9 @@ const modalAddStyles = StyleSheet.create({
     // marginRight: 7,
     marginLeft: 20,
   },
-  filterContainer: { 
-    alignItems: "center",
-  },
-  titleText: {
-    color: "#8e8efa",
-    fontWeight: "500",
-    fontSize: 35,
-    alignSelf: "left",
-    marginBottom: 25,
-  },
-  filterHeader: {
-    fontSize: 20,
-    fontWeight: "600",
-    color: "#ffffff",
-    margin: 5,
-    marginTop: 15
-  },
-  modalText: {
-    marginBottom: 15,
-    textAlign: 'center',
-  },
-  dividerView: {
-    width: "87%",
-  },
-  loginBtn: {
-    borderRadius:7,
-    paddingHorizontal: 15,
-    paddingVertical: 8,
-    backgroundColor: '#FFFFFF',
-    shadowColor: 'rgba(227, 227, 255, 0.2)',
-    shadowOpacity: 0.8,
-    elevation: 6,
-    shadowRadius: 15,
-    margin: 5,
-    shadowOffset : { width: 1, height: 13},
-  },
 
-  loginBtnClicked: {
-    borderRadius:7,
-    paddingHorizontal: 15,
-    paddingVertical: 8,
-    backgroundColor: '#8e8efa',
-    shadowColor: 'rgba(227, 227, 255, 0.2)',
-    shadowOpacity: 0.8,
-    elevation: 6,
-    shadowRadius: 15,
-    margin: 5,
-    shadowOffset : { width: 1, height: 13},
-  },
-  loginText: {
-    fontWeight: "600",
-    fontSize: 15,
-  },
-  returnText: {
-    fontWeight: "600",
-    fontSize: 35,
-    color: "#FF0101",
-    alignSelf: "left",
-  },
-
-  inputView: {
-    borderColor: "#404057",
-    borderWidth: 2,
-    borderRadius: 5,
-    height: 45,
-    width: 250,
-    marginRight: 5,
-    alignItems: "center",
-  },
-  inputText: {
-    height: 50,
-    width: "100%",
-    flex: 1,
-    padding: 15,
-    color: "#ffffff",
-  },
   scrollContainer1: {
     flex: 1,
-
     maxHeight: 45,
     width: "90%",
     backgroundColor: "#2b2b40",
@@ -1639,13 +1457,9 @@ const mainScrollView = StyleSheet.create({
   },
   cardInfoBtn: {
     height: 30,
+    // backgroundColor: "darkblue",
     justifyContent: "flex-end",
     alignSelf: "flex-end",
-  },
-  buttonView: {
-    alignContent: "center",
-    flexDirection: "row",
-    justifyContent: "center",
   },
 })
 
@@ -1815,7 +1629,8 @@ const styles = StyleSheet.create({
       flex: 1,
       // backgroundColor: "cyan",
       maxHeight: 495,
-    },
+    }
+
 
 })
 

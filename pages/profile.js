@@ -9,15 +9,6 @@ import { addDoc, getDoc, doc, enableNetwork, setDoc, getCountFromServer, collect
 
 export default function Profile({ navigation }) {
 
-  
-  React.useEffect(() => {
-    const unsubscribe = navigation.addListener('focus', () => {
-      loadRequests();
-    });
-    return unsubscribe;
-  }, []);
-
-
   const [username, setUsername] = useState("");
   const [requestName, setRequestName] = useState("");
   const [requestArr, setRequestArr] = useState([]);
@@ -91,11 +82,12 @@ export default function Profile({ navigation }) {
     querySnapshot.forEach(doc => {
         if (requestName === doc.data().username){
           addFriendToUserDoc(doc.id)
-          requestName("");
+          setRequestName("");
           console.log("matches")
         }
       });
     }
+
   }
 
   async function addFriendToUserDoc(friendID) {
