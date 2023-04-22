@@ -9,7 +9,10 @@ import { addDoc, getDoc, doc, enableNetwork, setDoc, getCountFromServer, collect
 
 export default function Profile({ navigation }) {
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 3a30e1f6196a8ead00ca3f64ac64abaddb005dc7
   const [username, setUsername] = useState("");
   const [requestName, setRequestName] = useState("");
   const [requestArr, setRequestArr] = useState([]);
@@ -83,11 +86,12 @@ export default function Profile({ navigation }) {
     querySnapshot.forEach(doc => {
         if (requestName === doc.data().username){
           addFriendToUserDoc(doc.id)
-          requestName("");
+          setRequestName("");
           console.log("matches")
         }
       });
     }
+
   }
 
   async function addFriendToUserDoc(friendID) {

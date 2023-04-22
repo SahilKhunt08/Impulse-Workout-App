@@ -25,9 +25,15 @@ async function newDoc() {
   await setDoc(doc(db, "accounts", user.uid), {
     username: usernameString,
     workouts: []
+<<<<<<< HEAD
     })
   }
     
+=======
+    }
+  )}
+
+>>>>>>> 3a30e1f6196a8ead00ca3f64ac64abaddb005dc7
 export default function Login({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("")  
@@ -37,6 +43,24 @@ export default function Login({ navigation }) {
   const [modalVisible, setModalVisible] = useState(false);
 
 async function makeNewDoc() {
+  const auth = getAuth();
+  const user = auth.currentUser   
+  const usernameString = auth.currentUser.email.substring(0, auth.currentUser.email.indexOf("@"));
+  const friendsRef = await setDoc(doc(db, "accounts", user.uid, "friends", "temp"), {});
+  const requestsRef = await setDoc(doc(db, "accounts", user.uid, "requests", "temp"), {});
+  const workoutRef = await setDoc(doc(db, "accounts", user.uid, "workouts", "temp"), {});
+  // const workout1Ref = await setDoc(doc(db, "accounts", user.uid, "workouts", "workout1"), {name: "workout1"});
+  // const workout2Ref = await setDoc(doc(db, "accounts", user.uid, "workouts", "workout2"), {name: "workout2"});
+  // const workout3Ref = await setDoc(doc(db, "accounts", user.uid, "workouts", "workout3"), {name: "workout3"});
+  // const workout4Ref = await setDoc(doc(db, "accounts", user.uid, "workouts", "workout4"), {name: "workout4"});
+  // const workout5Ref = await setDoc(doc(db, "accounts", user.uid, "workouts", "workout5"), {name: "workout5"});
+  const setTempField = await setDoc(doc(db, "accounts", user.uid), {
+    username: newUsername,
+    workoutsArr: [],
+    leaderboardsArr: ["temp"],
+  })
+  // navigation.replace('Impulse')
+
   navigation.navigate('Impulse') //Old version
   setModalVisible(false);
 }
@@ -110,9 +134,7 @@ async function makeNewDoc() {
         <Text style={newStyles.loginText}>LOGIN</Text> 
       </TouchableOpacity> 
 
-      <TouchableOpacity style={newStyles.loginBtn} onPress={handleRegister}>
-        <Text style={newStyles.loginText}>REGISTER</Text> 
-      </TouchableOpacity> 
+     
 
       <View style={newStyles.dividerView}>
         <Divider borderColor="#a3a3bf" color="#a3a3bf" orientation="center">
