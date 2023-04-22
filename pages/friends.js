@@ -1,13 +1,16 @@
+//setMyArray(oldArray => [...oldArray, newElement]);
+
 import React, { useState } from "react";
 import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity, ScrollView, Modal, Pressable, MaskedViewComponent, KeyboardAvoidingView} from "react-native";
 import { auth } from './firebase';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
-import { addDoc, doc, enableNetwork, setDoc, getCountFromServer, collection, getDocs, namedQuery, updateDoc, getDoc} from "firebase/firestore"; 
+import { addDoc, doc, enableNetwork, setDoc, getCountFromServer, collection, getDocs, namedQuery, updateDoc, getDoc, deleteDoc} from "firebase/firestore"; 
 import {db} from './firebase';
 import { Button } from 'react-native-paper';
 import { BlurView } from 'expo-blur';
 import { Icon } from '@rneui/themed';
 import Divider from 'react-native-divider';
+import { TokenTypeHint } from "expo-auth-session";
 
 export default function AddFriends({ navigation }) {
 
@@ -29,6 +32,8 @@ export default function AddFriends({ navigation }) {
   
   const [myLeaderboardsArr, setMyLeaderboardsArr] = useState([]); 
   const [sortedLeaderboardsArr, setSortedLeaderboardsArr] = useState({});
+  const [deleteModalVis, setDeleteModalVis] = useState(false);
+  const [chosenleaderboard ,setChosenLeaderboard] = useState("");
   const [leaderboardModalVisible, setLeaderboardModalVisible] = useState(false);
   const [modalInfo, setModalInfo] = useState([]);
   
@@ -55,13 +60,28 @@ export default function AddFriends({ navigation }) {
 
   async function initialize(){
     setChosenFriendsArr([]);  
-    //Load all the leaderboards the user is in.
+
+    const querySnapshot = await getDocs(collection(db, "leaderboards"));
+    var deleteDocArr = [];
+    querySnapshot.forEach((doc) => {
+      if(doc.id != "temp"){
+        const currMemebersArr = doc.data().membersArr;
+        if(currMemebersArr.length == 0){
+          deleteDocArr.push(doc.id);
+        }
+      }
+    });
+    for(var i = 0; i < deleteDocArr.length; i++){
+      await deleteDoc(doc(db, "leaderboards", deleteDocArr[i]));
+    }
+
     const docRef1 = doc(db, "accounts", user.uid);
     const docSnap1 = await getDoc(docRef1);
     var joinedLeaderboardsArr = [];
     var tempMyArr = [];
     if(docSnap1.exists()){
       joinedLeaderboardsArr = docSnap1.data().leaderboardsArr;
+      console.log(joinedLeaderboardsArr);
       for(var i = 0; i < joinedLeaderboardsArr.length; i++){
         if(joinedLeaderboardsArr[i] != "temp"){
           const docRef2 = doc(db, "leaderboards", joinedLeaderboardsArr[i]);
@@ -70,8 +90,9 @@ export default function AddFriends({ navigation }) {
         }
       }
     }
-    setMyLeaderboardsArr(tempMyArr);
+  
     var tempArr = tempMyArr;
+    var settingFinalArr = [];
     for(var x = 0; x < tempArr.length; x++){
 
       var currentMembersArr = tempArr[x].membersArr;
@@ -104,8 +125,6 @@ export default function AddFriends({ navigation }) {
         currentScoreArr = tempArr1;
         currentMembersArr = tempArr2;
       }
-      // console.log(newMembersArr);
-      // console.log(newScoresArr);
       var placement = 0;
       for(var l = 0; l < newMembersArr.length; l++){
         if(user.uid == newMembersArr[l]){
@@ -113,8 +132,7 @@ export default function AddFriends({ navigation }) {
         }
       }
       sortedLeaderboardsArr[x] = {place: placement, sortedMembersArr: newMembersArr, sortedScoresArr: newScoresArr}
-      // console.log(myLeaderboardsArr[x]);
-      myLeaderboardsArr[x] = {
+      settingFinalArr.push({
         category: tempMyArr[x].category,
         membersArr: tempMyArr[x].membersArr,
         name: tempMyArr[x].name,
@@ -122,13 +140,9 @@ export default function AddFriends({ navigation }) {
         place: placement, 
         sortedMembersArr: newMembersArr, 
         sortedScoresArr: newScoresArr,
-      };
+      });
     }
-
-      console.log("----------------------------------------------")
-      // console.log(sortedLeaderboardsArr);
-      // console.log(myLeaderboardsArr);
-      setMyLeaderboardsArr(myLeaderboardsArr);
+    setMyLeaderboardsArr(settingFinalArr);
   }
 
   async function loadFriends(){
@@ -218,8 +232,7 @@ export default function AddFriends({ navigation }) {
 
   async function createLeaderboard(){
     setMakeModalVisible(false);
-    var participantsArr = [];
-    participantsArr.push(user.uid);
+    var participantsArr = [user.uid];
     var defaultScoresArr = [0];
     for(var i = 0; i < chosenFriendsArr.length; i++){
       participantsArr.push(chosenFriendsArr[i])    
@@ -247,6 +260,7 @@ export default function AddFriends({ navigation }) {
         });
       }
     }
+    initialize();
   }
 
   async function openMainModal(input){
@@ -298,6 +312,30 @@ export default function AddFriends({ navigation }) {
     });
   }
 
+  async function leaveQuestion(answer) {
+    if(answer == true){
+      const docRef1 = doc(db, "leaderboards", chosenleaderboard);
+      const docSnap1 = await getDoc(docRef1);
+      const oldArr1 = docSnap1.data().membersArr;
+      const newArr1 = oldArr1.filter(a => a !== user.uid);
+      await updateDoc(docRef1, {
+        membersArr:newArr1
+      });
+      const docRef2 = doc(db, "accounts", user.uid);
+      const docSnap2 = await getDoc(docRef2);
+      const oldArr2 = docSnap2.data().leaderboardsArr;
+      const newArr2 = oldArr2.filter(a => a !== chosenleaderboard);
+      await updateDoc(docRef2, {
+        leaderboardsArr:newArr2
+      });
+      initialize();
+      const oldArr3 = myLeaderboardsArr;
+      const newArr3 = oldArr3.filter(a => a.name !== chosenleaderboard);
+      setMyLeaderboardsArr(newArr3);
+    }
+    setDeleteModalVis(false);
+  }
+
   return (
     <View style={styles.container}>
 
@@ -322,10 +360,9 @@ export default function AddFriends({ navigation }) {
                 color="#321b8f"
                 name="close-box-outline"
                 type="material-community"
-                size="40"
-              />
+                size="40">
+              </Icon>
             </View>
-
             <View style={makeStyles.bothInputView}>
               <View style={makeStyles.inputView}>
                 <TextInput
@@ -350,14 +387,14 @@ export default function AddFriends({ navigation }) {
             <Text style={makeStyles.scrollViewTitle}>Select Friends</Text>
             <ScrollView style={makeStyles.scrollContainer1} showsVerticalScrollIndicator={false}>
               <View style={makeStyles.scrollContainer2}>
-                {/* {selectableFriendsArr.map((info, index) => (
+                {selectableFriendsArr.map((info, index) => (
                   <View style={makeStyles.mapView} key={index}>
                     <Text style={makeStyles.mapText}>{info.name}</Text>
                     <TouchableOpacity style={makeStyles.mapButton} onPress={() => selectFriend(info.id)}>
                       <Text style={makeStyles.mapButtonText}>ADD</Text>
                     </TouchableOpacity>
                   </View>
-                ))} */}
+                ))}
               </View>
             </ScrollView>
 
@@ -374,8 +411,19 @@ export default function AddFriends({ navigation }) {
           <View style={cardStyles.container3}>
             {myLeaderboardsArr.map((info, index) => (
               <TouchableOpacity key={index} style={cardStyles.cardView} onPress={() => openMainModal(info.name)}>
-                <View style={cardStyles.nameTextView}>
-                  <Text style={cardStyles.nameText}>{info.name}</Text>
+                <View style={cardStyles.headerView}>
+                  <View style={cardStyles.nameTextView}>
+                    <Text style={cardStyles.nameText}>{info.name}</Text>
+                  </View>
+                  <TouchableOpacity style={cardStyles.removeBtn}>
+                    <Icon
+                      name='close-box'
+                      type='material-community'
+                      color='#8e8ef3'
+                      size={30}
+                      onPress={() => {setDeleteModalVis(true); setChosenLeaderboard(info.name)}} >
+                    </Icon>
+                  </TouchableOpacity>
                 </View>
                 <View style={cardStyles.categoryTextView}>
                   <Text style={cardStyles.categoryText}>{info.category}</Text>
@@ -388,6 +436,30 @@ export default function AddFriends({ navigation }) {
           </View>
         </ScrollView>
       </View>
+
+      <Modal  
+        animationType="fade"
+        transparent={true}
+        visible={deleteModalVis}
+        onRequestClose={() => {Alert.alert('Modal has been closed.'); setDeleteModalVis(!deleteModalVis); }}>
+        <BlurView intensity={35} tint="dark" style={deleteModalStyles.modalContainer}>
+          <View style={deleteModalStyles.modalView}>
+            <View style={deleteModalStyles.titleView}>
+              <Text style={deleteModalStyles.titleText1}>Leave Leaderboard</Text>
+              <Text style={deleteModalStyles.titleText2}>Are you sure you want to leave?</Text>
+            </View>
+            <View style={deleteModalStyles.answerView}>
+              <TouchableOpacity style={deleteModalStyles.button} onPress={() => leaveQuestion(true)}>
+                <Text style={deleteModalStyles.buttonText1}>YES</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={deleteModalStyles.button} onPress={() => leaveQuestion(false)}>
+                <Text style={deleteModalStyles.buttonText2}>NO</Text>
+              </TouchableOpacity>
+            </View>
+
+          </View>
+        </BlurView>
+      </Modal>
 
       <Modal  
         animationType="slide"
@@ -439,6 +511,60 @@ export default function AddFriends({ navigation }) {
      </View>
   )
 }
+
+const deleteModalStyles = StyleSheet.create({
+    modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalView: {
+    shadowColor: 'white',
+    shadowOffset: {width: 0, height: 0},
+    shadowOpacity: 0.2,
+    shadowRadius: 10,
+    // backgroundColor: "#1a1a29", //'#404057', //0d0d12
+    backgroundColor: "#bac1d2",
+    alignItems: 'center',
+    height: "21%",
+    width: "80%",
+    borderRadius: 12,
+  },
+  titleView: {
+    // backgroundColor: "red",
+    height: "70%",
+    alignItems: "center",
+  },
+  answerView: {
+    height: "30%",
+    flexDirection: "row",
+    borderTopWidth: 0.5,
+    borderTopColor: "#898e9c",
+  },
+  button: {
+    justifyContent: "center",
+    alignItems: "center",
+    width: "50%",
+  },
+  titleText1: {
+    color: "#5f5fb3",
+    fontSize: 23,
+    fontWeight: "500",
+    marginTop: 15,
+  },
+  titleText2: {
+    fontSize: 18,
+    marginTop: 15,
+  },
+  buttonText1: {
+    fontSize: 18,
+    fontWeight: "500",
+  },
+  buttonText2: {
+    fontSize: 18,
+    fontWeight: "500",
+  },
+})
 
 const mainScrollViewStyles = StyleSheet.create({
   scrollContainer1: {
@@ -584,9 +710,6 @@ const mainModalStyles = StyleSheet.create({
   },
 })
 
-
-
-
 const cardStyles = StyleSheet.create({
   container1: {
     alignItems: "center",
@@ -612,9 +735,20 @@ const cardStyles = StyleSheet.create({
     marginBottom: 15,
     borderRadius: 10,
   },
-  nameTextView: {
-    // backgroundColor: "grey",
+  headerView: {
+    flexDirection: "row",
+    alignItems: "center",
     height: "35%",
+  },
+  removeBtn: {
+    height: "100%",
+    width: "15%",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  nameTextView: {
+    width: "85%",
+    height: "100%",
   },
   categoryTextView: {
     // backgroundColor: "tan",
@@ -629,7 +763,7 @@ const cardStyles = StyleSheet.create({
     color: "#8e8ef3",
     fontWeight: "500",
     marginTop: 10,
-    marginLeft: 10,
+    marginHorizontal: 10,
   },
   categoryText: {
     fontSize: 20,
