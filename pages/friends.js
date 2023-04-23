@@ -1,13 +1,16 @@
+//setMyArray(oldArray => [...oldArray, newElement]);
+
 import React, { useState } from "react";
 import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity, ScrollView, Modal, Pressable, MaskedViewComponent, KeyboardAvoidingView} from "react-native";
 import { auth } from './firebase';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
-import { addDoc, doc, enableNetwork, setDoc, getCountFromServer, collection, getDocs, namedQuery, updateDoc, getDoc} from "firebase/firestore"; 
+import { addDoc, doc, enableNetwork, setDoc, getCountFromServer, collection, getDocs, namedQuery, updateDoc, getDoc, deleteDoc} from "firebase/firestore"; 
 import {db} from './firebase';
 import { Button } from 'react-native-paper';
 import { BlurView } from 'expo-blur';
 import { Icon } from '@rneui/themed';
 import Divider from 'react-native-divider';
+import { TokenTypeHint } from "expo-auth-session";
 
 export default function AddFriends({ navigation }) {
 
@@ -29,6 +32,8 @@ export default function AddFriends({ navigation }) {
   
   const [myLeaderboardsArr, setMyLeaderboardsArr] = useState([]); 
   const [sortedLeaderboardsArr, setSortedLeaderboardsArr] = useState({});
+  const [deleteModalVis, setDeleteModalVis] = useState(false);
+  const [chosenleaderboard ,setChosenLeaderboard] = useState("");
   const [leaderboardModalVisible, setLeaderboardModalVisible] = useState(false);
   const [modalInfo, setModalInfo] = useState([]);
   
@@ -38,6 +43,8 @@ export default function AddFriends({ navigation }) {
 
   const auth = getAuth();
   const user = auth.currentUser;
+
+  const rankingArr = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
 //————————————————————————————————————————————————————————————————————————————————————————————————————
 
@@ -55,7 +62,21 @@ export default function AddFriends({ navigation }) {
 
   async function initialize(){
     setChosenFriendsArr([]);  
-    //Load all the leaderboards the user is in.
+
+    const querySnapshot = await getDocs(collection(db, "leaderboards"));
+    var deleteDocArr = [];
+    querySnapshot.forEach((doc) => {
+      if(doc.id != "temp"){
+        const currMemebersArr = doc.data().membersArr;
+        if(currMemebersArr.length == 0){
+          deleteDocArr.push(doc.id);
+        }
+      }
+    });
+    for(var i = 0; i < deleteDocArr.length; i++){
+      await deleteDoc(doc(db, "leaderboards", deleteDocArr[i]));
+    }
+
     const docRef1 = doc(db, "accounts", user.uid);
     const docSnap1 = await getDoc(docRef1);
     var joinedLeaderboardsArr = [];
@@ -70,65 +91,96 @@ export default function AddFriends({ navigation }) {
         }
       }
     }
-    setMyLeaderboardsArr(tempMyArr);
+  
     var tempArr = tempMyArr;
+    var settingFinalArr = [];
+//------------------------------------------------------------------------------------------------------------------------------
+    // for(var x = 0; x < tempArr.length; x++){
+
+    //   var currentMembersArr = tempArr[x].membersArr;
+    //   var currentScoreArr = tempArr[x].scoresArr;
+    //   var newMembersArr = [];
+    //   var newScoresArr = [];
+
+    //   for(var y = 0; y < tempArr[x].membersArr.length; y++){
+    //     var max = 0;
+    //     var index = 0;
+    //     var mainLength = currentScoreArr.length;
+
+    //     for(var z = 0; z < mainLength; z++){
+    //       if(currentScoreArr[z] >= max){
+    //         max = currentScoreArr[z];
+    //         index = z;
+    //       }
+    //     }
+    //     newMembersArr.push(currentMembersArr[index]);
+    //     newScoresArr.push(currentScoreArr[index]);
+    //     var tempArr1 = [];
+    //     var tempArr2 = [];
+
+    //     for(var j = 0; j < mainLength; j++){
+    //       if(currentScoreArr[j] != max){
+    //         tempArr1.push(currentScoreArr[j]);
+    //         tempArr2.push(currentMembersArr[j]);
+    //       }
+    //     }
+    //     currentScoreArr = tempArr1;
+    //     currentMembersArr = tempArr2;
+    //   }
+    //   var placement = 0;
+    //   for(var l = 0; l < newMembersArr.length; l++){
+    //     if(user.uid == newMembersArr[l]){
+    //       placement = l + 1; 
+    //     }
+    //   }
+    //   sortedLeaderboardsArr[x] = {place: placement, sortedMembersArr: newMembersArr, sortedScoresArr: newScoresArr}
+    //   settingFinalArr.push({
+    //     category: tempMyArr[x].category,
+    //     membersArr: tempMyArr[x].membersArr,
+    //     name: tempMyArr[x].name,
+    //     scoresArr: tempMyArr[x].scoresArr,
+    //     place: placement, 
+    //     sortedMembersArr: newMembersArr, 
+    //     sortedScoresArr: newScoresArr,
+    //   });
+    // }
+//------------------------------------------------------------------------------------------------------------------------------
+
     for(var x = 0; x < tempArr.length; x++){
-
-      var currentMembersArr = tempArr[x].membersArr;
-      var currentScoreArr = tempArr[x].scoresArr;
-      var newMembersArr = [];
-      var newScoresArr = [];
-
-      for(var y = 0; y < tempArr[x].membersArr.length; y++){
-        var max = 0;
-        var index = 0;
-        var mainLength = currentScoreArr.length;
-
-        for(var z = 0; z < mainLength; z++){
-          if(currentScoreArr[z] >= max){
-            max = currentScoreArr[z];
-            index = z;
-          }
-        }
-        newMembersArr.push(currentMembersArr[index]);
-        newScoresArr.push(currentScoreArr[index]);
-        var tempArr1 = [];
-        var tempArr2 = [];
-
-        for(var j = 0; j < mainLength; j++){
-          if(currentScoreArr[j] != max){
-            tempArr1.push(currentScoreArr[j]);
-            tempArr2.push(currentMembersArr[j]);
-          }
-        }
-        currentScoreArr = tempArr1;
-        currentMembersArr = tempArr2;
+    
+      var testingArr = [];
+      for(var i = 0; i < tempArr[x].membersArr.length; i++){
+        testingArr.push({
+          member: tempArr[x].membersArr[i],
+          score: tempArr[x].scoresArr[i],
+        })
       }
-      // console.log(newMembersArr);
-      // console.log(newScoresArr);
-      var placement = 0;
-      for(var l = 0; l < newMembersArr.length; l++){
-        if(user.uid == newMembersArr[l]){
-          placement = l + 1; 
+      testingArr.sort((p1, p2) => (p1.score < p2.score) ? 1 : (p1.score > p2.score) ? -1 : 0);
+
+      var newSort1 = [];
+      var newSort2 = [];
+      var placeIndex = -1;
+      for(var i = 0; i < testingArr.length; i++){
+        newSort1.push(testingArr[i].member);
+        newSort2.push(testingArr[i].score);
+        if(testingArr[i].member = user.uid){
+          placeIndex = i;
         }
       }
-      sortedLeaderboardsArr[x] = {place: placement, sortedMembersArr: newMembersArr, sortedScoresArr: newScoresArr}
-      // console.log(myLeaderboardsArr[x]);
-      myLeaderboardsArr[x] = {
+
+      settingFinalArr.push({
         category: tempMyArr[x].category,
         membersArr: tempMyArr[x].membersArr,
         name: tempMyArr[x].name,
         scoresArr: tempMyArr[x].scoresArr,
-        place: placement, 
-        sortedMembersArr: newMembersArr, 
-        sortedScoresArr: newScoresArr,
-      };
+        place: (placeIndex + 1), 
+        sortedMembersArr: newSort1, 
+        sortedScoresArr: newSort2,
+      });
     }
 
-      console.log("----------------------------------------------")
-      // console.log(sortedLeaderboardsArr);
-      // console.log(myLeaderboardsArr);
-      setMyLeaderboardsArr(myLeaderboardsArr);
+    setMyLeaderboardsArr(settingFinalArr);
+
   }
 
   async function loadFriends(){
@@ -218,12 +270,11 @@ export default function AddFriends({ navigation }) {
 
   async function createLeaderboard(){
     setMakeModalVisible(false);
-    var participantsArr = [];
-    participantsArr.push(user.uid);
+    var participantsArr = [user.uid];
     var defaultScoresArr = [0];
     for(var i = 0; i < chosenFriendsArr.length; i++){
       participantsArr.push(chosenFriendsArr[i])    
-      defaultScoresArr.push(0);
+      defaultScoresArr.push(i + 1);
     }
     await setDoc(doc(db, "leaderboards", inputTitle), {
       name: inputTitle,
@@ -247,38 +298,38 @@ export default function AddFriends({ navigation }) {
         });
       }
     }
+    initialize();
   }
 
   async function openMainModal(input){
-    // var index = -1;
-    // for(var i = 0; i < myLeaderboardsArr.length; i++){
-    //   if(input == myLeaderboardsArr[i].name){
-    //     setModalInfo(myLeaderboardsArr[i])
-    //     index = i;
-    //     setLeaderboardClicked(myLeaderboardsArr[i].name);
-    //     i = myLeaderboardsArr.length + 1;
-    //   }
-    // }
-    // var tempArr = [];
-    // for(var j = 0; j < myLeaderboardsArr[index].membersArr.length; j++){
-    //   const docRef1 = doc(db, "accounts", myLeaderboardsArr[index].sortedMembersArr[j]);
-    //   const docSnap1 = await getDoc(docRef1);
-    //   var tempName = "TEMP";
-    //   if(docSnap1.exists()){
-    //     tempName = docSnap1.data().username;
-    //   }
-    //   tempArr.push({
-    //     member: myLeaderboardsArr[index].sortedMembersArr[j],
-    //     score: myLeaderboardsArr[index].sortedScoresArr[j],
-    //     name: tempName,
-    //   });
-    // }
-    // setDisplayingArr(tempArr);
+    var index = -1;
+    for(var i = 0; i < myLeaderboardsArr.length; i++){
+      if(input == myLeaderboardsArr[i].name){
+        setModalInfo(myLeaderboardsArr[i])
+        index = i;
+        setLeaderboardClicked(myLeaderboardsArr[i].name);
+        i = myLeaderboardsArr.length + 1;
+      }
+    }
+    var tempArr = [];
+    for(var j = 0; j < myLeaderboardsArr[index].membersArr.length; j++){
+      const docRef1 = doc(db, "accounts", myLeaderboardsArr[index].sortedMembersArr[j]);
+      const docSnap1 = await getDoc(docRef1);
+      var tempName = "TEMP";
+      if(docSnap1.exists()){
+        tempName = docSnap1.data().username;
+      }
+      tempArr.push({
+        member: myLeaderboardsArr[index].sortedMembersArr[j],
+        score: myLeaderboardsArr[index].sortedScoresArr[j],
+        name: tempName,
+      });
+    }
+    setDisplayingArr(tempArr);
     setLeaderboardModalVisible(true);
   }
 
   async function updateScore() {
-    // statInput
     const docRef1 = doc(db, "leaderboards", leaderboardClicked);
     const docSnap1 = await getDoc(docRef1);
     var tempArr = docSnap1.data().scoresArr;
@@ -296,6 +347,30 @@ export default function AddFriends({ navigation }) {
     await updateDoc(docRef2, {
       scoresArr: tempArr
     });
+  }
+
+  async function leaveQuestion(answer) {
+    if(answer == true){
+      const docRef1 = doc(db, "leaderboards", chosenleaderboard);
+      const docSnap1 = await getDoc(docRef1);
+      const oldArr1 = docSnap1.data().membersArr;
+      const newArr1 = oldArr1.filter(a => a !== user.uid);
+      await updateDoc(docRef1, {
+        membersArr:newArr1
+      });
+      const docRef2 = doc(db, "accounts", user.uid);
+      const docSnap2 = await getDoc(docRef2);
+      const oldArr2 = docSnap2.data().leaderboardsArr;
+      const newArr2 = oldArr2.filter(a => a !== chosenleaderboard);
+      await updateDoc(docRef2, {
+        leaderboardsArr:newArr2
+      });
+      initialize();
+      const oldArr3 = myLeaderboardsArr;
+      const newArr3 = oldArr3.filter(a => a.name !== chosenleaderboard);
+      setMyLeaderboardsArr(newArr3);
+    }
+    setDeleteModalVis(false);
   }
 
   return (
@@ -322,10 +397,9 @@ export default function AddFriends({ navigation }) {
                 color="#321b8f"
                 name="close-box-outline"
                 type="material-community"
-                size="40"
-              />
+                size="40">
+              </Icon>
             </View>
-
             <View style={makeStyles.bothInputView}>
               <View style={makeStyles.inputView}>
                 <TextInput
@@ -350,14 +424,14 @@ export default function AddFriends({ navigation }) {
             <Text style={makeStyles.scrollViewTitle}>Select Friends</Text>
             <ScrollView style={makeStyles.scrollContainer1} showsVerticalScrollIndicator={false}>
               <View style={makeStyles.scrollContainer2}>
-                {/* {selectableFriendsArr.map((info, index) => (
+                {selectableFriendsArr.map((info, index) => (
                   <View style={makeStyles.mapView} key={index}>
                     <Text style={makeStyles.mapText}>{info.name}</Text>
                     <TouchableOpacity style={makeStyles.mapButton} onPress={() => selectFriend(info.id)}>
                       <Text style={makeStyles.mapButtonText}>ADD</Text>
                     </TouchableOpacity>
                   </View>
-                ))} */}
+                ))}
               </View>
             </ScrollView>
 
@@ -374,8 +448,19 @@ export default function AddFriends({ navigation }) {
           <View style={cardStyles.container3}>
             {myLeaderboardsArr.map((info, index) => (
               <TouchableOpacity key={index} style={cardStyles.cardView} onPress={() => openMainModal(info.name)}>
-                <View style={cardStyles.nameTextView}>
-                  <Text style={cardStyles.nameText}>{info.name}</Text>
+                <View style={cardStyles.headerView}>
+                  <View style={cardStyles.nameTextView}>
+                    <Text style={cardStyles.nameText}>{info.name}</Text>
+                  </View>
+                  <TouchableOpacity style={cardStyles.removeBtn}>
+                    <Icon
+                      name='close-box'
+                      type='material-community'
+                      color='#8e8ef3'
+                      size={30}
+                      onPress={() => {setDeleteModalVis(true); setChosenLeaderboard(info.name)}} >
+                    </Icon>
+                  </TouchableOpacity>
                 </View>
                 <View style={cardStyles.categoryTextView}>
                   <Text style={cardStyles.categoryText}>{info.category}</Text>
@@ -388,6 +473,30 @@ export default function AddFriends({ navigation }) {
           </View>
         </ScrollView>
       </View>
+
+      <Modal  
+        animationType="fade"
+        transparent={true}
+        visible={deleteModalVis}
+        onRequestClose={() => {Alert.alert('Modal has been closed.'); setDeleteModalVis(!deleteModalVis); }}>
+        <BlurView intensity={35} tint="dark" style={deleteModalStyles.modalContainer}>
+          <View style={deleteModalStyles.modalView}>
+            <View style={deleteModalStyles.titleView}>
+              <Text style={deleteModalStyles.titleText1}>Leave Leaderboard</Text>
+              <Text style={deleteModalStyles.titleText2}>Are you sure you want to leave?</Text>
+            </View>
+            <View style={deleteModalStyles.answerView}>
+              <TouchableOpacity style={deleteModalStyles.button} onPress={() => leaveQuestion(true)}>
+                <Text style={deleteModalStyles.buttonText1}>YES</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={deleteModalStyles.button} onPress={() => leaveQuestion(false)}>
+                <Text style={deleteModalStyles.buttonText2}>NO</Text>
+              </TouchableOpacity>
+            </View>
+
+          </View>
+        </BlurView>
+      </Modal>
 
       <Modal  
         animationType="slide"
@@ -403,7 +512,7 @@ export default function AddFriends({ navigation }) {
             <View style={mainModalStyles.inputView}>
               <TextInput
                 style={mainModalStyles.inputText}
-                placeholder="New Stat"
+                placeholder="Update Stat"
                 placeholderTextColor="#cccccc"
                 fontSize={20}
                 fontWeight={"300"}
@@ -414,20 +523,25 @@ export default function AddFriends({ navigation }) {
               </TouchableOpacity>
             </View>  
 
-            <View style={mainModalStyles.dividerView1}></View>
             <View style={mainModalStyles.mainLeaderboardView}>
               <ScrollView style={mainScrollViewStyles.scrollContainer1} showsVerticalScrollIndicator={false}>
                 <View style={mainScrollViewStyles.scrollContainer2}>
                   {displayingArr.map((info, index) => (
                     <View style={mainScrollViewStyles.placeCard} key={index}>
+                      <View style={mainScrollViewStyles.placementView}>
+                        <Text style={mainScrollViewStyles.placementText}>{index + 1}</Text>
+                      </View>
+                      <View style={mainScrollViewStyles.nameView}>
                         <Text style={mainScrollViewStyles.nameText}>{info.name}</Text>
+                      </View>
+                      <View style={mainScrollViewStyles.scoreView}>                    
                         <Text style={mainScrollViewStyles.scoreText}>{info.score}</Text>
+                      </View>
                     </View>
                   ))}
                 </View>
               </ScrollView>
             </View>
-            <View style={mainModalStyles.dividerView2}></View>
 
             <TouchableOpacity style={mainModalStyles.returnButton} onPress={() => {setLeaderboardModalVisible(false); initialize()}}>
               <Text style={mainModalStyles.returnText}>Return</Text>
@@ -440,6 +554,60 @@ export default function AddFriends({ navigation }) {
   )
 }
 
+const deleteModalStyles = StyleSheet.create({
+    modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalView: {
+    shadowColor: 'white',
+    shadowOffset: {width: 0, height: 0},
+    shadowOpacity: 0.2,
+    shadowRadius: 10,
+    // backgroundColor: "#1a1a29", //'#404057', //0d0d12
+    backgroundColor: "#bac1d2",
+    alignItems: 'center',
+    height: "21%",
+    width: "80%",
+    borderRadius: 12,
+  },
+  titleView: {
+    // backgroundColor: "red",
+    height: "70%",
+    alignItems: "center",
+  },
+  answerView: {
+    height: "30%",
+    flexDirection: "row",
+    borderTopWidth: 0.5,
+    borderTopColor: "#898e9c",
+  },
+  button: {
+    justifyContent: "center",
+    alignItems: "center",
+    width: "50%",
+  },
+  titleText1: {
+    color: "#5f5fb3",
+    fontSize: 23,
+    fontWeight: "500",
+    marginTop: 15,
+  },
+  titleText2: {
+    fontSize: 18,
+    marginTop: 15,
+  },
+  buttonText1: {
+    fontSize: 18,
+    fontWeight: "500",
+  },
+  buttonText2: {
+    fontSize: 18,
+    fontWeight: "500",
+  },
+})
+
 const mainScrollViewStyles = StyleSheet.create({
   scrollContainer1: {
     width: "100%",
@@ -447,29 +615,61 @@ const mainScrollViewStyles = StyleSheet.create({
   scrollContainer2: {
     justifyContent: "center",
     alignItems: "center",
+    marginTop: 5,
   },
   placeCard: {
     justifyContent: "center",
     alignItems: "center",
     flexDirection: "row",
-    borderBottomWidth: 1,
-    borderColor: "#cec7ff",
-    paddingVertical: 15,
-    width: "70%",
+    width: "95%",
+    height: 55,
+  },
+  placementView: {
+    width: "15%",
+    height: "80%",
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#534f8c",
+    borderTopLeftRadius: 5,
+    borderBottomLeftRadius: 5,
+  },
+  nameView: {
+    width: "65%",
+    height: "80%",
+    justifyContent: "center",
+    backgroundColor: "#34315e",
+  },
+  scoreView: {
+    width: "20%",
+    height: "80%",
+    borderTopRightRadius: 5,
+    borderBottomRightRadius: 5,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#534f8c",
+  },
+  placementText: {
+    fontSize: 30,
+    color: "white",
+    fontWeight: "900",
   },
   nameText: {
     fontSize: 20,
     color: "white",
-    width: "80%",
+    marginHorizontal: 10,
+    letterSpacing: 1.5,
+    fontWeight: "500",
   },
   scoreText: {
     fontSize: 20,
     color: "white",
-    width: "20%",
+    fontWeight: "600",
   },
 })
 
 const mainModalStyles = StyleSheet.create({
+        // borderTopColor: "#898e9c",    
+      // backgroundColor: "#bac1d2",
   modalContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -478,18 +678,10 @@ const mainModalStyles = StyleSheet.create({
   modalView: {
     marginTop: 5,
     // backgroundColor: "#1a1a29", //'#404057', //0d0d12
-    backgroundColor: "#1a1a29",
+    backgroundColor: "#181a25", //border: 262832
     alignItems: 'center',
     height: "80.5%",
     width: "100%",
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
   },
 
   nameText: {
@@ -504,38 +696,27 @@ const mainModalStyles = StyleSheet.create({
   },
   categoryText: {
     fontSize: 20,
-    color: "#8e8ef3",
+    color: "#a4a4f5",
     fontWeight: "500",
-    marginTop: 15,
-  },
-  
-  dividerView1: {
-    width: "100%",
-    borderBottomWidth: 2,
-    borderColor: "#cec7ff", //8a7ed9
-  },
-  dividerView2: {
-    width: "100%",
-    borderBottomWidth: 2,
-    borderColor: "#cec7ff", //8a7ed9
-    marginBottom: 20,
+    marginTop: 25,
   },
 
   mainLeaderboardView: {
-    height: "60%",
+    height: "55%",
     width: "100%",
+    marginBottom: 15,
   },
 
   inputView: {
-    borderColor: "#cec7ff",
+    borderColor: "#6965ad",
     borderWidth: 2,
     borderRadius: 7,
     height: 45,
-    width: "55%",
+    width: "65%",
     alignItems: "center",
     flexDirection: "row",
-    marginTop: 15,
-    marginBottom: 15,
+    marginTop: 50,
+    marginBottom: 10,
     // backgroundColor: "grey",
   },
   inputText: {
@@ -544,16 +725,16 @@ const mainModalStyles = StyleSheet.create({
     flex: 1,
     // paddingHorizontal: 15,
     color: "#ffffff",
-    marginLeft: 15,
+    marginHorizontal: 10,
   },
   enterButton: {
     height: "100%",
     width: "40%",
     justifyContent: "center",
     alignItems: "center",
-    borderColor: "#cec7ff",
+    borderColor: "#6965ad",
     borderLeftWidth: 2,
-    backgroundColor: "#45406b",
+    backgroundColor: "#322e52",
     borderTopRightRadius: 7,
     borderBottomRightRadius: 7,
   },
@@ -584,9 +765,6 @@ const mainModalStyles = StyleSheet.create({
   },
 })
 
-
-
-
 const cardStyles = StyleSheet.create({
   container1: {
     alignItems: "center",
@@ -612,9 +790,20 @@ const cardStyles = StyleSheet.create({
     marginBottom: 15,
     borderRadius: 10,
   },
-  nameTextView: {
-    // backgroundColor: "grey",
+  headerView: {
+    flexDirection: "row",
+    alignItems: "center",
     height: "35%",
+  },
+  removeBtn: {
+    height: "100%",
+    width: "15%",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  nameTextView: {
+    width: "85%",
+    height: "100%",
   },
   categoryTextView: {
     // backgroundColor: "tan",
@@ -629,7 +818,7 @@ const cardStyles = StyleSheet.create({
     color: "#8e8ef3",
     fontWeight: "500",
     marginTop: 10,
-    marginLeft: 10,
+    marginHorizontal: 10,
   },
   categoryText: {
     fontSize: 20,
