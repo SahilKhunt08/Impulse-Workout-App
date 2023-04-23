@@ -44,6 +44,8 @@ export default function AddFriends({ navigation }) {
   const auth = getAuth();
   const user = auth.currentUser;
 
+  const rankingArr = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+
 //————————————————————————————————————————————————————————————————————————————————————————————————————
 
   let shouldLoad = true;
@@ -81,7 +83,6 @@ export default function AddFriends({ navigation }) {
     var tempMyArr = [];
     if(docSnap1.exists()){
       joinedLeaderboardsArr = docSnap1.data().leaderboardsArr;
-      console.log(joinedLeaderboardsArr);
       for(var i = 0; i < joinedLeaderboardsArr.length; i++){
         if(joinedLeaderboardsArr[i] != "temp"){
           const docRef2 = doc(db, "leaderboards", joinedLeaderboardsArr[i]);
@@ -93,56 +94,93 @@ export default function AddFriends({ navigation }) {
   
     var tempArr = tempMyArr;
     var settingFinalArr = [];
+//------------------------------------------------------------------------------------------------------------------------------
+    // for(var x = 0; x < tempArr.length; x++){
+
+    //   var currentMembersArr = tempArr[x].membersArr;
+    //   var currentScoreArr = tempArr[x].scoresArr;
+    //   var newMembersArr = [];
+    //   var newScoresArr = [];
+
+    //   for(var y = 0; y < tempArr[x].membersArr.length; y++){
+    //     var max = 0;
+    //     var index = 0;
+    //     var mainLength = currentScoreArr.length;
+
+    //     for(var z = 0; z < mainLength; z++){
+    //       if(currentScoreArr[z] >= max){
+    //         max = currentScoreArr[z];
+    //         index = z;
+    //       }
+    //     }
+    //     newMembersArr.push(currentMembersArr[index]);
+    //     newScoresArr.push(currentScoreArr[index]);
+    //     var tempArr1 = [];
+    //     var tempArr2 = [];
+
+    //     for(var j = 0; j < mainLength; j++){
+    //       if(currentScoreArr[j] != max){
+    //         tempArr1.push(currentScoreArr[j]);
+    //         tempArr2.push(currentMembersArr[j]);
+    //       }
+    //     }
+    //     currentScoreArr = tempArr1;
+    //     currentMembersArr = tempArr2;
+    //   }
+    //   var placement = 0;
+    //   for(var l = 0; l < newMembersArr.length; l++){
+    //     if(user.uid == newMembersArr[l]){
+    //       placement = l + 1; 
+    //     }
+    //   }
+    //   sortedLeaderboardsArr[x] = {place: placement, sortedMembersArr: newMembersArr, sortedScoresArr: newScoresArr}
+    //   settingFinalArr.push({
+    //     category: tempMyArr[x].category,
+    //     membersArr: tempMyArr[x].membersArr,
+    //     name: tempMyArr[x].name,
+    //     scoresArr: tempMyArr[x].scoresArr,
+    //     place: placement, 
+    //     sortedMembersArr: newMembersArr, 
+    //     sortedScoresArr: newScoresArr,
+    //   });
+    // }
+//------------------------------------------------------------------------------------------------------------------------------
+
     for(var x = 0; x < tempArr.length; x++){
-
-      var currentMembersArr = tempArr[x].membersArr;
-      var currentScoreArr = tempArr[x].scoresArr;
-      var newMembersArr = [];
-      var newScoresArr = [];
-
-      for(var y = 0; y < tempArr[x].membersArr.length; y++){
-        var max = 0;
-        var index = 0;
-        var mainLength = currentScoreArr.length;
-
-        for(var z = 0; z < mainLength; z++){
-          if(currentScoreArr[z] >= max){
-            max = currentScoreArr[z];
-            index = z;
-          }
-        }
-        newMembersArr.push(currentMembersArr[index]);
-        newScoresArr.push(currentScoreArr[index]);
-        var tempArr1 = [];
-        var tempArr2 = [];
-
-        for(var j = 0; j < mainLength; j++){
-          if(currentScoreArr[j] != max){
-            tempArr1.push(currentScoreArr[j]);
-            tempArr2.push(currentMembersArr[j]);
-          }
-        }
-        currentScoreArr = tempArr1;
-        currentMembersArr = tempArr2;
+    
+      var testingArr = [];
+      for(var i = 0; i < tempArr[x].membersArr.length; i++){
+        testingArr.push({
+          member: tempArr[x].membersArr[i],
+          score: tempArr[x].scoresArr[i],
+        })
       }
-      var placement = 0;
-      for(var l = 0; l < newMembersArr.length; l++){
-        if(user.uid == newMembersArr[l]){
-          placement = l + 1; 
+      testingArr.sort((p1, p2) => (p1.score < p2.score) ? 1 : (p1.score > p2.score) ? -1 : 0);
+
+      var newSort1 = [];
+      var newSort2 = [];
+      var placeIndex = -1;
+      for(var i = 0; i < testingArr.length; i++){
+        newSort1.push(testingArr[i].member);
+        newSort2.push(testingArr[i].score);
+        if(testingArr[i].member = user.uid){
+          placeIndex = i;
         }
       }
-      sortedLeaderboardsArr[x] = {place: placement, sortedMembersArr: newMembersArr, sortedScoresArr: newScoresArr}
+
       settingFinalArr.push({
         category: tempMyArr[x].category,
         membersArr: tempMyArr[x].membersArr,
         name: tempMyArr[x].name,
         scoresArr: tempMyArr[x].scoresArr,
-        place: placement, 
-        sortedMembersArr: newMembersArr, 
-        sortedScoresArr: newScoresArr,
+        place: (placeIndex + 1), 
+        sortedMembersArr: newSort1, 
+        sortedScoresArr: newSort2,
       });
     }
+
     setMyLeaderboardsArr(settingFinalArr);
+
   }
 
   async function loadFriends(){
@@ -236,7 +274,7 @@ export default function AddFriends({ navigation }) {
     var defaultScoresArr = [0];
     for(var i = 0; i < chosenFriendsArr.length; i++){
       participantsArr.push(chosenFriendsArr[i])    
-      defaultScoresArr.push(0);
+      defaultScoresArr.push(i + 1);
     }
     await setDoc(doc(db, "leaderboards", inputTitle), {
       name: inputTitle,
@@ -264,35 +302,34 @@ export default function AddFriends({ navigation }) {
   }
 
   async function openMainModal(input){
-    // var index = -1;
-    // for(var i = 0; i < myLeaderboardsArr.length; i++){
-    //   if(input == myLeaderboardsArr[i].name){
-    //     setModalInfo(myLeaderboardsArr[i])
-    //     index = i;
-    //     setLeaderboardClicked(myLeaderboardsArr[i].name);
-    //     i = myLeaderboardsArr.length + 1;
-    //   }
-    // }
-    // var tempArr = [];
-    // for(var j = 0; j < myLeaderboardsArr[index].membersArr.length; j++){
-    //   const docRef1 = doc(db, "accounts", myLeaderboardsArr[index].sortedMembersArr[j]);
-    //   const docSnap1 = await getDoc(docRef1);
-    //   var tempName = "TEMP";
-    //   if(docSnap1.exists()){
-    //     tempName = docSnap1.data().username;
-    //   }
-    //   tempArr.push({
-    //     member: myLeaderboardsArr[index].sortedMembersArr[j],
-    //     score: myLeaderboardsArr[index].sortedScoresArr[j],
-    //     name: tempName,
-    //   });
-    // }
-    // setDisplayingArr(tempArr);
+    var index = -1;
+    for(var i = 0; i < myLeaderboardsArr.length; i++){
+      if(input == myLeaderboardsArr[i].name){
+        setModalInfo(myLeaderboardsArr[i])
+        index = i;
+        setLeaderboardClicked(myLeaderboardsArr[i].name);
+        i = myLeaderboardsArr.length + 1;
+      }
+    }
+    var tempArr = [];
+    for(var j = 0; j < myLeaderboardsArr[index].membersArr.length; j++){
+      const docRef1 = doc(db, "accounts", myLeaderboardsArr[index].sortedMembersArr[j]);
+      const docSnap1 = await getDoc(docRef1);
+      var tempName = "TEMP";
+      if(docSnap1.exists()){
+        tempName = docSnap1.data().username;
+      }
+      tempArr.push({
+        member: myLeaderboardsArr[index].sortedMembersArr[j],
+        score: myLeaderboardsArr[index].sortedScoresArr[j],
+        name: tempName,
+      });
+    }
+    setDisplayingArr(tempArr);
     setLeaderboardModalVisible(true);
   }
 
   async function updateScore() {
-    // statInput
     const docRef1 = doc(db, "leaderboards", leaderboardClicked);
     const docSnap1 = await getDoc(docRef1);
     var tempArr = docSnap1.data().scoresArr;
@@ -475,7 +512,7 @@ export default function AddFriends({ navigation }) {
             <View style={mainModalStyles.inputView}>
               <TextInput
                 style={mainModalStyles.inputText}
-                placeholder="New Stat"
+                placeholder="Update Stat"
                 placeholderTextColor="#cccccc"
                 fontSize={20}
                 fontWeight={"300"}
@@ -486,20 +523,25 @@ export default function AddFriends({ navigation }) {
               </TouchableOpacity>
             </View>  
 
-            <View style={mainModalStyles.dividerView1}></View>
             <View style={mainModalStyles.mainLeaderboardView}>
               <ScrollView style={mainScrollViewStyles.scrollContainer1} showsVerticalScrollIndicator={false}>
                 <View style={mainScrollViewStyles.scrollContainer2}>
                   {displayingArr.map((info, index) => (
                     <View style={mainScrollViewStyles.placeCard} key={index}>
+                      <View style={mainScrollViewStyles.placementView}>
+                        <Text style={mainScrollViewStyles.placementText}>{index + 1}</Text>
+                      </View>
+                      <View style={mainScrollViewStyles.nameView}>
                         <Text style={mainScrollViewStyles.nameText}>{info.name}</Text>
+                      </View>
+                      <View style={mainScrollViewStyles.scoreView}>                    
                         <Text style={mainScrollViewStyles.scoreText}>{info.score}</Text>
+                      </View>
                     </View>
                   ))}
                 </View>
               </ScrollView>
             </View>
-            <View style={mainModalStyles.dividerView2}></View>
 
             <TouchableOpacity style={mainModalStyles.returnButton} onPress={() => {setLeaderboardModalVisible(false); initialize()}}>
               <Text style={mainModalStyles.returnText}>Return</Text>
@@ -573,29 +615,61 @@ const mainScrollViewStyles = StyleSheet.create({
   scrollContainer2: {
     justifyContent: "center",
     alignItems: "center",
+    marginTop: 5,
   },
   placeCard: {
     justifyContent: "center",
     alignItems: "center",
     flexDirection: "row",
-    borderBottomWidth: 1,
-    borderColor: "#cec7ff",
-    paddingVertical: 15,
-    width: "70%",
+    width: "95%",
+    height: 55,
+  },
+  placementView: {
+    width: "15%",
+    height: "80%",
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#534f8c",
+    borderTopLeftRadius: 5,
+    borderBottomLeftRadius: 5,
+  },
+  nameView: {
+    width: "65%",
+    height: "80%",
+    justifyContent: "center",
+    backgroundColor: "#34315e",
+  },
+  scoreView: {
+    width: "20%",
+    height: "80%",
+    borderTopRightRadius: 5,
+    borderBottomRightRadius: 5,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#534f8c",
+  },
+  placementText: {
+    fontSize: 30,
+    color: "white",
+    fontWeight: "900",
   },
   nameText: {
     fontSize: 20,
     color: "white",
-    width: "80%",
+    marginHorizontal: 10,
+    letterSpacing: 1.5,
+    fontWeight: "500",
   },
   scoreText: {
     fontSize: 20,
     color: "white",
-    width: "20%",
+    fontWeight: "600",
   },
 })
 
 const mainModalStyles = StyleSheet.create({
+        // borderTopColor: "#898e9c",    
+      // backgroundColor: "#bac1d2",
   modalContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -604,18 +678,10 @@ const mainModalStyles = StyleSheet.create({
   modalView: {
     marginTop: 5,
     // backgroundColor: "#1a1a29", //'#404057', //0d0d12
-    backgroundColor: "#1a1a29",
+    backgroundColor: "#181a25", //border: 262832
     alignItems: 'center',
     height: "80.5%",
     width: "100%",
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
   },
 
   nameText: {
@@ -630,38 +696,27 @@ const mainModalStyles = StyleSheet.create({
   },
   categoryText: {
     fontSize: 20,
-    color: "#8e8ef3",
+    color: "#a4a4f5",
     fontWeight: "500",
-    marginTop: 15,
-  },
-  
-  dividerView1: {
-    width: "100%",
-    borderBottomWidth: 2,
-    borderColor: "#cec7ff", //8a7ed9
-  },
-  dividerView2: {
-    width: "100%",
-    borderBottomWidth: 2,
-    borderColor: "#cec7ff", //8a7ed9
-    marginBottom: 20,
+    marginTop: 25,
   },
 
   mainLeaderboardView: {
-    height: "60%",
+    height: "55%",
     width: "100%",
+    marginBottom: 15,
   },
 
   inputView: {
-    borderColor: "#cec7ff",
+    borderColor: "#6965ad",
     borderWidth: 2,
     borderRadius: 7,
     height: 45,
-    width: "55%",
+    width: "65%",
     alignItems: "center",
     flexDirection: "row",
-    marginTop: 15,
-    marginBottom: 15,
+    marginTop: 50,
+    marginBottom: 10,
     // backgroundColor: "grey",
   },
   inputText: {
@@ -670,16 +725,16 @@ const mainModalStyles = StyleSheet.create({
     flex: 1,
     // paddingHorizontal: 15,
     color: "#ffffff",
-    marginLeft: 15,
+    marginHorizontal: 10,
   },
   enterButton: {
     height: "100%",
     width: "40%",
     justifyContent: "center",
     alignItems: "center",
-    borderColor: "#cec7ff",
+    borderColor: "#6965ad",
     borderLeftWidth: 2,
-    backgroundColor: "#45406b",
+    backgroundColor: "#322e52",
     borderTopRightRadius: 7,
     borderBottomRightRadius: 7,
   },
