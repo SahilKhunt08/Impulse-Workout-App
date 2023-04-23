@@ -145,7 +145,6 @@ export default function AddFriends({ navigation }) {
     //   });
     // }
 //------------------------------------------------------------------------------------------------------------------------------
-
     for(var x = 0; x < tempArr.length; x++){
     
       var testingArr = [];
@@ -163,7 +162,7 @@ export default function AddFriends({ navigation }) {
       for(var i = 0; i < testingArr.length; i++){
         newSort1.push(testingArr[i].member);
         newSort2.push(testingArr[i].score);
-        if(testingArr[i].member = user.uid){
+        if(testingArr[i].member == user.uid){
           placeIndex = i;
         }
       }

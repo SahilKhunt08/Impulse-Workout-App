@@ -5,7 +5,7 @@ import { Avatar} from '@rneui/themed';
 import { auth } from './firebase';
 import {db} from './firebase';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
-import { addDoc, getDoc, doc, enableNetwork, setDoc, getCountFromServer, collection, getDocs, namedQuery, query, deleteDoc} from "firebase/firestore"; 
+import { addDoc, getDoc, doc, enableNetwork, setDoc, getCountFromServer, collection, getDocs, namedQuery, query, deleteDoc, updateDoc} from "firebase/firestore"; 
 
 export default function Profile({ navigation }) {
 
@@ -58,9 +58,9 @@ export default function Profile({ navigation }) {
   }
 
   async function saveProfile() {
-    const docRef2 = await setDoc(doc(db, "accounts", user.uid), {
-      username: username,
-      workoutsArr: workoutNamesArr,
+    const docRef = doc(db, "accounts", user.uid);
+    await updateDoc(docRef, {
+      username: username
     });
   }
 
