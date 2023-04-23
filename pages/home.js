@@ -95,10 +95,12 @@ export default function Home({navigation}) {
 
     const docSnap = await getDoc(doc(db, "accounts", user.uid));
     const tempArr1 = docSnap.data().workoutsArr;  
+    const tempLeaderboards1 = docSnap.data().leaderboardsArr;
     tempArr1.push(workoutName)
     await setDoc(doc(db, "accounts", user.uid), {
       username: usernameString,
-      workoutsArr: tempArr1
+      workoutsArr: tempArr1,
+      leaderboardsArr: tempLeaderboards1,
     })
     loadWorkouts()
   }
@@ -193,11 +195,13 @@ let nextConfig = []
     const tempArr1 = docSnap.data().workoutsArr;  
     const deleteIndex = tempArr1.indexOf(deleteName)
     const usernameString = auth.currentUser.email.substring(0, auth.currentUser.email.indexOf("@"));
+    const tempLeaderboards = docSnap.data().leaderboardsArr;
 
     tempArr1.splice(deleteIndex, deleteIndex+1)
     await setDoc(doc(db, "accounts", user.uid), {
       username: usernameString,
-      workoutsArr: tempArr1
+      workoutsArr: tempArr1,
+      leaderboardsArr: tempLeaderboards,
     })
 
     await deleteDoc(doc(db, "accounts", user.uid, "workouts", deleteName));
