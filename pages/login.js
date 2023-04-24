@@ -25,15 +25,9 @@ async function newDoc() {
   await setDoc(doc(db, "accounts", user.uid), {
     username: usernameString,
     workouts: []
-<<<<<<< HEAD
-    })
-  }
-    
-=======
     }
   )}
 
->>>>>>> 3a30e1f6196a8ead00ca3f64ac64abaddb005dc7
 export default function Login({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("")  
