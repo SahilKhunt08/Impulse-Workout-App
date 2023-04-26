@@ -1,20 +1,10 @@
-
-//Countdown
-
-//Loop based on num exercises 
-
-//Loop based on sets(if only one then only time on, add time on at the end)
-//Time on
-
-//Rest Set
-//Time on
-
-// Rest Exercise
+//Issues
+//Workout name field changes when you edit but the doc id doesnt
 
 
 
 import React, { useState } from 'react'
-import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity, ScrollView, Button, Modal} from "react-native";
+import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity, ScrollView, Button, Modal, Settings} from "react-native";
 import Card1 from "./components/card1";
 import Card2 from "./components/card2";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
@@ -39,14 +29,17 @@ import { BlurView } from 'expo-blur';
 export default function Home({navigation}) {
   React.useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
-      loadWorkouts();       
+      loadWorkouts();     
+      initializeName()
     });
     return unsubscribe;
   }, []);
+
   const auth = getAuth();
   const user = auth.currentUser;
 
   const [userID, setUserUID] = useState(user.email)
+  const [userName, setUserName] = useState("")
   
   //New Workout
   const [openNewWorkoutPage, setOpenNewWorkoutPage] = useState(false)
@@ -82,6 +75,7 @@ export default function Home({navigation}) {
   const [selName, setSelName] = useState("")
   const [selDesc, setSelDesc] = useState("")
   const [selExercises, setSelExercises] = useState([])
+  //Edit Exercises
   const setNumArr = [1, 2, 3, 4, 5, 6];
   const timeArr = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60];
   const [modalAddVisible, setModalAddVisible] = useState(false);
@@ -91,7 +85,15 @@ export default function Home({navigation}) {
   const [settingStyleArr1, setSettingStyleArr1] = useState([]);
   const [settingStyleArr2, setSettingStyleArr2] = useState([]);
   const [settingStyleArr3, setSettingStyleArr3] = useState([]);
+  const [selExercise, setSelExercise] = useState("")
+  const [selWorkoutID, setSelWorkoutID] = useState("")
 
+
+  async function initializeName() {
+    const docSnap = await getDoc(doc(db, "accounts", user.uid));
+    const name = docSnap.data().username; 
+    setUserName(name) 
+  }
 
   async function createWorkout() {
     const auth = getAuth();
@@ -144,7 +146,6 @@ export default function Home({navigation}) {
         selectedRestTime = totalWorkoutsArr[i].breakTime
       }
     }
-
     const exerciseRef = collection(db, "accounts", user.uid, "workouts", selectedName, "exercises");
     const exerciseDocs = await getDocs(exerciseRef)
     exerciseDocs.forEach(doc => {
@@ -153,6 +154,7 @@ export default function Home({navigation}) {
 
     setCurrExercisesArr(exercises)
     setOpenSpecWorkout(true);
+    recieveBreakTimes(0)
 
 let timerConfig = []
 let nameConfig = []
@@ -220,69 +222,77 @@ let nextConfig = []
         selectedName = totalWorkoutsArr[i].name
         selectedRestTime = totalWorkoutsArr[i].breakTime
         selectedDesc = totalWorkoutsArr[i].description
+        setSelWorkoutID(totalWorkoutsArr[i].workoutID)
       }
     }
-
-
     setSelName(selectedName)
-    setSelDesc(selectedDesc)
-    if (selectedRestTime == 5) {
-      setBut5(newWorkout.breakButtonClicked)
-    } else if (selectedRestTime == 10) {
-      setBut10(newWorkout.breakButtonClicked)
-    } else if (selectedRestTime == 15) {
-      setBut15(newWorkout.breakButtonClicked)
-    } else if (selectedRestTime == 20) {
-      setBut20(newWorkout.breakButtonClicked)
-    } else if (selectedRestTime == 25) {
-      setBut25(newWorkout.breakButtonClicked)
-    } else if (selectedRestTime == 30) {
-      setBut30(newWorkout.breakButtonClicked)
-    } else if (selectedRestTime == 35) {
-      setBut35(newWorkout.breakButtonClicked)
-    } else if (selectedRestTime == 40) {
-      setBut40(newWorkout.breakButtonClicked)
-    } else if (selectedRestTime == 45) {
-      setBut45(newWorkout.breakButtonClicked)
-    } else if (selectedRestTime == 50) {
-      setBut50(newWorkout.breakButtonClicked)
-    } else if (selectedRestTime == 55) {
-      setBut60(newWorkout.breakButtonClicked)
-    } else if (selectedRestTime == 60) {
-      setBut60(newWorkout.breakButtonClicked)
-    } 
-    
-    //Exercise Editing
+    setSelDesc(selectedDesc) 
+    loadExercises(selectedName);
+    recieveBreakTimes(selectedRestTime/5)
+    loadWorkouts()
+  }
+
+  async function loadExercises(workoutName) {
+
     const exercises = []
-    const exerciseRef = collection(db, "accounts", user.uid, "workouts", selectedName, "exercises");
+    const exerciseRef = collection(db, "accounts", user.uid, "workouts", workoutName, "exercises");
     const exerciseDocs = await getDocs(exerciseRef)
     exerciseDocs.forEach(doc => {
       exercises.push(doc.data());
     })
     setSelExercises(exercises)
-
   }
 
   async function editExercises(name) {
-
-
-
+    let setsNum = 0
+    let activeNum = 0
+    let restNum = 0
+    
     // console.log(exerciseDocs)
     for (let i = 0; i < selExercises.length; i++) {
 
       if (selExercises[i].name == name) { 
         setModalAddVisible(true)
-
+        setSelExercise(name)
+        setsNum = selExercises[i].setsNum
+        activeNum = selExercises[i].activeNum
+        restNum = selExercises[i].restNum
       }
     }
+    selectSetting(1, setNumArr.indexOf(setsNum))
+    selectSetting(2, timeArr.indexOf(activeNum))
+    selectSetting(3, timeArr.indexOf(restNum))
+  }
+
+  async function deleteExercise(name) {
+
+    await deleteDoc(doc(db, "accounts", user.uid, "workouts", selName, "exercises", name));
+    loadExercises(selName)
+    
+  }
+
+  async function submitExerciseChanges() {
+    //Needed Variables
+    setModalAddVisible(false)
+    await setDoc(doc(db, "accounts", user.uid, "workouts", selName, "exercises", selExercise), {
+      setsNum: setting1,
+      restNum: setting3,
+      activeNum: setting2,
+      name: selExercise
+    });
+    loadExercises(selName)
   }
 
   async function submitWorkoutChanges() {
-    //Needed Variables
-    selName
-    selDesc
-    selExercises
-
+    setOpenEditWorkoutPage(false)
+    //finish
+    await setDoc(doc(db, "accounts", user.uid, "workouts", selName), {
+      breakTime: breakTime,
+      description: selDesc,
+      name: selName,
+      workoutID: selWorkoutID
+  
+    });
   }
 
   async function deleteWorkout(index) {
@@ -338,7 +348,7 @@ let nextConfig = []
     } else if (input === 2) {
       if (but10 == newWorkout.breakButton) {
         setBut10(newWorkout.breakButtonClicked)
-        setBreakTime(5)
+        setBreakTime(10)
 
       } else {
         setBut10(newWorkout.breakButton)
@@ -348,7 +358,7 @@ let nextConfig = []
     } else if (input === 3) {
       if (but15 == newWorkout.breakButton) {
         setBut15(newWorkout.breakButtonClicked)
-        setBreakTime(5)
+        setBreakTime(15)
 
       } else {
         setBut15(newWorkout.breakButton)
@@ -359,7 +369,7 @@ let nextConfig = []
     } else if (input === 4) {
       if (but20 == newWorkout.breakButton) {
         setBut20(newWorkout.breakButtonClicked)
-        setBreakTime(5)
+        setBreakTime(20)
 
       } else {
         setBut20(newWorkout.breakButton)
@@ -369,7 +379,7 @@ let nextConfig = []
     } else if (input === 5) {
       if (but25 == newWorkout.breakButton) {
         setBut25(newWorkout.breakButtonClicked)
-        setBreakTime(5)
+        setBreakTime(25)
 
       } else {
         setBut25(newWorkout.breakButton)
@@ -379,7 +389,7 @@ let nextConfig = []
     } else if (input === 6) {
       if (but30 == newWorkout.breakButton) {
         setBut30(newWorkout.breakButtonClicked)
-        setBreakTime(5)
+        setBreakTime(30)
 
       } else {
         setBut30(newWorkout.breakButton)
@@ -389,7 +399,7 @@ let nextConfig = []
     } else if (input === 7) {
       if (but35 == newWorkout.breakButton) {
         setBut35(newWorkout.breakButtonClicked)
-        setBreakTime(5)
+        setBreakTime(35)
 
       } else {
         setBut35(newWorkout.breakButton)
@@ -399,7 +409,7 @@ let nextConfig = []
     } else if (input === 8) {
       if (but40 == newWorkout.breakButton) {
         setBut40(newWorkout.breakButtonClicked)
-        setBreakTime(5)
+        setBreakTime(40)
 
       } else {
         setBut40(newWorkout.breakButton)
@@ -409,8 +419,7 @@ let nextConfig = []
     } else if (input === 9) {
       if (but45 == newWorkout.breakButton) {
         setBut45(newWorkout.breakButtonClicked)
-        setBreakTime(5)
-
+        setBreakTime(45)
       } else {
         setBut45(newWorkout.breakButton)
         setBreakTime(null)
@@ -419,7 +428,7 @@ let nextConfig = []
     } else if (input === 10) {
       if (but50 == newWorkout.breakButton) {
         setBut50(newWorkout.breakButtonClicked)
-        setBreakTime(5)
+        setBreakTime(50)
 
       } else {
         setBut50(newWorkout.breakButton)
@@ -429,7 +438,7 @@ let nextConfig = []
     } else if (input === 11) {
       if (but55 == newWorkout.breakButton) {
         setBut55(newWorkout.breakButtonClicked)
-        setBreakTime(5)
+        setBreakTime(55)
 
       } else {
         setBut55(newWorkout.breakButton)
@@ -439,7 +448,7 @@ let nextConfig = []
     } else if (input === 12) {
       if (but60 == newWorkout.breakButton) {
         setBut60(newWorkout.breakButtonClicked)
-        setBreakTime(5)
+        setBreakTime(60)
 
       } else {
         setBut60(newWorkout.breakButton)
@@ -454,7 +463,7 @@ let nextConfig = []
     <View style={backgroundStyle.container}>
         <View>
           <View flexDirection='row'>
-            <Text style={backgroundStyle.titleText}> Welcome, {userID.substring(0, userID.indexOf("@"))} </Text>
+            <Text style={backgroundStyle.titleText}> Welcome, {userName} </Text>
             <TouchableOpacity style = {{marginLeft:72, marginTop:13}} onPress={temp}>
               <Image source={ require('../assets/person3.png') } style={ { width: 60, height: 60 } } />
             </TouchableOpacity>
@@ -488,7 +497,13 @@ let nextConfig = []
           </ScrollView>
 
           
-          <TouchableOpacity style={backgroundStyle.plusButton} onPress={() => setOpenNewWorkoutPage(true)}>
+          <TouchableOpacity style={backgroundStyle.plusButton} onPress={
+            () => {
+              recieveBreakTimes(0)
+              setOpenNewWorkoutPage(true)
+
+            }
+          }>
             <Text style={backgroundStyle.plusText}>
               +
             </Text>
@@ -670,7 +685,12 @@ let nextConfig = []
         <View style={editWorkouts.container}>
 
         <View flexDirection={"row"}>
-            <TouchableOpacity style={{marginTop: 35, marginLeft: 15}} onPress={() => setOpenEditWorkoutPage(false)} >
+            <TouchableOpacity style={{marginTop: 35, marginLeft: 15}} onPress={() => {
+              recieveBreakTimes(0)
+              setOpenEditWorkoutPage(false)
+              
+              } 
+            }>
                   <Text style={newWorkout.returnText}>x</Text> 
           </TouchableOpacity> 
           <Text style={editWorkouts.mainHeader}>Edit Workout</Text> 
@@ -683,7 +703,6 @@ let nextConfig = []
                 style={editWorkouts.inputText}
                 placeholder={selName}
                 placeholderTextColor="#ffffff"
-                onChangeText={(workoutName) => setWorkoutName(workoutName)}
               /> 
             </View> 
         </View>
@@ -696,7 +715,6 @@ let nextConfig = []
               placeholderTextColor="#ffffff"
               numberOfLines={5}
               maxLength={150}
-              onChangeText={(workoutDesc) => setWorkoutDesc(workoutDesc)}
             /> 
         </View>
        
@@ -751,16 +769,15 @@ let nextConfig = []
             <View key={index} style={mainScrollView.cardComp}>
               <View style={mainScrollView.cardTextView}>
                 <Text style={mainScrollView.cardText1}> {info.name} </Text>
-                <Text style={mainScrollView.cardText2}> {info.difficulty} </Text>
               </View>
               <View style={styles.buttonView}>
                 <TouchableOpacity
                   style={[mainScrollView.cardInfoBtn]}
-                  onPress={() => editExercises(info.name)}
+                  onPress={() => deleteExercise(info.name)}
                 >
                   <Icon
                       style={{ alignContent: "end" }}
-                      color="#c8c5db"
+                      color="#FF0000"
                       name="delete"
                       type="material"
                       size="20"
@@ -786,8 +803,8 @@ let nextConfig = []
         
 
       <View backgroundColor={"#404057"}>
-        <TouchableOpacity style={editWorkouts.submitButton} onPress={createWorkout}>
-              <Text style={newWorkout.submitText}>Save</Text> 
+        <TouchableOpacity style={editWorkouts.submitButton} onPress={submitWorkoutChanges}>
+              <Text style={editWorkouts.submitText}>Save</Text> 
           </TouchableOpacity>
       </View>
       
@@ -859,7 +876,7 @@ let nextConfig = []
                 </ScrollView>
               </View> 
 
-              <TouchableOpacity style={modalAddStyles.saveButton} onPress={() => setModalAddVisible(false)}>
+              <TouchableOpacity style={modalAddStyles.saveButton} onPress={() => submitExerciseChanges()}>
                 <Text style={modalAddStyles.saveText}>SAVE</Text>
               </TouchableOpacity>
             </View>
@@ -1061,7 +1078,7 @@ const mainScrollView = StyleSheet.create({
   },
   cardComp: {
     flexDirection: "row",
-    width: "92%",
+    width: "97%",
     backgroundColor: "#282838",
     height: 70,
     borderWidth: 0,
@@ -1300,7 +1317,21 @@ const newWorkout = StyleSheet.create({
     backgroundColor: '#cccccc'
   },
 
-
+  submitButton: {
+    borderRadius:9,
+    paddingHorizontal: 15,
+    paddingVertical: 8,
+    width: 150,
+    marginLeft: 110,
+    marginBottom: 15,
+    marginTop:10,
+    backgroundColor: '#8e8efa',
+    shadowColor: 'rgba(227, 227, 255, 0.2)',
+    shadowOpacity: 0.8,
+    elevation: 6,
+    shadowRadius: 15,
+    shadowOffset : { width: 1, height: 13},
+  },
 
   headerBackground: {
     fontWeight: "600",
@@ -1364,7 +1395,7 @@ const newWorkout = StyleSheet.create({
   submitText: {
     fontWeight: "700",
     fontSize: 22,
-    marginLeft: 33,
+    marginLeft: 22,
     color: "#ffffff",
   },
 })
@@ -1458,6 +1489,12 @@ const editWorkouts = StyleSheet.create({
     alignSelf: "left",
     marginLeft:22,
     marginTop: 47
+  },
+  submitText: {
+    fontWeight: "700",
+    fontSize: 22,
+    marginLeft: 34,
+    color: "#ffffff",
   },
   inputText: {
     height: 50,
