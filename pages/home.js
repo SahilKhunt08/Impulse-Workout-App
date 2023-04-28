@@ -31,6 +31,7 @@ export default function Home({navigation}) {
     const unsubscribe = navigation.addListener('focus', () => {
       loadWorkouts();     
       initializeName()
+      initializeDailyWorkouts()
     });
     return unsubscribe;
   }, []);
@@ -78,6 +79,7 @@ export default function Home({navigation}) {
   //Edit Exercises
   const setNumArr = [1, 2, 3, 4, 5, 6];
   const timeArr = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60];
+  const dailyWorkouts = ["Arms Killer", "Leg Burner"]
   const [modalAddVisible, setModalAddVisible] = useState(false);
   const [setting1, setSetting1] = useState(0);
   const [setting2, setSetting2] = useState(0);
@@ -87,13 +89,31 @@ export default function Home({navigation}) {
   const [settingStyleArr3, setSettingStyleArr3] = useState([]);
   const [selExercise, setSelExercise] = useState("")
   const [selWorkoutID, setSelWorkoutID] = useState("")
+ 
+  const [currDailyNum, setCurrDailyNum] = useState(0)
 
+ 
 
   async function initializeName() {
     const docSnap = await getDoc(doc(db, "accounts", user.uid));
     const name = docSnap.data().username; 
     setUserName(name) 
   }
+
+  const initializeDailyWorkouts = () => {
+    let temp = currDailyNum;
+    var hours = new Date().getHours();
+    if (hours == 0) {
+      if (temp+1< dailyWorkouts.length) {
+        temp++
+      } else {
+        temp = 0;
+      }
+      setCurrDailyNum(temp)
+      loadDailyWorkout(dailyWorkouts[currDailyNum])
+    }
+  }
+
 
   async function createWorkout() {
     const auth = getAuth();
@@ -130,6 +150,18 @@ export default function Home({navigation}) {
         }
       })        
       setTotalWorkoutsArr(allWorkoutsArr)
+  }
+
+  async function loadDailyWorkout(name) {
+    const allWorkoutsArr = []
+    const workoutRef = collection(db, "challenges");
+    const workoutDocs = await getDocs(workoutRef);
+    workoutDocs.forEach(doc => {
+      if (doc.id == name) {
+        allWorkoutsArr.push(doc.data())
+      }
+    })        
+    setTotalWorkoutsArr(allWorkoutsArr)
   }
 
   async function openSpecificWorkout(index) {
