@@ -30,9 +30,9 @@
     "react-native-axios": "^0.17.1",
     "react-native-countdown-circle-timer": "^3.2.1",
     "react-native-divider": "^1.0.3",
+    "react-native-elements": "^3.4.3",
     "react-native-flip-card": "^3.5.7",
     "react-native-linear-gradient": "^2.6.2",
-    "react-native-modal": "^13.0.1",
     "react-native-paper": "^5.2.0",
     "react-native-svg": "^13.4.0"
   },

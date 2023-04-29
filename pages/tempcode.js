@@ -223,3 +223,55 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
 });
+
+
+
+    // for(var x = 0; x < tempArr.length; x++){
+
+    //   var currentMembersArr = tempArr[x].membersArr;
+    //   var currentScoreArr = tempArr[x].scoresArr;
+    //   var newMembersArr = [];
+    //   var newScoresArr = [];
+
+    //   for(var y = 0; y < tempArr[x].membersArr.length; y++){
+    //     var max = 0;
+    //     var index = 0;
+    //     var mainLength = currentScoreArr.length;
+
+    //     for(var z = 0; z < mainLength; z++){
+    //       if(currentScoreArr[z] >= max){
+    //         max = currentScoreArr[z];
+    //         index = z;
+    //       }
+    //     }
+    //     newMembersArr.push(currentMembersArr[index]);
+    //     newScoresArr.push(currentScoreArr[index]);
+    //     var tempArr1 = [];
+    //     var tempArr2 = [];
+
+    //     for(var j = 0; j < mainLength; j++){
+    //       if(currentScoreArr[j] != max){
+    //         tempArr1.push(currentScoreArr[j]);
+    //         tempArr2.push(currentMembersArr[j]);
+    //       }
+    //     }
+    //     currentScoreArr = tempArr1;
+    //     currentMembersArr = tempArr2;
+    //   }
+    //   var placement = 0;
+    //   for(var l = 0; l < newMembersArr.length; l++){
+    //     if(user.uid == newMembersArr[l]){
+    //       placement = l + 1; 
+    //     }
+    //   }
+    //   sortedLeaderboardsArr[x] = {place: placement, sortedMembersArr: newMembersArr, sortedScoresArr: newScoresArr}
+    //   settingFinalArr.push({
+    //     category: tempMyArr[x].category,
+    //     membersArr: tempMyArr[x].membersArr,
+    //     name: tempMyArr[x].name,
+    //     scoresArr: tempMyArr[x].scoresArr,
+    //     place: placement, 
+    //     sortedMembersArr: newMembersArr, 
+    //     sortedScoresArr: newScoresArr,
+    //   });
+    // }
