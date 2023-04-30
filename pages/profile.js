@@ -9,6 +9,7 @@ import { addDoc, getDoc, doc, enableNetwork, setDoc, getCountFromServer, collect
 
 export default function Profile({ navigation }) {
 
+
   const [username, setUsername] = useState("");
   const [requestName, setRequestName] = useState("");
   const [requestArr, setRequestArr] = useState([]);
