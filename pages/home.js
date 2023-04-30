@@ -92,7 +92,7 @@ export default function Home({navigation}) {
  
   const [currDailyNum, setCurrDailyNum] = useState(0)
 
- 
+  const [selDailyWorkout, setSelDailyWorkout] = useState("")
 
   async function initializeName() {
     const docSnap = await getDoc(doc(db, "accounts", user.uid));
@@ -153,15 +153,15 @@ export default function Home({navigation}) {
   }
 
   async function loadDailyWorkout(name) {
-    const allWorkoutsArr = []
+    const allWorkoutsArr = ""
     const workoutRef = collection(db, "challenges");
     const workoutDocs = await getDocs(workoutRef);
     workoutDocs.forEach(doc => {
       if (doc.id == name) {
-        allWorkoutsArr.push(doc.data())
+        allWorkoutsArr = doc.data()
       }
     })        
-    setTotalWorkoutsArr(allWorkoutsArr)
+    setSelDailyWorkout(allWorkoutsArr)
   }
 
   async function openSpecificWorkout(index) {
