@@ -1124,20 +1124,18 @@ const mainStyles = StyleSheet.create({
     alignItems: "flex-start",
     width: "100%",
     flexDirection: "row",
-
   },
     scrollContainer3: {
     justifyContent: "center",
     alignItems: "center",
     width: "50%",
-    backgroundColor: "red",
-
+    // backgroundColor: "red",
   },
 
   friendCard: {
     width: "90%",
     marginVertical: 5,
-    backgroundColor: "green",
+    // backgroundColor: "green",
   },
   mainContent: {
     flexDirection: "row",
