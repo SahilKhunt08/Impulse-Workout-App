@@ -15,8 +15,6 @@ import { async } from "@firebase/util";
 import Divider from 'react-native-divider';
 import { Icon } from '@rneui/themed';
 
-import DropDownPicker from 'react-native-dropdown-picker';
-
 import { CountdownCircleTimer } from 'react-native-countdown-circle-timer'
 
 import HomeCards from './homeCards';
