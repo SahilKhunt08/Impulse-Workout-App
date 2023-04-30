@@ -22,6 +22,8 @@ import { CountdownCircleTimer } from 'react-native-countdown-circle-timer'
 import HomeCards from './homeCards';
 import RedirectCards from './RedirectCards';
 
+import HomeScroll from './homeScroll';
+
 import { BlurView } from 'expo-blur';
 
 
@@ -528,6 +530,7 @@ let nextConfig = []
 
           </ScrollView>
 
+          <HomeScroll></HomeScroll>
           
           <TouchableOpacity style={backgroundStyle.plusButton} onPress={
             () => {
