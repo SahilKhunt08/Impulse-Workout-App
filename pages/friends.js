@@ -316,6 +316,7 @@ export default function AddFriends({ navigation }) {
   }
 
   async function updateScore() {
+    //statInput
     const docRef1 = doc(db, "leaderboards", leaderboardClicked);
     const docSnap1 = await getDoc(docRef1);
     var tempArr = docSnap1.data().scoresArr;
@@ -333,6 +334,21 @@ export default function AddFriends({ navigation }) {
     await updateDoc(docRef2, {
       scoresArr: tempArr
     });
+
+
+    var newArr = displayingArr;
+    for(var i = 0; i < displayingArr.length; i++){
+      if(newArr[i].member == user.uid){
+        newArr[i].score = statInput;
+        i = displayingArr.length;
+      }
+    }
+
+    newArr.sort((p1, p2) => (p1.score < p2.score) ? 1 : (p1.score > p2.score) ? -1 : 0);
+    setDisplayingArr(newArr);
+    setStatInput("");
+    // openMainModal(leaderboardClicked);
+
   }
 
   async function leaveQuestion(answer) {
