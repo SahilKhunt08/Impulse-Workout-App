@@ -19,34 +19,82 @@ export default function HomeScroll() {
             <View style={homeScrollMain.scrollContainer}>
 
                 <Image source={ require('../assets/workingout.jpeg') } style={homeScrollMain.banner} />
-                <Text style={homeScrollMain.titleText}>Friend's Workouts</Text>
+                <Text style={homeScrollMain.titleText}>Friend Workouts</Text>
+                <View style={homeScrollMain.scrollContainer1}>
+                    <ScrollView>
+                        <View style={homeScrollMain.workoutCard1}>
+
+                        </View>
+                        <View style={homeScrollMain.workoutCard1}>
+
+                        </View>
+                        <View style={homeScrollMain.workoutCard1}>
+
+                        </View>
+                        <View style={homeScrollMain.workoutCard1}>
+
+                        </View>
+                        <View style={homeScrollMain.workoutCard1}>
+
+                        </View>
+                        <View style={homeScrollMain.workoutCard1}>
+
+                        </View>
+                    </ScrollView>
+                </View>
+                
             </View>
             <View style={homeScrollMain.scrollContainer}>
 
                 <Image source={ require('../assets/soloworkout.jpeg') } style={homeScrollMain.banner} />
-                <Text style={homeScrollMain.titleText}>Impulse Workouts</Text>
+                <Text style={homeScrollMain.titleText1}>Impulse Workouts</Text>
+
+                <View style={homeScrollMain.scrollContainer1}>
+                    <ScrollView>
+                    <View style={homeScrollMain.workoutCard}>
+
+                    </View>
+                    <View style={homeScrollMain.workoutCard}>
+
+                    </View><View style={homeScrollMain.workoutCard}>
+
+                    </View>
+                    <View style={homeScrollMain.workoutCard}>
+
+                    </View>
+                    <View style={homeScrollMain.workoutCard}>
+
+                    </View>
+                    <View style={homeScrollMain.workoutCard}>
+
+                    </View>
+                </ScrollView>
+                </View>
             </View>
         </ScrollView>
     )
 }
 const homeScrollMain = StyleSheet.create({
     container: {
-      marginLeft: 33.5,
-      marginBottom: 30,
+      marginLeft: 17.5,
+      marginBottom: 120,
       height: 250,
-      width: 310,
+      width: 350,
     },
 
     scrollContainer: {
         margin: 10
       },
 
+      scrollContainer1: {
+        height: '78%',
+        maxHeight: '78%'
+
+      },
     banner: {
-       
         alignSelf: 'center',
-        
         height: 130,
-        width: 300,
+        width: 310,
         borderRadius: 10,
         shadowColor: '#000000',
         shadowOffset: {
@@ -59,22 +107,40 @@ const homeScrollMain = StyleSheet.create({
       },
       titleText: {
         position:'absolute',
-        color: "#067785",
-        fontWeight: "900",
+        color: "#466D97",
+        fontWeight: "700",
         fontSize: 20,
         alignSelf: "left",
-        left: 100,
+        left: 125,
         marginTop: 100
 
       },
       titleText1: {
         position:'absolute',
-        color: "#067785",
-        fontWeight: "900",
+        color: "#C03546",
+        fontWeight: "700",
         fontSize: 20,
         alignSelf: "left",
-        left: 100,
+        left: 110,
         marginTop: 100
 
+      },
+
+      workoutCard1: {
+        marginTop:10, 
+        marginLeft:4,
+        height: 55,
+        width: 300,
+        borderRadius: 4,
+        backgroundColor: "#466D97"
+      },
+
+      workoutCard: {
+        marginTop:10, 
+        marginLeft:4,
+        height: 55,
+        width: 300,
+        borderRadius: 4,
+        backgroundColor: "#C03546"
       },
   })

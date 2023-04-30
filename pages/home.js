@@ -1152,7 +1152,8 @@ const backgroundStyle = StyleSheet.create({
   },
 
   plusButton: {
-      marginBottom: 9,
+      position: 'absolute',
+      marginTop: 585,
       marginLeft: 317,
       borderRadius:7,
       paddingHorizontal: 10,
