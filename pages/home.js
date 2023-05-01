@@ -19,8 +19,6 @@ import DropDownPicker from 'react-native-dropdown-picker';
 
 import { CountdownCircleTimer } from 'react-native-countdown-circle-timer'
 
-import HomeCards from './homeCards';
-import RedirectCards from './RedirectCards';
 
 import HomeScroll from './homeScroll';
 
@@ -127,7 +125,8 @@ export default function Home({navigation}) {
       description: workoutDesc,
       breakTime: breakTime,
       name: workoutName,
-      workoutID: uID
+      workoutID: uID,
+      type: "Self"
     });
 
     const docSnap = await getDoc(doc(db, "accounts", user.uid));
@@ -142,6 +141,12 @@ export default function Home({navigation}) {
     loadWorkouts()
   }
 
+  async function deleteSelected(selectedArr) {
+    for (let i = 0; i < selectedArr; i++) {
+      await deleteDoc(doc(db, "accounts", user.uid, "workouts", selectedArr[i].name));
+    }
+  }
+
   async function loadWorkouts() {
     const allWorkoutsArr = []
       const workoutRef = collection(db, "accounts", user.uid, "workouts");
@@ -152,6 +157,66 @@ export default function Home({navigation}) {
         }
       })        
       setTotalWorkoutsArr(allWorkoutsArr)
+
+
+      // clear friend workouts first
+      // const workoutsDeleteArr = []
+      // const deleteWorkoutRef = collection(db, "accounts", user.uid, "workouts");
+      // const deleteWorkoutDocs = await getDocs(deleteWorkoutRef);
+      // deleteWorkoutDocs.forEach(doc => {
+      //   if (doc.id != "temp" && doc.data().type == "Friend") {
+      //     workoutsDeleteArr.push(doc.data())
+      //   }
+      // })  
+
+      // deleteSelected(workoutsDeleteArr)
+
+      //   let friends = []
+      //   const friendsRef = collection(db, "accounts", user.uid, "friends");
+      //   const friendsDocs = await getDocs(friendsRef);
+      //   friendsDocs.forEach(doc => {
+      //     if (doc.id != "temp") {
+      //       friends.push(doc.data())
+      //     }
+      //   })  
+
+      //   let addingWorkouts = []
+
+      //   for (let i = 0; i < friends.length; i++) {
+      //     const fWorkoutsRef = collection(db, "accounts", friends[i], "workouts");
+      //     const fWorkoutDocs = await getDocs(fWorkoutsRef);
+
+      //       fWorkoutDocs.forEach(doc => {
+      //       if (doc.id != "temp") {
+      //         addingWorkouts.push(doc.data())
+      //       }
+      //     })  
+      //   }
+
+      // for (let i = 0; i < addingWorkouts.length; i++) {
+      //   await setDoc(doc(db, "accounts", user.uid, "workouts", addingWorkouts[i].name), {
+      //     description: addingWorkouts[i].description,
+      //     breakTime: addingWorkouts[i].breakTime,
+      //     name: addingWorkouts[i].name,
+      //     workoutID: addingWorkouts[i].workoutID,
+      //     type: "Friend"
+      //   });
+      // }
+
+
+  }
+
+  async function temp () {
+    const workoutsDeleteArr = []
+    const deleteWorkoutRef = collection(db, "accounts", user.uid, "workouts");
+    const deleteWorkoutDocs = await getDocs(deleteWorkoutRef);
+    deleteWorkoutDocs.forEach(doc => {
+      if (doc.id != "temp" && doc.data().type == "Friend") {
+        workoutsDeleteArr.push(doc.data())
+      }
+    })  
+    deleteSelected(workoutsDeleteArr)
+
   }
 
   async function loadDailyWorkout(name) {
@@ -219,9 +284,6 @@ let nextConfig = []
     setNextNameConfigs(nextConfig)
   }
 
-  const temp = () => {
-    console.log(currExercisesArr)
-  }
   
   const selectSetting = (type, index) => {
     if(type == 1){
