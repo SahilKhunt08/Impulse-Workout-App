@@ -255,36 +255,38 @@ export default function AddFriends({ navigation }) {
   }
 
   async function createLeaderboard(){
-    setMakeModalVisible(false);
-    var participantsArr = [user.uid];
-    var defaultScoresArr = [0];
-    for(var i = 0; i < chosenFriendsArr.length; i++){
-      participantsArr.push(chosenFriendsArr[i])    
-      defaultScoresArr.push(i + 1);
-    }
-    await setDoc(doc(db, "leaderboards", inputTitle), {
-      name: inputTitle,
-      category: inputCategory,
-      membersArr: participantsArr,
-      scoresArr: defaultScoresArr,
-    });
-    for(var i = 0; i < participantsArr.length; i++){
-      // await setDoc(doc(db, "leaderboards", inputTitle, "members", participantsArr[i]), {
-      //   score: 0,
-      // });
-      const docRef = doc(db, "accounts", participantsArr[i]);
-      const docSnap = await getDoc(docRef);
-      if (docSnap.exists()) {
-        var profileArr = docSnap.data().leaderboardsArr;
-        profileArr.push(inputTitle);
-        await setDoc(doc(db, "accounts", participantsArr[i]), {
-          username: docSnap.data().username,
-          workoutsArr: docSnap.data().workoutsArr,
-          leaderboardsArr: profileArr,
-        });
+    if(inputTitle.length > 5 && inputCategory.length > 5){
+      setMakeModalVisible(false);
+      var participantsArr = [user.uid];
+      var defaultScoresArr = [0];
+      for(var i = 0; i < chosenFriendsArr.length; i++){
+        participantsArr.push(chosenFriendsArr[i])    
+        defaultScoresArr.push(i + 1);
       }
+      await setDoc(doc(db, "leaderboards", inputTitle), {
+        name: inputTitle,
+        category: inputCategory,
+        membersArr: participantsArr,
+        scoresArr: defaultScoresArr,
+      });
+      for(var i = 0; i < participantsArr.length; i++){
+        // await setDoc(doc(db, "leaderboards", inputTitle, "members", participantsArr[i]), {
+        //   score: 0,
+        // });
+        const docRef = doc(db, "accounts", participantsArr[i]);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          var profileArr = docSnap.data().leaderboardsArr;
+          profileArr.push(inputTitle);
+          await setDoc(doc(db, "accounts", participantsArr[i]), {
+            username: docSnap.data().username,
+            workoutsArr: docSnap.data().workoutsArr,
+            leaderboardsArr: profileArr,
+          });
+        }
+      }
+      initialize();
     }
-    initialize();
   }
 
   async function openMainModal(input){
@@ -316,39 +318,55 @@ export default function AddFriends({ navigation }) {
   }
 
   async function updateScore() {
-    //statInput
-    const docRef1 = doc(db, "leaderboards", leaderboardClicked);
-    const docSnap1 = await getDoc(docRef1);
-    var tempArr = docSnap1.data().scoresArr;
-    var index = -1;
-    var IDArr = docSnap1.data().membersArr;
-    for(var i = 0; i < IDArr.length; i++){
-      if(user.uid == IDArr[i]){
-        index = i;
-        i = IDArr.length;
+    var addInfo = true;
+    if(statInput.length == 0){
+      addInfo = false;
+    } else {
+      var decimalCounter = 0;
+      for(var i = 0; i < statInput.length; i++){
+        if(statInput.substring(i, i+1) == "."){
+          decimalCounter++;
+        }
       }
-    }
-    tempArr[index] = statInput;
-
-    const docRef2 = doc(db, "leaderboards", leaderboardClicked);
-    await updateDoc(docRef2, {
-      scoresArr: tempArr
-    });
-
-
-    var newArr = displayingArr;
-    for(var i = 0; i < displayingArr.length; i++){
-      if(newArr[i].member == user.uid){
-        newArr[i].score = statInput;
-        i = displayingArr.length;
+      if(decimalCounter > 0){
+        addInfo = false;
       }
     }
 
-    newArr.sort((p1, p2) => (p1.score < p2.score) ? 1 : (p1.score > p2.score) ? -1 : 0);
-    setDisplayingArr(newArr);
-    setStatInput("");
-    // openMainModal(leaderboardClicked);
+    if(addInfo == true){
+      //statInput
+      const docRef1 = doc(db, "leaderboards", leaderboardClicked);
+      const docSnap1 = await getDoc(docRef1);
+      var tempArr = docSnap1.data().scoresArr;
+      var index = -1;
+      var IDArr = docSnap1.data().membersArr;
+      for(var i = 0; i < IDArr.length; i++){
+        if(user.uid == IDArr[i]){
+          index = i;
+          i = IDArr.length;
+        }
+      }
+      tempArr[index] = statInput;
 
+      const docRef2 = doc(db, "leaderboards", leaderboardClicked);
+      await updateDoc(docRef2, {
+        scoresArr: tempArr
+      });
+
+
+      var newArr = displayingArr;
+      for(var i = 0; i < displayingArr.length; i++){
+        if(newArr[i].member == user.uid){
+          newArr[i].score = statInput;
+          i = displayingArr.length;
+        }
+      }
+
+      newArr.sort((p1, p2) => (p1.score < p2.score) ? 1 : (p1.score > p2.score) ? -1 : 0);
+      setDisplayingArr(newArr);
+      setStatInput("");
+      // openMainModal(leaderboardClicked);
+    }
   }
 
   async function leaveQuestion(answer) {
@@ -508,6 +526,7 @@ export default function AddFriends({ navigation }) {
                   fontSize={16}
                   onChangeText={(inputTitle) => setInputTitle(inputTitle)}
                   keyboardAppearance="dark"
+                  maxLength={30}
                 /> 
               </View> 
               <View style={makeStyles.inputView}>
@@ -518,6 +537,7 @@ export default function AddFriends({ navigation }) {
                   fontSize={16}
                   onChangeText={(inputCategory) => setInputCategory(inputCategory)}
                   keyboardAppearance="dark"
+                  maxLength={40}
                 /> 
               </View> 
             </View>
@@ -588,6 +608,8 @@ export default function AddFriends({ navigation }) {
                 fontWeight={"300"}
                 onChangeText={(statInput) => setStatInput(statInput)}
                 keyboardAppearance="dark"
+                keyboardType="numeric"
+                maxLength={5}
               /> 
               <TouchableOpacity style={mainModalStyles.enterButton} onPress={() => {updateScore()}}>
                 <Text style={mainModalStyles.enterText}>Enter</Text>
