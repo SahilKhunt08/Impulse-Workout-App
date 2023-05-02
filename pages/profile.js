@@ -1,23 +1,30 @@
 import React, { useState } from 'react'
-import { TouchableOpacity, Text, View, StyleSheet, Image, TextInput, ScrollView} from 'react-native';
+import { TouchableOpacity, Text, View, StyleSheet, Image, TextInput, ScrollView, Switch} from 'react-native';
 import { Card } from 'react-native-paper';
-import { Avatar} from '@rneui/themed';
 import { auth } from './firebase';
 import {db} from './firebase';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
 import { addDoc, getDoc, doc, enableNetwork, setDoc, getCountFromServer, collection, getDocs, namedQuery, query, deleteDoc, updateDoc} from "firebase/firestore"; 
+import { Icon } from '@rneui/themed';
 
 export default function Profile({ navigation }) {
 
-
-  const [username, setUsername] = useState("");
   const [requestName, setRequestName] = useState("");
   const [requestArr, setRequestArr] = useState([]);
   const [count, setCount] = useState(0);
   const [workoutNamesArr, setWorkoutNamesArr] = useState([]);
   const auth = getAuth();
   const user = auth.currentUser;
-  const LeftContent = props => <Avatar.Icon {...props} icon="human" />
+
+  const [newUsername, setNewUsername] = useState("");
+  const [newEmail, setNewEmail] = useState("");
+  const [newPassword, setNewPassword] = useState("")  
+  const [sendingName, setSendingName] = useState("");
+
+  const [toggle1, setToggle1] = useState(false);
+  const [toggle2, setToggle2] = useState(false);
+  const toggleSwitch1 = () => setToggle1(previousState => !previousState)
+  const toggleSwitch2 = () => setToggle2(previousState => !previousState)
 
   React.useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
@@ -51,8 +58,10 @@ export default function Profile({ navigation }) {
     const docSnap2 = await getDoc(docRef2);
 
     if (docSnap2.exists()) {
-      setUsername(docSnap2.data().username);
+      setNewUsername(docSnap2.data().username);
       setWorkoutNamesArr(docSnap2.data().workoutsArr);
+      setToggle1(docSnap2.data().settings1);
+      setToggle2(docSnap2.data().settings2);
     } else {
       console.log("No such document!");
     }
@@ -79,12 +88,16 @@ export default function Profile({ navigation }) {
 
     const accountsColRef = collection(db, "accounts"); 
     const querySnapshot = await getDocs(accountsColRef);
-    if(requestName !== accountUsername){
-    querySnapshot.forEach(doc => {
-        if (requestName === doc.data().username){
-          addFriendToUserDoc(doc.id)
-          setRequestName("");
-          console.log("matches")
+    if(sendingName !== accountUsername && sendingName !== "temp"){
+      querySnapshot.forEach(doc => {
+        if (sendingName === doc.data().username){
+          if(doc.data().settings1 == true){
+            addFriendToUserDoc(doc.id)
+            setRequestName("");
+            console.log("matches");
+          } else {
+            console.log("Other user doesn't accept requests")
+          }
         }
       });
     }
@@ -145,79 +158,391 @@ export default function Profile({ navigation }) {
     setRequestArr(tempArr);
   }
 
+  async function handleUpdate() {
+    const docRef1 = doc(db, "accounts", user.uid);
+    await updateDoc(docRef1, {
+      username: newUsername,
+      settings1: toggle1,
+      settings2: toggle2,
+    });
+  }
+
+  const handleLogout = () => {
+    console.log("LOGOUT");
+    // navigation.replace('Impulse') //New version
+    navigation.navigate('Login') //Old version
+  }
+
   return (
     <View style={styles.container}>
+      <ScrollView style={newStyles.scrollView1} showsVerticalScrollIndicator={false}>
+        <View style={newStyles.scrollView2}>
 
-      <View style={{left: 150, flexDirection:'row-reverse', justifyContent:'flex-start', flexWrap:'nowrap' }}>
-        <TouchableOpacity  onPress={saveProfile}>
-            <Image source={ require('../assets/settingsIcon.png') } style={ { width: 35, height: 35 } } />
-        </TouchableOpacity>
-      </View>
+          <View style={{marginTop: 50}}></View>
+          <View style={newStyles.dividerView}>
+            <Text style={newStyles.dividerText}>Account Information</Text>
+          </View>
 
-      <View style={styles.profilePicture}>
-        <Avatar size={150} rounded source={require('../assets/person2.png')}></Avatar>
-      </View>
+          <View style={newStyles.accountInfoView}>
+            <Text style={newStyles.infoText}> Username </Text>
+            <View style={newStyles.inputView}>
+              <TextInput
+                style={newStyles.inputText}
+                placeholder="Example"
+                placeholderTextColor="#cccccc"
+                onChangeText={(newUsername) => setNewUsername(newUsername)}
+                value={newUsername}
+                color={"#cccccc"}
+                keyboardAppearance="dark"
+              /> 
+            </View> 
+            <Text style={newStyles.infoText}> Email </Text>
+            <View style={newStyles.inputView}>
+              <TextInput
+                style={newStyles.inputText}
+                editable={false}
+                placeholder="Work in Progress"
+                // placeholder="someone@example.com"
+                placeholderTextColor="#cccccc"
+                onChangeText={(newEmail) => setNewEmail(newEmail)}
+                value={newEmail}
+                color={"#cccccc"}
+                keyboardAppearance="dark"
+              /> 
+            </View> 
+            <Text style={newStyles.infoText}> Password </Text>
+            <View style={newStyles.inputView}>
+              <TextInput
+                style={newStyles.inputText}
+                editable={false}
+                placeholder="Work in Progress"
+                // placeholder="Your Password"
+                placeholderTextColor="#cccccc"
+                secureTextEntry={true}
+                onChangeText={(newPassword) => setNewPassword(newPassword)}
+                value={newPassword}
+                color={"#cccccc"}
+                keyboardAppearance="dark"
+              /> 
+            </View> 
+          </View>
 
-      <View style={styles.usernameView}>
-        <TextInput
-            style={styles.usernameInput}
-            placeholder={username}
-            placeholderTextColor= "#ffffff"
-            onChangeText={(username) => setUsername(username)}
-          /> 
-        <TouchableOpacity  onPress={saveProfile}>
-          <Image source={ require('../assets/checkmark1.png') } style={ { width: 40, height: 40 } } />
-        </TouchableOpacity>
-      </View>
+          <View style={newStyles.dividerView}>
+            <Text style={newStyles.dividerText}>General Settings</Text>
+          </View>
 
-      <View style={styles.requestContainer}>
-        <View style={styles.requestTitleBar}>
-         <Text style={styles.requestTitle}> Friend Requests</Text>
-        </View>
+          <View style={newStyles.genSettingsContainer}>
+            <View style={newStyles.settingsView}>
+              <View style={newStyles.settingsSplit1}>
+                <Icon 
+                  name="group"
+                  type="material"
+                  size={31}
+                  color="#8e8efa"
+                />
+              </View>
+              <View style={newStyles.settingsSplit2}>
+                <Text style={newStyles.settingsText}>Receive Requests</Text>
+              </View>
+              <View style={newStyles.settingsSplit3}>
+                <Switch
+                  style={newStyles.switchStyle}
+                  trackColor={{true: '#8e8efa', false: '#767577'}}
+                  thumbColor={toggle1 ? '#f4f3f4' : '#f4f3f4'}
+                  ios_backgroundColor="#3e3e3e"
+                  onValueChange={toggleSwitch1}
+                  value={toggle1}
+                />
+              </View>
+              </View>
+              <View style={newStyles.settingsView}>
+                <View style={newStyles.settingsSplit1}>
+                  <Icon 
+                    name="leaderboard"
+                    type="material"
+                    size={31}
+                    color="#8e8efa"
+                  />
+                </View>
+                <View style={newStyles.settingsSplit2}>
+                  <Text style={newStyles.settingsText}>Receive Invites</Text>
+                </View>
+                <View style={newStyles.settingsSplit3}>
+                  <Switch
+                    trackColor={{true: '#8e8efa', false: '#767577'}}
+                    thumbColor={toggle2 ? '#f4f3f4' : '#f4f3f4'}
+                    ios_backgroundColor="#3e3e3e"
+                    onValueChange={toggleSwitch2}
+                    value={toggle2}
+                  />   
+                </View>
+              </View>
+            </View>
 
-        <View style={styles.sendRequestView}>
-          <TextInput
-            style={styles.requestNameInput}
-            placeholder= "Name Here"
-            placeholderTextColor= "#f2e6ff"
-            onChangeText={(requestName) => setRequestName(requestName)}
-          /> 
-          <TouchableOpacity style={styles.sendRequestBtn} onPress={sendFriendRequest}>
-            <Text style={styles.sendRequestBtnText}>Send Request</Text>
+          <View style={newStyles.dividerView}>
+            <Text style={newStyles.dividerText}>Friend Requests</Text>
+          </View>
+
+          <View style={newStyles.friendRequestsContainer}>
+            <View style={newStyles.requestingView}>
+              <View style={newStyles.requestInput}>
+                <TextInput
+                  style={newStyles.requestInputText}
+                  placeholder="Friend's Name"
+                  fontSize="16"
+                  placeholderTextColor="#cccccc"
+                  onChangeText={(sendingName) => setSendingName(sendingName)}
+                  valie={sendingName}
+                  color={"#dddddd"}
+                  keyboardAppearance="dark"
+                />
+              </View>
+              <TouchableOpacity style={newStyles.sendBtn} onPress={sendFriendRequest}>
+                <Text style={newStyles.sendText}>Send</Text>
+              </TouchableOpacity>
+            </View>
+            
+            <View style={styles.requestContainer}>
+              <ScrollView style={styles.scrollStyle} showsVerticalScrollIndicator={false}>
+                <View style={styles.container2}>
+                {requestArr.map((info, index) => (
+                <View key={index} style={styles.workoutCard}>
+                  <View style={styles.friendNameView}>
+                    <Text style={styles.friendNameText}> {info.name} </Text>
+                  </View>
+                  <View style={styles.twoButtonView}>
+                    <TouchableOpacity style={styles.requestButton1} onPress={() => addButton(info.id)}>
+                      <Icon 
+                        name="person-add"
+                        type="material"
+                        size={31}
+                        color="#8e8efa"
+                      />
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.requestButton2} onPress={() => denyButton(info.id)}>
+                      <Icon 
+                        name="person-remove"
+                        type="material"
+                        size={31}
+                        color="#8e8efa"
+                      />
+                    </TouchableOpacity>
+                    {/* <TouchableOpacity style={styles.requestButton1} onPress={() => addButton(info.id)}>
+                      <Text style={styles.requestText}>Add</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.requestButton2} onPress={() => denyButton(info.id)}>
+                      <Text style={styles.requestText}>Deny</Text>
+                    </TouchableOpacity> */}
+                  </View>
+                </View>
+                ))}
+                </View>
+              </ScrollView>
+            </View>
+          </View>
+
+          <View style={newStyles.dividerView}>
+            <Text style={newStyles.dividerText}></Text>
+          </View>
+
+          <TouchableOpacity style={newStyles.updateBtn} onPress={() => handleUpdate()}>
+            <Text style={newStyles.updateText}>Update</Text>
           </TouchableOpacity>
+
+          <TouchableOpacity style={newStyles.logoutBtn} onPress={() => handleLogout()}>
+            <Icon 
+              name="logout"
+              type="material"
+              size={31}
+              color="#8e8efa"
+            />
+            <Text style={newStyles.logoutText}>LOGOUT</Text> 
+          </TouchableOpacity> 
+
         </View>
-
-        <ScrollView style={styles.scrollStyle}>
-          <View style={styles.container2}>
-          {requestArr.map((info, index) => (
-          <View key={index} style={styles.workoutCard}>
-            <View style={styles.friendNameView}>
-              <Text style={styles.friendNameText}> {info.name} </Text>
-            </View>
-            <View style={styles.twoButtonView}>
-              <TouchableOpacity style={styles.requestButton1} onPress={() => addButton(info.id)}>
-                <Text style={styles.requestText}>Add</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.requestButton2} onPress={() => denyButton(info.id)}>
-                <Text style={styles.requestText}>Deny</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-          ))}
-          </View>
-        </ScrollView>
-
-      </View>
+      </ScrollView>
     </View>
 
   )
 }
 
+const newStyles = StyleSheet.create({
+  scrollView1: {
+    width: "100%",
+  },
+  scrollView2: {
+    alignItems: "center",  
+  },
+  dividerView: {
+    height: 30,
+    width: "100%",
+    backgroundColor: "#181821",
+    justifyContent: "center",
+    marginVertical: 5,
+  },
+  dividerText: {
+    color: "#b1b1c9",
+    fontSize: 15,
+    marginLeft: 25,
+    fontWeight: "600",
+  },
+
+  accountInfoView: {
+    marginTop: 25,
+    marginBottom: 10,
+  },
+  infoText: {
+    color: "#ffffff",
+    fontWeight: "350",
+    fontSize: 16,
+    marginBottom: 6,
+    alignSelf: "left",
+    letterSpacing: 0.5,
+  },
+  inputView: {
+    borderColor: "#404057",
+    borderWidth: 2,
+    borderRadius: 5,
+    height: 45,
+    width: 340,
+    marginBottom: 20,
+    alignItems: "center",
+  },
+  inputText: {
+    height: 50,
+    width: "100%",
+    flex: 1,
+    paddingHorizontal: 15,
+    color: "#ffffff",
+  },
+
+  genSettingsContainer: {
+    marginTop: 20,
+    marginBottom: 25,
+    width: "100%",
+  },
+  settingsView: {
+    flexDirection: "row",
+    paddingVertical: 8,
+  },
+  settingsSplit1: {
+    width: "20%",
+    // backgroundColor: "red",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  settingsSplit2: {
+    width: "62%",
+    // backgroundColor: "green",
+    justifyContent: "center",
+  },
+  settingsSplit3: {
+    width: "20%",
+  },
+  switchStyle: {
+    transform: [{ scaleX: 1 }, { scaleY: 1 }],
+  },
+  settingsText: {
+    fontSize: 18,
+    color: "#dcdcfc",
+    fontWeight: "600",
+    letterSpacing: 0.5
+  },
+
+  friendRequestsContainer: {
+    // backgroundColor: "grey",
+    width: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 30,
+    marginBottom: 10,
+  },
+  requestingView: {
+    justifyContent: "center",
+    width: "100%",
+    flexDirection: "row",
+  },
+  requestInput: {
+    borderColor: "#404057",
+    borderWidth: 2,
+    borderRadius: 5,
+    height: 45,
+    alignItems: "center",
+    width: "65%",
+    marginRight: 20,
+  },
+  requestInputText: {
+    height: 50,
+    width: "100%",
+    flex: 1,
+    paddingHorizontal: 15,
+    color: "#ffffff",
+  },
+  sendBtn: {
+    borderRadius: 7,
+    backgroundColor: '#8e8efa',
+    justifyContent: "center",
+    alignItems: "center",
+    shadowColor: 'rgba(227, 227, 255, 0.2)',
+    shadowOpacity: 0.8,
+    elevation: 6,
+    shadowRadius: 15,
+    shadowOffset : { width: 1, height: 13},
+    paddingHorizontal: 10,
+  },
+  sendText: {
+    color: "black",
+    fontSize: 20,
+    fontWeight: "800",
+    letterSpacing: 1.5,
+  },
+
+
+  updateBtn: {
+    borderRadius: 7,
+    backgroundColor: '#FFFFFF',
+    width: "90%",
+    height: 50,
+    marginTop: 40,
+    justifyContent: "center",
+    alignItems: "center",
+    shadowColor: 'rgba(227, 227, 255, 0.2)',
+    shadowOpacity: 0.8,
+    elevation: 6,
+    shadowRadius: 15,
+    shadowOffset : { width: 1, height: 13},
+  },
+  updateText: {
+    fontWeight: "800",
+    fontSize: 22,
+    letterSpacing: 1.5,
+  },
+  logoutBtn: {
+    borderColor: "#404057",
+    borderWidth: 2,
+    borderRadius: 5,
+    height: 50,
+    width: 340,
+    marginBottom: 30,
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 30,
+  },
+  logoutText: {
+    color: "#ffffff",
+    fontWeight: "500",
+    fontSize: 16,
+    paddingHorizontal: 115,
+    marginLeft: -20,
+    letterSpacing: 0.9,
+  },
+});
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // justifyContent: 'center',
-    padding: 20,
     backgroundColor: '#0d0d12',
     alignContent: "center",
     alignItems: "center",
@@ -226,13 +551,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   requestContainer: {
-    backgroundColor: "#0d0d12",
-    borderWidth: 2,
-    borderColor: "#555070",
+    backgroundColor: "#1f1f30",
+    // borderColor: "#555070",
     alignItems: "center",
-    width: "100%",
-    height: "60%",
-    marginTop: 10,
+    width: "90%",
+    height: 200,
+    marginTop: 20,
+    borderRadius: 5,
+    marginBottom: 25,
   },
   requestTitleBar: {
     backgroundColor: "#0d0d12",
@@ -286,9 +612,8 @@ const styles = StyleSheet.create({
   },
   requestButton1: {
     borderRadius: 8,
-    borderWidth: 3,
     alignItems: "center",
-    backgroundColor: "#70a17e",
+    backgroundColor: "#0d0d14",
     margin: 5,
     height: 40,
     width: 60,
@@ -296,9 +621,8 @@ const styles = StyleSheet.create({
   },
   requestButton2: {
     borderRadius: 8,
-    borderWidth: 3,
     alignItems: "center",
-    backgroundColor: "#c76565",
+    backgroundColor: "#0d0d14",
     margin: 5,
     height: 40,
     width: 60,
@@ -307,10 +631,12 @@ const styles = StyleSheet.create({
   workoutCard: {
     marginTop: 10,
     width: "90%",
-    backgroundColor: "#463e4f",
-    bordercolor: "black",
-    borderWidth: 2,
-    borderRadius: 5,
+    // backgroundColor: "#463e4f",
+    // bordercolor: "black",
+    // borderWidth: 2,
+    // borderRadius: 5,
+    borderBottomWidth: 2,
+    borderColor: "#737387",
     justifyContent: "center",
     alignItems: "center",
     flexDirection: "row",
@@ -321,6 +647,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     width: "90%",
+    marginTop: 150,
   },
   usernameInput: {
     borderRadius: 5,
@@ -351,8 +678,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   requestText: {
-    fontSize: 17,
-    fontWeight: "600",
+    fontSize: 18,
+    fontWeight: "800",
+    letterSpacing: 0.5
   },
 
   sendRequestView: {

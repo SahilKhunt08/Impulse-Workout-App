@@ -664,6 +664,7 @@ export default function Workout({ navigation }) {
             placeholder="Search"
             placeholderTextColor="#cccccc"
             onChangeText={(searchBarText) => setSearchBarText(searchBarText)}
+            keyboardAppearance="dark"
           /> 
         </View> 
         <TouchableOpacity style = {{paddingLeft:6}} onPress={() => submitInput(false)}>

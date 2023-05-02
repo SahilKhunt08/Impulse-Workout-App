@@ -52,6 +52,8 @@ async function makeNewDoc() {
     username: newUsername,
     workoutsArr: [],
     leaderboardsArr: ["temp"],
+    settings1: true,
+    settings2: true,
   })
   // navigation.replace('Impulse')
 
@@ -107,6 +109,7 @@ async function makeNewDoc() {
             placeholder="someone@example.com"
             placeholderTextColor="#cccccc"
             onChangeText={(email) => setEmail(email)}
+            keyboardAppearance="dark"
           /> 
         </View> 
         <Text style={newStyles.infoText}> Password </Text>
@@ -117,6 +120,7 @@ async function makeNewDoc() {
             placeholderTextColor="#cccccc"
             secureTextEntry={true}
             onChangeText={(password) => setPassword(password)}
+            keyboardAppearance="dark"
           /> 
         </View> 
         <TouchableOpacity style={newStyles.forgotView}>
@@ -173,6 +177,7 @@ async function makeNewDoc() {
                   placeholder="Example"
                   placeholderTextColor="#cccccc"
                   onChangeText={(newUsername) => setNewUsername(newUsername)}
+                  keyboardAppearance="dark"
                 /> 
               </View> 
               <Text style={newStyles.infoText}> Email </Text>
@@ -182,6 +187,7 @@ async function makeNewDoc() {
                   placeholder="someone@example.com"
                   placeholderTextColor="#cccccc"
                   onChangeText={(newEmail) => setNewEmail(newEmail)}
+                  keyboardAppearance="dark"
                 /> 
               </View> 
               <Text style={newStyles.infoText}> Password </Text>
@@ -192,6 +198,7 @@ async function makeNewDoc() {
                   placeholderTextColor="#cccccc"
                   secureTextEntry={true}
                   onChangeText={(newPassword) => setNewPassword(newPassword)}
+                  keyboardAppearance="dark"
                 /> 
               </View> 
             </View>

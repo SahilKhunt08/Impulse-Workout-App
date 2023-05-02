@@ -507,6 +507,7 @@ export default function AddFriends({ navigation }) {
                   placeholderTextColor="#d9d9d9"
                   fontSize={16}
                   onChangeText={(inputTitle) => setInputTitle(inputTitle)}
+                  keyboardAppearance="dark"
                 /> 
               </View> 
               <View style={makeStyles.inputView}>
@@ -516,6 +517,7 @@ export default function AddFriends({ navigation }) {
                   placeholderTextColor="#d9d9d9"
                   fontSize={16}
                   onChangeText={(inputCategory) => setInputCategory(inputCategory)}
+                  keyboardAppearance="dark"
                 /> 
               </View> 
             </View>
@@ -585,6 +587,7 @@ export default function AddFriends({ navigation }) {
                 fontSize={20}
                 fontWeight={"300"}
                 onChangeText={(statInput) => setStatInput(statInput)}
+                keyboardAppearance="dark"
               /> 
               <TouchableOpacity style={mainModalStyles.enterButton} onPress={() => {updateScore()}}>
                 <Text style={mainModalStyles.enterText}>Enter</Text>

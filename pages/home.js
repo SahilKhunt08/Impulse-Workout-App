@@ -578,6 +578,7 @@ let nextConfig = []
               placeholder="Workout Name"
               placeholderTextColor="#8e8efa"
               onChangeText={(workoutName) => setWorkoutName(workoutName)}
+              keyboardAppearance="dark"
             /> 
           </View> 
 
@@ -595,6 +596,7 @@ let nextConfig = []
               numberOfLines={5}
               maxLength={150}
               onChangeText={(workoutDesc) => setWorkoutDesc(workoutDesc)}
+              keyboardAppearance="dark"
             /> 
          </View>
      
@@ -736,6 +738,7 @@ let nextConfig = []
                 style={editWorkouts.inputText}
                 placeholder={selName}
                 placeholderTextColor="#ffffff"
+                keyboardAppearance="dark"
               /> 
             </View> 
         </View>
@@ -748,6 +751,7 @@ let nextConfig = []
               placeholderTextColor="#ffffff"
               numberOfLines={5}
               maxLength={150}
+              keyboardAppearance="dark"
             /> 
         </View>
        
