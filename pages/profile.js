@@ -94,13 +94,14 @@ export default function Profile({ navigation }) {
   async function pushWorkout(arr, reciever) {
 
     const workouts = arr
-    console.log(workouts + " | " + reciever)
+
+    console.log(workouts.length)
     for (let i = 0; i< arr.length; i++) {
-      await setDoc(doc(db, "accounts", reciever, "workouts", workouts[0].name), {
-        breakTime: workouts[0].breakTime,
-        description: workouts[0].description,
-        name: workouts[0].name,
-        workoutID: workouts[0].workoutID,
+      await setDoc(doc(db, "accounts", reciever, "workouts", workouts[i].name), {
+        breakTime: workouts[i].breakTime,
+        description: workouts[i].description,
+        name: workouts[i].name,
+        workoutID: workouts[i].workoutID,
         type: "Friend"
     })
     }
@@ -138,25 +139,31 @@ export default function Profile({ navigation }) {
       username: acceptedName,
     });
 
-    //Reference user workouts(send from user to friend)
-    let tempArr = []
-    const selfWorkoutRef = collection(db, "accounts", user.uid, "workouts");
-    const selfWorkoutDocs = await getDocs(selfWorkoutRef);
-      selfWorkoutDocs.forEach(doc => {
-        tempArr.push(doc.data())
-    }) 
-    pushWorkout(tempArr, acceptedName)
+  
 
     let tempArr1 = []
     const friendWorkoutRef = collection(db, "accounts", acceptedName, "workouts");
     const friendWorkoutDocs = await getDocs(friendWorkoutRef);
       friendWorkoutDocs.forEach(doc => {
+        if (doc.id != "temp") {
         tempArr1.push(doc.data())
+        }
     }) 
 
     pushWorkout(tempArr1, user.uid)
 
            
+     //Reference user workouts(send from user to friend)
+     let tempArr = []
+     const selfWorkoutRef = collection(db, "accounts", user.uid, "workouts");
+     const selfWorkoutDocs = await getDocs(selfWorkoutRef);
+       selfWorkoutDocs.forEach(doc => {
+        if (doc.id != "temp") {
+          tempArr.push(doc.data())
+        }
+         
+     }) 
+     pushWorkout(tempArr, acceptedName)
 
     //Adds your account to the friend
     await setDoc(doc(db, "accounts", acceptedName, "friends", user.uid), {

@@ -62,6 +62,8 @@ export default function Home({navigation}) {
 
   //All Workout Objects
   const [totalWorkoutsArr, setTotalWorkoutsArr] = useState([])
+  const [totalFriendWorkoutsArr, setTotalFriendWorkoutsArr] = useState([])
+  const [totalImpulseWorkoutsArr, setTotalImpulseWorkoutsArr] = useState([])
 
   //Timer
   const [currExercisesArr, setCurrExercisesArr] = useState([])
@@ -141,81 +143,51 @@ export default function Home({navigation}) {
     loadWorkouts()
   }
 
-  async function deleteSelected(selectedArr) {
-    for (let i = 0; i < selectedArr; i++) {
-      await deleteDoc(doc(db, "accounts", user.uid, "workouts", selectedArr[i].name));
-    }
-  }
+
 
   async function loadWorkouts() {
-    const allWorkoutsArr = []
+    const allSelfWorkoutsArr = []
+    const allFriendWorkoutArr = []
+    const allImpulseWorkoutArr = []
       const workoutRef = collection(db, "accounts", user.uid, "workouts");
       const workoutDocs = await getDocs(workoutRef);
       workoutDocs.forEach(doc => {
-        if (doc.id != "temp") {
-          allWorkoutsArr.push(doc.data())
+        if (doc.id != "temp" && doc.data().type == "Self") {
+          allSelfWorkoutsArr.push(doc.data())
+        } else if ((doc.id != "temp" && doc.data().type == "Friend")) {
+          allFriendWorkoutArr.push(doc.data())
         }
       })        
-      setTotalWorkoutsArr(allWorkoutsArr)
 
+      const impulseWorkoutRef = collection(db, "challenges");
+      const impulseWorkoutDocs = await getDocs(impulseWorkoutRef);
+      impulseWorkoutDocs.forEach(doc => {
+        if (doc.id != "temp" && doc.data().type == "Impulse") {
+          allImpulseWorkoutArr.push(doc.data())
+        }
+      })
 
-      // clear friend workouts first
-      // const workoutsDeleteArr = []
-      // const deleteWorkoutRef = collection(db, "accounts", user.uid, "workouts");
-      // const deleteWorkoutDocs = await getDocs(deleteWorkoutRef);
-      // deleteWorkoutDocs.forEach(doc => {
-      //   if (doc.id != "temp" && doc.data().type == "Friend") {
-      //     workoutsDeleteArr.push(doc.data())
-      //   }
-      // })  
+      //Self Workouts
+      setTotalWorkoutsArr(allSelfWorkoutsArr)
+      //Friend Workouts
+      setTotalFriendWorkoutsArr(allFriendWorkoutArr)
 
-      // deleteSelected(workoutsDeleteArr)
-
-      //   let friends = []
-      //   const friendsRef = collection(db, "accounts", user.uid, "friends");
-      //   const friendsDocs = await getDocs(friendsRef);
-      //   friendsDocs.forEach(doc => {
-      //     if (doc.id != "temp") {
-      //       friends.push(doc.data())
-      //     }
-      //   })  
-
-      //   let addingWorkouts = []
-
-      //   for (let i = 0; i < friends.length; i++) {
-      //     const fWorkoutsRef = collection(db, "accounts", friends[i], "workouts");
-      //     const fWorkoutDocs = await getDocs(fWorkoutsRef);
-
-      //       fWorkoutDocs.forEach(doc => {
-      //       if (doc.id != "temp") {
-      //         addingWorkouts.push(doc.data())
-      //       }
-      //     })  
-      //   }
-
-      // for (let i = 0; i < addingWorkouts.length; i++) {
-      //   await setDoc(doc(db, "accounts", user.uid, "workouts", addingWorkouts[i].name), {
-      //     description: addingWorkouts[i].description,
-      //     breakTime: addingWorkouts[i].breakTime,
-      //     name: addingWorkouts[i].name,
-      //     workoutID: addingWorkouts[i].workoutID,
-      //     type: "Friend"
-      //   });
-      // }
-
+      setTotalImpulseWorkoutsArr(allImpulseWorkoutArr)
 
   }
 
   async function temp () {
-    const workoutsDeleteArr = []
-    const deleteWorkoutRef = collection(db, "accounts", user.uid, "workouts");
-    const deleteWorkoutDocs = await getDocs(deleteWorkoutRef);
-    deleteWorkoutDocs.forEach(doc => {
-      if (doc.id != "temp" && doc.data().type == "Friend") {
-        workoutsDeleteArr.push(doc.data())
-      }
-    })  
-    deleteSelected(workoutsDeleteArr)
+  //   console.log("fdfd")
+  //   const workoutsDeleteArr = []
+  //   const deleteWorkoutRef = collection(db, "accounts", user.uid, "workouts");
+  //   const deleteWorkoutDocs = await getDocs(deleteWorkoutRef);
+  //   deleteWorkoutDocs.forEach(doc => {
+  //     if (doc.id != "temp" && doc.data().type == "Friend") {
+  //       workoutsDeleteArr.push(doc.data())
+  //     }
+  //   })  
+  //   console.log(workoutsDeleteArr.length)
+  //   deleteSelected(workoutsDeleteArr)
 
   }
 
@@ -233,8 +205,6 @@ export default function Home({navigation}) {
 
   async function openSpecificWorkout(index) {
     setCurrStep(0);
-    const auth = getAuth();
-    const user = auth.currentUser;
     const exercises = []
     let selectedName = ""
     let selectedRestTime = 0
@@ -592,7 +562,38 @@ let nextConfig = []
 
           </ScrollView>
 
-          <HomeScroll></HomeScroll>
+          <ScrollView horizontal={true} style={homeScrollMain.container}>
+            <View style={homeScrollMain.scrollContainer}>
+
+                <Image source={ require('../assets/workingout.jpeg') } style={homeScrollMain.banner} />
+                <Text style={homeScrollMain.titleText}>Friend Workouts</Text>
+                <View style={homeScrollMain.scrollContainer1}>
+                    <ScrollView>
+                    {totalFriendWorkoutsArr.map((info, index) => (
+                        <View key={index} style={homeScrollMain.workoutCard1}>
+                          <Text style={cardStyle.titleText} backgroundColor={'#FFFFFF'}>{info.name}</Text>
+                        </View>
+                        ))}  
+                    </ScrollView>
+                </View>
+                
+            </View>
+            <View style={homeScrollMain.scrollContainer}>
+
+                <Image source={ require('../assets/soloworkout.jpeg') } style={homeScrollMain.banner} />
+                <Text style={homeScrollMain.titleText1}>Impulse Workouts</Text>
+
+                <View style={homeScrollMain.scrollContainer1}>
+                    <ScrollView>
+                      {totalImpulseWorkoutsArr.map((info, index) => (
+                        <View key={index} style={homeScrollMain.workoutCard}>
+                          <Text  style={cardStyle.titleText} backgroundColor={'#FFFFFF'}>{info.name}</Text>
+                        </View>
+                      ))}  
+                </ScrollView>
+                </View>
+            </View>
+        </ScrollView>
           
           <TouchableOpacity style={backgroundStyle.plusButton} onPress={
             () => {
@@ -1216,7 +1217,7 @@ const backgroundStyle = StyleSheet.create({
   plusButton: {
       position: 'absolute',
       marginTop: 585,
-      marginLeft: 317,
+      marginLeft: 287,
       borderRadius:7,
       paddingHorizontal: 10,
       backgroundColor: '#8e8efa',
@@ -1745,4 +1746,75 @@ const modalAddStyles = StyleSheet.create({
     fontWeight: "300",
     color: "#f1f0fc",
   },
+})
+const homeScrollMain = StyleSheet.create({
+  container: {
+  
+    height: 250,
+    marginTop: 300,
+    width: 350,
+    position: 'absolute'
+  },
+
+  scrollContainer: {
+      margin: 10
+    },
+
+    scrollContainer1: {
+      height: '78%',
+      maxHeight: '78%'
+
+    },
+  banner: {
+      alignSelf: 'center',
+      height: 130,
+      width: 310,
+      borderRadius: 10,
+      shadowColor: '#000000',
+      shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+      shadowOpacity: 0.25,
+      shadowRadius: 4,
+      elevation: 5,
+    },
+    titleText: {
+      position:'absolute',
+      color: "#466D97",
+      fontWeight: "700",
+      fontSize: 20,
+      alignSelf: "left",
+      left: 125,
+      marginTop: 100
+
+    },
+    titleText1: {
+      position:'absolute',
+      color: "#C03546",
+      fontWeight: "700",
+      fontSize: 20,
+      alignSelf: "left",
+      left: 110,
+      marginTop: 100
+
+    },
+
+    workoutCard1: {
+      marginTop:10, 
+      marginLeft:4,
+      height: 55,
+      width: 300,
+      borderRadius: 4,
+      backgroundColor: "#466D97"
+    },
+
+    workoutCard: {
+      marginTop:10, 
+      marginLeft:4,
+      height: 55,
+      width: 300,
+      borderRadius: 4,
+      backgroundColor: "#C03546"
+    },
 })
