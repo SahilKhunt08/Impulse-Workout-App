@@ -187,15 +187,15 @@ export default function Home({navigation}) {
   }
 
   async function loadDailyWorkout(name) {
-    const allWorkoutsArr = ""
+    const allWorkoutsArr1 = []
     const workoutRef = collection(db, "challenges");
     const workoutDocs = await getDocs(workoutRef);
     workoutDocs.forEach(doc => {
       if (doc.id == name) {
-        allWorkoutsArr = doc.data()
+        allWorkoutsArr1.push(doc.data())
       }
     })        
-    setSelDailyWorkout(allWorkoutsArr)
+    setSelDailyWorkout(allWorkoutsArr1)
   }
 
   async function openSpecificWorkout(index) {
@@ -347,11 +347,12 @@ let nextConfig = []
   async function submitWorkoutChanges() {
     setOpenEditWorkoutPage(false)
     //finish
-    await setDoc(doc(db, "accounts", user.uid, "workouts", selName), {
+    await updateDoc(doc(db, "accounts", user.uid, "workouts", selName), {
       breakTime: breakTime,
       description: selDesc,
       name: selName,
       workoutID: selWorkoutID
+      
   
     });
   }
@@ -555,6 +556,33 @@ let nextConfig = []
           </ScrollView>
 
           <ScrollView horizontal={true} style={homeScrollMain.container} showsHorizontalScrollIndicator={false}>
+
+             
+                      <View style={homeScrollMain.scrollContainer}>
+
+            <Image source={ require('../assets/blurryBackground.jpeg') } style={homeScrollMain.banner} />
+            <Text style={homeScrollMain.titleText2}>Work In Progress</Text>
+
+           
+            </View>
+
+
+              <View style={homeScrollMain.scrollContainer}>
+
+              <Image source={ require('../assets/soloworkout.jpeg') } style={homeScrollMain.banner} />
+              <Text style={homeScrollMain.titleText1}>Impulse Workouts</Text>
+
+              <View style={homeScrollMain.scrollContainer1}>
+                  <ScrollView>
+                    {totalImpulseWorkoutsArr.map((info, index) => (
+                      <View key={index} style={homeScrollMain.workoutCard}>
+                        <Text  style={cardStyle.titleText} backgroundColor={'#FFFFFF'}>{info.name}</Text>
+                      </View>
+                    ))}  
+              </ScrollView>
+              </View>
+              </View>
+            
             <View style={homeScrollMain.scrollContainer}>
 
                 <Image source={ require('../assets/workingout.jpeg') } style={homeScrollMain.banner} />
@@ -571,21 +599,6 @@ let nextConfig = []
                   </ScrollView>
                 </View>
                 
-            </View>
-            <View style={homeScrollMain.scrollContainer}>
-
-                <Image source={ require('../assets/soloworkout.jpeg') } style={homeScrollMain.banner} />
-                <Text style={homeScrollMain.titleText1}>Impulse Workouts</Text>
-
-                <View style={homeScrollMain.scrollContainer1}>
-                    <ScrollView>
-                      {totalImpulseWorkoutsArr.map((info, index) => (
-                        <View key={index} style={homeScrollMain.workoutCard}>
-                          <Text  style={cardStyle.titleText} backgroundColor={'#FFFFFF'}>{info.name}</Text>
-                        </View>
-                      ))}  
-                </ScrollView>
-                </View>
             </View>
         </ScrollView>
           
@@ -632,7 +645,7 @@ let nextConfig = []
             <TextInput
               style={newWorkout.inputText}
               placeholder="Workout Name"
-              placeholderTextColor="#8e8efa"
+              placeholderTextColor="#ffffff"
               onChangeText={(workoutName) => setWorkoutName(workoutName)}
               keyboardAppearance="dark"
             /> 
@@ -646,10 +659,9 @@ let nextConfig = []
          <View style={newWorkout.inputView2}>
             <TextInput
               style={newWorkout.inputText1}
-              multiline
               placeholder="Description"
-              placeholderTextColor="#8e8efa"
-              numberOfLines={5}
+              placeholderTextColor="#ffffff"
+              fontSize={30}
               maxLength={150}
               onChangeText={(workoutDesc) => setWorkoutDesc(workoutDesc)}
               keyboardAppearance="dark"
@@ -788,28 +800,15 @@ let nextConfig = []
 
         </View>
 
-        <View>
-            <View style={editWorkouts.inputView}>
-              <TextInput
-                style={editWorkouts.inputText}
-                placeholder={selName}
-                placeholderTextColor="#ffffff"
-                keyboardAppearance="dark"
-              /> 
-            </View> 
-        </View>
+        <Divider borderColor="#a3a3bf" color="#a3a3bf" orientation="center">
+          Name & Description
+        </Divider>
 
-        <View style={editWorkouts.inputView2}>
-            <TextInput
-              style={editWorkouts.inputText}
-              multiline
-              placeholder={selDesc}
-              placeholderTextColor="#ffffff"
-              numberOfLines={5}
-              maxLength={150}
-              keyboardAppearance="dark"
-            /> 
-        </View>
+        <Text style={editWorkouts.name} >{selName}</Text>
+
+        <Text style={editWorkouts.desc}>{selDesc}</Text>
+
+       
        
         <Divider borderColor="#a3a3bf" color="#a3a3bf" orientation="center">
           Break Times
@@ -853,8 +852,15 @@ let nextConfig = []
                 <Text style={newWorkout.breakText}>60</Text> 
             </TouchableOpacity>  
         </ScrollView>
+
+<Divider marginTop={10} borderColor="#a3a3bf" color="#a3a3bf" orientation="center">
+          Exercises
+        </Divider>
+
         </View>
          
+
+        
 
         <ScrollView style={mainScrollView.scrollContainer1} showsVerticalScrollIndicator={false}>
         <View style={mainScrollView.scrollContainer2}>
@@ -1338,7 +1344,8 @@ const backgroundStyle = StyleSheet.create({
 
 const newWorkout = StyleSheet.create({
   container: {
-    backgroundColor: '#ffffff'
+    backgroundColor: '#000000',
+    height: '100%'
   }, 
 
   returnText: {
@@ -1370,38 +1377,32 @@ const newWorkout = StyleSheet.create({
   breakButton: {
     borderRadius:9,
     borderWidth: 2,
-    borderColor: '#8e8efa',
+    borderColor: '#404057',
     paddingHorizontal: 15,
     paddingVertical: 8,
-    backgroundColor: '#ffffff',
-    shadowColor: 'rgba(227, 227, 255, 0.2)',
-    shadowOpacity: 0.8,
+    backgroundColor: '#000000',
     elevation: 6,
-    shadowRadius: 15,
     margin: 5,
     height: 40,
-    shadowOffset : { width: 1, height: 13},
+  
   },
 
   breakButtonClicked: {
     borderRadius:9,
     borderWidth: 2,
-    borderColor: '#8e8efa',
+    borderColor: '#404057',
     paddingHorizontal: 15,
     paddingVertical: 8,
     backgroundColor: '#8e8efa',
-    shadowColor: 'rgba(227, 227, 255, 0.2)',
-    shadowOpacity: 0.8,
     elevation: 6,
-    shadowRadius: 15,
     margin: 5,
     height: 40,
-    shadowOffset : { width: 1, height: 13},
   },
 
   breakText: {
     fontWeight: "600",
     fontSize: 15,
+    color: "#ffffff"
   },
 
   breakDesc: {
@@ -1410,7 +1411,8 @@ const newWorkout = StyleSheet.create({
     fontStyle:'italic',
     paddingLeft: 4,
     marginTop: 8,
-    backgroundColor: '#cccccc'
+    backgroundColor: '#404057',
+    marginTop: 15
   },
 
   submitButton: {
@@ -1419,8 +1421,8 @@ const newWorkout = StyleSheet.create({
     paddingVertical: 8,
     width: 150,
     marginLeft: 110,
-    marginBottom: 15,
-    marginTop:10,
+    marginBottom: 55.5 ,
+    marginTop:20,
     backgroundColor: '#8e8efa',
     shadowColor: 'rgba(227, 227, 255, 0.2)',
     shadowOpacity: 0.8,
@@ -1431,7 +1433,7 @@ const newWorkout = StyleSheet.create({
 
   headerBackground: {
     fontWeight: "600",
-    backgroundColor: "#8e8efa",
+    backgroundColor: "#404057",
     alignSelf: "left",
     marginTop: 45,
     width: '100%',
@@ -1476,7 +1478,7 @@ const newWorkout = StyleSheet.create({
     fontSize: 25,
     fontStyle: 'italic',
     paddingLeft: 15,
-    color: "#000000",
+    color: "#ffffff",
   },
   inputText1: {
     width: "100%",
@@ -1485,7 +1487,7 @@ const newWorkout = StyleSheet.create({
     paddingLeft: 15,
     paddingTop: 10,
     paddingRight: 15,
-    color: "#000000",
+    color: "#ffffff",
   },
   
   submitText: {
@@ -1585,6 +1587,16 @@ const editWorkouts = StyleSheet.create({
     alignSelf: "left",
     marginLeft:22,
     marginTop: 47
+  },
+  name: {
+    fontSize: 39,
+    marginLeft: 10,
+    color: '#A5A2A2'
+  },
+  desc: {
+    fontSize: 25,
+    marginLeft: 10,
+    color: '#A5A2A2'
   },
   submitText: {
     fontWeight: "700",
@@ -1699,6 +1711,8 @@ const modalAddStyles = StyleSheet.create({
     borderRadius: 3,
     backgroundColor: "#2b2b40",
   },
+   
+ 
   timeButtonOff: {
     width: 40,
     height: 30,
@@ -1795,6 +1809,17 @@ const homeScrollMain = StyleSheet.create({
     titleText1: {
       position:'absolute',
       color: "#C03546",
+      fontWeight: "700",
+      fontSize: 20,
+      alignSelf: "left",
+      left: 110,
+      marginTop: 100
+
+    },
+
+    titleText2: {
+      position:'absolute',
+      color: "#ACA975",
       fontWeight: "700",
       fontSize: 20,
       alignSelf: "left",
