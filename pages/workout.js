@@ -429,8 +429,9 @@ export default function Workout({ navigation }) {
     // console.log(counter);
   }
  
-  const submitInput = () => {
-    if(searchBarText == "") {
+  const submitInput = (filter) => {
+    if(filter == true) {
+      setfilterModalVis(false);
       setExerciseArr([])
         const options = {
           method: 'GET',
@@ -449,7 +450,7 @@ export default function Workout({ navigation }) {
       }).catch(function (error) {
         console.error(error);
       });
-    } else {
+    } else if(searchBarText != "" && filter == false){
       setExerciseArr([])
         const options = {
           method: 'GET',
@@ -466,14 +467,6 @@ export default function Workout({ navigation }) {
       	console.error(error);
       });
     }
-  }
-
-  const openFilterPage = () => {
-    setfilterModalVis(true)
-  }
-
-  const closeFilterPage = () => {
-    setfilterModalVis(false)
   }
 
   const displayData = (input) => {
@@ -662,7 +655,7 @@ export default function Workout({ navigation }) {
   return (
     <View style={styles.mainContainer}>
       <View style={styles.searchView}>
-        <TouchableOpacity style = {{paddingRight:10}} onPress={openFilterPage}>
+        <TouchableOpacity style = {{paddingRight:10}} onPress={() => setfilterModalVis(true)}>
           <Image source={ require('../assets/filter1.png') } style={ { width: 35, height: 35 } } />
         </TouchableOpacity>
         <View style={vedantStyles.inputView}>
@@ -671,9 +664,10 @@ export default function Workout({ navigation }) {
             placeholder="Search"
             placeholderTextColor="#cccccc"
             onChangeText={(searchBarText) => setSearchBarText(searchBarText)}
+            keyboardAppearance="dark"
           /> 
         </View> 
-        <TouchableOpacity style = {{paddingLeft:6}} onPress={submitInput}>
+        <TouchableOpacity style = {{paddingLeft:6}} onPress={() => submitInput(false)}>
             <Image source={ require('../assets/search.png') } style={ { width: 40, height: 40 } } />
         </TouchableOpacity>
       </View>
@@ -993,9 +987,13 @@ export default function Workout({ navigation }) {
           </TouchableOpacity> 
         </View>
       
-        <View style={{flexDirection: 'row', marginTop: 45, marginRight: 265}}>
-          <TouchableOpacity onPress={closeFilterPage}>
-              <Text style={vedantStyles.returnText}>Back</Text> 
+        <View style={vedantStyles.filterButtonsView}>
+          <TouchableOpacity onPress={() => setfilterModalVis(false)} style={vedantStyles.backBtnView}>
+
+            <Text style={vedantStyles.backText}>Back</Text> 
+          </TouchableOpacity> 
+          <TouchableOpacity onPress={() => submitInput(true)} style={vedantStyles.searchBtnView}>
+            <Text style={vedantStyles.searchText}>Search</Text> 
           </TouchableOpacity> 
         </View>
 
@@ -1032,7 +1030,9 @@ export default function Workout({ navigation }) {
                   <Icon
                     style={{ alignContent: "end" }}
                     color="#c8c5db"
-                    name="menu"
+                    // name="menu"
+                    // type="material"
+                    name="more-horiz"
                     type="material"
                     size="30"
                   />
@@ -1464,50 +1464,12 @@ const mainScrollView = StyleSheet.create({
 })
 
 const styles = StyleSheet.create({
-
-  mainContainer:{
+  mainContainer:{//
     flex: 1,
     alignItems: "center",
     backgroundColor: '#0d0d12',
   },
-  
-  playlist: {
-    backgroundColor: "#7ab3d6",
-    borderRadius: 5,
-    borderWidth: 3,
-    alignItems: "center",
-    width: "90%",
-    height: "30%"
-  },
-  playlistText: {
-    fontSize: 17,
-    marginTop: 10,
-    marginHorizontal: 10,
-  },
-
-  //————————————————————————————————————————————————————————————————
-  container: {
-    flex: 1,
-    alignItems: "center",
-    backgroundColor: '#adc9db',
-  },
-  
-  button1: {
-    alignItems: 'center',
-    backgroundColor: '#DDDDDD',
-    padding: 10,
-    marginTop: 5,
-  },
-  button2: {
-    alignItems: 'center',
-    backgroundColor: 'white',
-    padding: 10,
-    marginTop: 5,
-    marginHorizontal: 5,
-    borderRadius: 5,
-  },
-//————————————————————————————————————————————————————————————————
-  searchView: {
+  searchView: {//
     // width: "100%",
     height: 45,
     marginBottom: 20,
@@ -1515,123 +1477,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     marginTop: 20,
   },
-  searchInput: {
-    backgroundColor: "#578bab",
-    borderRadius: 20,
-    maxWidth: "50%", 
-    marginRight: 5,
-    height: 50,
-    flex: 1,
-    padding: 10,
-    marginLeft: 5,
-    bordercolor: "black",
-    borderWidth: 3,
-  },
-  searchButton: {
-    backgroundColor: "white",
-    padding: 10,
-    bordercolor: "black",
-    borderRadius: 5,
-    bordercolor: "black",
-    borderWidth: 3,
-    marginRight: 5,
-  },
-//————————————————————————————————————————————————————————————————
-  workoutCard: {
-    marginTop: 10,
-    width: "90%",
-    backgroundColor: "white",
-    bordercolor: "black",
-    borderWidth: 2,
-    borderRadius: 5,
-    justifyContent: "center",
-    alignContent: "center",
-
-  }, 
-  buttonView: {
+  buttonView: {//
     alignContent: "center",
     flexDirection: "row",
     justifyContent: "center",
   },
-  cardButton: {
-    backgroundColor: "lightblue",
-    padding: 5,
-    width: "30%",
-    borderRadius: 5,
-    margin: 10,
-    height: 35,
-    alignContent: "center",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  modalButton: {
-    borderRadius: 20,
-    padding: 10,
-    elevation: 2,
-  },
-  buttonOpen: {
-    backgroundColor: '#F194FF',
-  },
-  buttonClose: {
-    backgroundColor: '#2196F3',
-  },
-//————————————————————————————————————————————————————————————————
-
-  playingSpace: {
-    backgroundColor: 'white',
-    borderColor: 'blue',
-    borderWidth: 3,
-  },
-  paragraph: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    padding: 20
-    },
-
-    centeredView: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-      marginTop: 22,
-    },
-    modalView: {
-      margin: 20,
-      backgroundColor: 'white',
-      borderRadius: 20,
-      padding: 35,
-      alignItems: 'center',
-      shadowColor: '#000',
-      shadowOffset: {
-        width: 0,
-        height: 2,
-      },
-      shadowOpacity: 0.25,
-      shadowRadius: 4,
-      elevation: 5,
-    },
-    button: {
-      borderRadius: 20,
-      padding: 10,
-      elevation: 2,
-    },
-    textStyle: {
-      color: 'white',
-      fontWeight: 'bold',
-      textAlign: 'center',
-    },
-    modalText: {
-      marginBottom: 15,
-      textAlign: 'center',
-    },
-    scrollStyle: {
-      marginTop: 10,
-      flex: 1,
-      // backgroundColor: "cyan",
-      maxHeight: 495,
-    }
-
-
 })
 
 const vedantStyles = StyleSheet.create({
@@ -1713,7 +1563,8 @@ const vedantStyles = StyleSheet.create({
     height: 50,
     width: "100%",
     flex: 1,
-    padding: 15,
+    paddingVertical: 5,
+    paddingHorizontal: 15,
     color: "#ffffff",
   },
   scrollContainer1: {
@@ -1756,4 +1607,32 @@ const vedantStyles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
   },
+
+  filterButtonsView: {
+    flexDirection: "row",
+    marginTop: 45,
+    // marginRight: 265,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  backText: {
+    fontWeight: "600",
+    fontSize: 35,
+    color: "#FF0101",
+    marginLeft: 20,
+  },
+  searchText: {
+    fontWeight: "600",
+    fontSize: 35,
+    color: "#1ad983",
+    alignSelf: "flex-end",
+    marginRight: 20,
+  },
+  backBtnView: {
+    width: "50%",
+  },
+  searchBtnView: {
+    width: "50%",
+  },
+
 })
