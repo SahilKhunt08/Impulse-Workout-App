@@ -90,6 +90,64 @@ async function makeNewDoc() {
     });
   }
 
+  // async function deleteSelected(selectedArr) {
+  //   const deleteWorkouts = selectedArr
+  //   for (let i = 0; i < deleteWorkouts.length; i++) {
+  //     await deleteDoc(doc(db, "accounts", user.uid, "workouts", deleteWorkouts[i].name));
+  //   }
+  // }
+
+  // async function setFriendWorkouts() {
+  //   const auth = getAuth();
+  //   const user = auth.currentUser;
+  //   //first clear
+  //   const workoutsDeleteArr = []
+  //   const deleteWorkoutRef = collection(db, "accounts", user.uid, "workouts");
+  //   const deleteWorkoutDocs = await getDocs(deleteWorkoutRef);
+  //   deleteWorkoutDocs.forEach(doc => {
+  //     if (doc.id != "temp" && doc.data().type == "Friend") {
+  //       workoutsDeleteArr.push(doc.data())
+  //     }
+  //   })  
+  //   deleteSelected(workoutsDeleteArr)
+
+  //   //then get all friend workouts
+
+  //   const friends = []
+  //       const friendsRef = collection(db, "accounts", user.uid, "friends");
+  //       const friendsDocs = await getDocs(friendsRef);
+  //       friendsDocs.forEach(doc => {
+  //         if (doc.id != "temp") {
+  //           friends.push(doc.id)
+  //         }
+  //       })  
+
+  //       const addingWorkouts = []
+
+  //       for (let i = 0; i < friends.length; i++) {
+  //         const fWorkoutsRef = collection(db, "accounts", friends[i], "workouts");
+  //         const fWorkoutDocs = await getDocs(fWorkoutsRef);
+
+  //           fWorkoutDocs.forEach(doc => {
+  //           if (doc.id != "temp") {
+  //             addingWorkouts.push(doc.data())
+  //           }
+  //         })  
+  //       }
+        
+
+  //     for (let i = 0; i < addingWorkouts.length; i++) {
+  //       await setDoc(doc(db, "accounts", user.uid, "workouts", addingWorkouts[i].name), {
+  //         description: addingWorkouts[i].description,
+  //         breakTime: addingWorkouts[i].breakTime,
+  //         name: addingWorkouts[i].name,
+  //         workoutID: addingWorkouts[i].workoutID,
+  //         type: "Friend"
+  //       });
+  //     }
+  // }
+
+
   return (
     <View style={newStyles.container}>
       <StatusBar

@@ -104,6 +104,24 @@ export default function Profile({ navigation }) {
 
   }
 
+  async function pushWorkout(arr, reciever) {
+
+    const workouts = arr
+
+    console.log(workouts.length)
+    for (let i = 0; i< arr.length; i++) {
+      await setDoc(doc(db, "accounts", reciever, "workouts", workouts[i].name), {
+        breakTime: workouts[i].breakTime,
+        description: workouts[i].description,
+        name: workouts[i].name,
+        workoutID: workouts[i].workoutID,
+        type: "Friend"
+    })
+    }
+    
+  }
+        
+
   async function addFriendToUserDoc(friendID) {
     const auth = getAuth()
     const user = auth.currentUser
@@ -133,6 +151,32 @@ export default function Profile({ navigation }) {
     await setDoc(doc(db, "accounts", user.uid, "friends", acceptedName), {
       username: acceptedName,
     });
+
+  
+
+    let tempArr1 = []
+    const friendWorkoutRef = collection(db, "accounts", acceptedName, "workouts");
+    const friendWorkoutDocs = await getDocs(friendWorkoutRef);
+      friendWorkoutDocs.forEach(doc => {
+        if (doc.id != "temp") {
+        tempArr1.push(doc.data())
+        }
+    }) 
+
+    pushWorkout(tempArr1, user.uid)
+
+           
+     //Reference user workouts(send from user to friend)
+     let tempArr = []
+     const selfWorkoutRef = collection(db, "accounts", user.uid, "workouts");
+     const selfWorkoutDocs = await getDocs(selfWorkoutRef);
+       selfWorkoutDocs.forEach(doc => {
+        if (doc.id != "temp") {
+          tempArr.push(doc.data())
+        }
+         
+     }) 
+     pushWorkout(tempArr, acceptedName)
 
     //Adds your account to the friend
     await setDoc(doc(db, "accounts", acceptedName, "friends", user.uid), {
