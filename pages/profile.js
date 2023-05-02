@@ -6,6 +6,7 @@ import {db} from './firebase';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
 import { addDoc, getDoc, doc, enableNetwork, setDoc, getCountFromServer, collection, getDocs, namedQuery, query, deleteDoc, updateDoc} from "firebase/firestore"; 
 import { Icon } from '@rneui/themed';
+import Divider from 'react-native-divider';
 
 export default function Profile({ navigation }) {
 
@@ -75,33 +76,34 @@ export default function Profile({ navigation }) {
   }
 
   async function sendFriendRequest() {
-    const auth = getAuth();
-    const user = auth.currentUser;
-    const docRef = doc(db, "accounts", user.uid);
-    const docSnap = await getDoc(docRef);
-    let accountUsername = "";
-    if (docSnap.exists()) {
-      accountUsername = docSnap.data().username;
-    } else {
-      console.log("No such document!");
-    }
+    if(sendingName.length > 0){
+      const auth = getAuth();
+      const user = auth.currentUser;
+      const docRef = doc(db, "accounts", user.uid);
+      const docSnap = await getDoc(docRef);
+      let accountUsername = "";
+      if (docSnap.exists()) {
+        accountUsername = docSnap.data().username;
+      } else {
+        console.log("No such document!");
+      }
 
-    const accountsColRef = collection(db, "accounts"); 
-    const querySnapshot = await getDocs(accountsColRef);
-    if(sendingName !== accountUsername && sendingName !== "temp"){
-      querySnapshot.forEach(doc => {
-        if (sendingName === doc.data().username){
-          if(doc.data().settings1 == true){
-            addFriendToUserDoc(doc.id)
-            setRequestName("");
-            console.log("matches");
-          } else {
-            console.log("Other user doesn't accept requests")
+      const accountsColRef = collection(db, "accounts"); 
+      const querySnapshot = await getDocs(accountsColRef);
+      if(sendingName !== accountUsername && sendingName !== "temp"){
+        querySnapshot.forEach(doc => {
+          if (sendingName === doc.data().username){
+            if(doc.data().settings1 == true){
+              addFriendToUserDoc(doc.id)
+              setRequestName("");
+              console.log("matches");
+            } else {
+              console.log("Other user doesn't accept requests")
+            }
           }
-        }
-      });
+        });
+      }
     }
-
   }
 
   async function pushWorkout(arr, reciever) {
@@ -119,8 +121,7 @@ export default function Profile({ navigation }) {
     })
     }
     
-  }
-        
+  }    
 
   async function addFriendToUserDoc(friendID) {
     const auth = getAuth()
@@ -205,10 +206,15 @@ export default function Profile({ navigation }) {
   async function handleUpdate() {
     const docRef1 = doc(db, "accounts", user.uid);
     await updateDoc(docRef1, {
-      username: newUsername,
+      // username: newUsername,
       settings1: toggle1,
       settings2: toggle2,
     });
+    if(newUsername.length > 0){
+      await updateDoc(docRef1, {
+        username: newUsername,
+      });
+    }
   }
 
   const handleLogout = () => {
@@ -222,10 +228,10 @@ export default function Profile({ navigation }) {
       <ScrollView style={newStyles.scrollView1} showsVerticalScrollIndicator={false}>
         <View style={newStyles.scrollView2}>
 
-          <View style={{marginTop: 50}}></View>
+          {/* <View style={{marginTop: 50}}></View>
           <View style={newStyles.dividerView}>
             <Text style={newStyles.dividerText}>Account Information</Text>
-          </View>
+          </View> */}
 
           <View style={newStyles.accountInfoView}>
             <Text style={newStyles.infoText}> Username </Text>
@@ -271,9 +277,9 @@ export default function Profile({ navigation }) {
             </View> 
           </View>
 
-          <View style={newStyles.dividerView}>
+          {/* <View style={newStyles.dividerView}>
             <Text style={newStyles.dividerText}>General Settings</Text>
-          </View>
+          </View> */}
 
           <View style={newStyles.genSettingsContainer}>
             <View style={newStyles.settingsView}>
@@ -323,9 +329,19 @@ export default function Profile({ navigation }) {
               </View>
             </View>
 
-          <View style={newStyles.dividerView}>
-            <Text style={newStyles.dividerText}>Friend Requests</Text>
+          <TouchableOpacity style={newStyles.updateBtn} onPress={() => handleUpdate()}>
+            <Text style={newStyles.updateText}>Update</Text>
+          </TouchableOpacity>  
+
+          <View style={newStyles.dividerView2}>
+            <Divider borderColor="#a3a3bf" color="#a3a3bf" orientation="center">
+              Friend Requests
+            </Divider>
           </View>
+
+          {/* <View style={newStyles.dividerView}>
+            <Text style={newStyles.dividerText}>Friend Requests</Text>
+          </View> */}
 
           <View style={newStyles.friendRequestsContainer}>
             <View style={newStyles.requestingView}>
@@ -385,13 +401,9 @@ export default function Profile({ navigation }) {
             </View>
           </View>
 
-          <View style={newStyles.dividerView}>
+          {/* <View style={newStyles.dividerView}>
             <Text style={newStyles.dividerText}></Text>
-          </View>
-
-          <TouchableOpacity style={newStyles.updateBtn} onPress={() => handleUpdate()}>
-            <Text style={newStyles.updateText}>Update</Text>
-          </TouchableOpacity>
+          </View> */}
 
           <TouchableOpacity style={newStyles.logoutBtn} onPress={() => handleLogout()}>
             <Icon 
@@ -424,6 +436,11 @@ const newStyles = StyleSheet.create({
     justifyContent: "center",
     marginVertical: 5,
   },
+    dividerView2: {
+    // backgroundColor: "white",
+    width: "87%",
+    marginVertical: 10,
+  },
   dividerText: {
     color: "#b1b1c9",
     fontSize: 15,
@@ -432,8 +449,7 @@ const newStyles = StyleSheet.create({
   },
 
   accountInfoView: {
-    marginTop: 25,
-    marginBottom: 10,
+    marginTop: 40,
   },
   infoText: {
     color: "#ffffff",
@@ -461,8 +477,8 @@ const newStyles = StyleSheet.create({
   },
 
   genSettingsContainer: {
-    marginTop: 20,
-    marginBottom: 25,
+    marginTop: 10,
+    marginBottom: 30,
     width: "100%",
   },
   settingsView: {
@@ -547,7 +563,7 @@ const newStyles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     width: "90%",
     height: 50,
-    marginTop: 40,
+    marginBottom: 40,
     justifyContent: "center",
     alignItems: "center",
     shadowColor: 'rgba(227, 227, 255, 0.2)',
@@ -567,12 +583,12 @@ const newStyles = StyleSheet.create({
     borderRadius: 5,
     height: 50,
     width: 340,
-    marginBottom: 30,
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 30,
+    marginTop: 10,
+    marginBottom: 40,
   },
   logoutText: {
     color: "#ffffff",

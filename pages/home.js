@@ -118,7 +118,6 @@ export default function Home({navigation}) {
   async function createWorkout() {
     const auth = getAuth();
     const user = auth.currentUser
-    const usernameString = auth.currentUser.email.substring(0, auth.currentUser.email.indexOf("@"));
     setOpenNewWorkoutPage(false)
     const uID = Math.random()
     await setDoc(doc(db, "accounts", user.uid, "workouts", workoutName), {
@@ -130,13 +129,11 @@ export default function Home({navigation}) {
     });
 
     const docSnap = await getDoc(doc(db, "accounts", user.uid));
+    const docRef1 = doc(db, "accounts", user.uid);
     const tempArr1 = docSnap.data().workoutsArr;  
-    const tempLeaderboards1 = docSnap.data().leaderboardsArr;
     tempArr1.push(workoutName)
-    await setDoc(doc(db, "accounts", user.uid), {
-      username: usernameString,
+    await updateDoc(docRef1, {
       workoutsArr: tempArr1,
-      leaderboardsArr: tempLeaderboards1,
     })
     loadWorkouts()
   }
@@ -372,16 +369,13 @@ let nextConfig = []
     }
 
     const docSnap = await getDoc(doc(db, "accounts", user.uid));
+    const docRef1 = doc(db, "accounts", user.uid);
     const tempArr1 = docSnap.data().workoutsArr;  
     const deleteIndex = tempArr1.indexOf(deleteName)
-    const usernameString = auth.currentUser.email.substring(0, auth.currentUser.email.indexOf("@"));
-    const tempLeaderboards = docSnap.data().leaderboardsArr;
 
     tempArr1.splice(deleteIndex, deleteIndex+1)
-    await setDoc(doc(db, "accounts", user.uid), {
-      username: usernameString,
+    await updateDoc(docRef1, {
       workoutsArr: tempArr1,
-      leaderboardsArr: tempLeaderboards,
     })
 
     await deleteDoc(doc(db, "accounts", user.uid, "workouts", deleteName));
@@ -560,19 +554,21 @@ let nextConfig = []
 
           </ScrollView>
 
-          <ScrollView horizontal={true} style={homeScrollMain.container}>
+          <ScrollView horizontal={true} style={homeScrollMain.container} showsHorizontalScrollIndicator={false}>
             <View style={homeScrollMain.scrollContainer}>
 
                 <Image source={ require('../assets/workingout.jpeg') } style={homeScrollMain.banner} />
                 <Text style={homeScrollMain.titleText}>Friend Workouts</Text>
                 <View style={homeScrollMain.scrollContainer1}>
-                    <ScrollView>
-                    {totalFriendWorkoutsArr.map((info, index) => (
-                        <View key={index} style={homeScrollMain.workoutCard1}>
-                          <Text style={cardStyle.titleText} backgroundColor={'#FFFFFF'}>{info.name}</Text>
-                        </View>
-                        ))}  
-                    </ScrollView>
+                  <ScrollView style={homeScrollMain.scrollContainer2}>
+                    <View style={homeScrollMain.scrollContainer3}>
+                      {totalFriendWorkoutsArr.map((info, index) => (
+                          <View key={index} style={homeScrollMain.workoutCard1}>
+                            <Text style={cardStyle.titleText} backgroundColor={'#FFFFFF'}>{info.name}</Text>
+                          </View>
+                          ))}  
+                    </View>
+                  </ScrollView>
                 </View>
                 
             </View>
@@ -597,12 +593,9 @@ let nextConfig = []
             () => {
               recieveBreakTimes(0)
               setOpenNewWorkoutPage(true)
-
             }
           }>
-            <Text style={backgroundStyle.plusText}>
-              +
-            </Text>
+            <Text style={backgroundStyle.plusText}>+</Text>
           </TouchableOpacity>
           {/* <View marginBottom={30}>
             <RedirectCards></RedirectCards>         
@@ -1218,8 +1211,10 @@ const backgroundStyle = StyleSheet.create({
 
   plusButton: {
       position: 'absolute',
-      marginTop: 585,
-      marginLeft: 287,
+      right: 10,
+      bottom: 10,
+      // marginTop: 585,
+      // marginLeft: 287,
       borderRadius:7,
       paddingHorizontal: 10,
       backgroundColor: '#8e8efa',
@@ -1749,24 +1744,30 @@ const modalAddStyles = StyleSheet.create({
     color: "#f1f0fc",
   },
 })
+
 const homeScrollMain = StyleSheet.create({
   container: {
   
-    height: 250,
+    height: 380,
     marginTop: 300,
-    width: 350,
     position: 'absolute'
   },
 
   scrollContainer: {
-      margin: 10
+      margin: 10,
+      // backgroundColor: "grey",
     },
 
     scrollContainer1: {
-      height: '78%',
-      maxHeight: '78%'
-
+      height: 200,
+      // backgroundColor: "red",
     },
+  scrollContainer2: {
+    // minHeight: 200,
+  },
+  scrollContainer3: {
+    // height: 300,
+  },
   banner: {
       alignSelf: 'center',
       height: 130,
