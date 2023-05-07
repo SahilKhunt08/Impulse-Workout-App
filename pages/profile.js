@@ -9,7 +9,7 @@ import { Icon } from '@rneui/themed';
 import Divider from 'react-native-divider';
 import FlashMessage, {showMessage, hideMessage } from "react-native-flash-message"; 
 
-var noPendingRequests = true;
+var noPendingRequests = false;
 
 export default function Profile({ navigation }) {
 
@@ -144,8 +144,6 @@ export default function Profile({ navigation }) {
   async function pushWorkout(arr, reciever) {
 
     const workouts = arr
-
-    console.log(workouts.length)
     for (let i = 0; i< arr.length; i++) {
       await setDoc(doc(db, "accounts", reciever, "workouts", workouts[i].name), {
         breakTime: workouts[i].breakTime,
@@ -172,7 +170,7 @@ export default function Profile({ navigation }) {
     const newRequestArray = requestArr.filter(a => a.id !== index);
     setRequestArr(newRequestArray);
     console.log("Added Friend")
-    if(tempArr.length == 0){
+    if(newRequestArray.length == 0){
       noPendingRequests = true;
     }
     let acceptedName = addedFriend[0].name;
@@ -205,17 +203,17 @@ export default function Profile({ navigation }) {
     pushWorkout(tempArr1, user.uid)
 
            
-     //Reference user workouts(send from user to friend)
-     let tempArr = []
-     const selfWorkoutRef = collection(db, "accounts", user.uid, "workouts");
-     const selfWorkoutDocs = await getDocs(selfWorkoutRef);
-       selfWorkoutDocs.forEach(doc => {
-        if (doc.id != "temp") {
-          tempArr.push(doc.data())
-        }
-         
-     }) 
-     pushWorkout(tempArr, acceptedName)
+    //Reference user workouts(send from user to friend)
+    let tempArr = []
+    const selfWorkoutRef = collection(db, "accounts", user.uid, "workouts");
+    const selfWorkoutDocs = await getDocs(selfWorkoutRef);
+      selfWorkoutDocs.forEach(doc => {
+       if (doc.id != "temp") {
+         tempArr.push(doc.data())
+       }
+        
+    }) 
+    pushWorkout(tempArr, acceptedName)
 
     //Adds your account to the friend
     await setDoc(doc(db, "accounts", acceptedName, "friends", user.uid), {
@@ -227,8 +225,6 @@ export default function Profile({ navigation }) {
     const deniedArr = requestArr.filter(a => a.id === index);
     let deniedName = deniedArr[0].name;
     
-    //Removed friend request
-    console.log(deniedName);
     const querySnapshot = await getDocs(collection(db, "accounts"));
     querySnapshot.forEach((doc) => {
       if(doc.data().username == deniedName){
@@ -808,20 +804,23 @@ const styles = StyleSheet.create({
   requestButton1: {
     borderRadius: 8,
     alignItems: "center",
-    backgroundColor: "#0d0d14",
-    margin: 5,
+    backgroundColor: "#101017",
+    marginRight: 5,
     height: 40,
     width: 60,
     justifyContent: "center",
+    marginBottom: 12,
   },
   requestButton2: {
     borderRadius: 8,
     alignItems: "center",
-    backgroundColor: "#0d0d14",
-    margin: 5,
+    backgroundColor: "#101017",
+    // margin: 5,
     height: 40,
     width: 60,
+    marginLeft: 5,
     justifyContent: "center",
+    marginBottom: 12,
   },
   workoutCard: {
     marginTop: 10,

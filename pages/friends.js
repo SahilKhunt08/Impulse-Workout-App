@@ -542,7 +542,7 @@ export default function AddFriends({ navigation }) {
               <Icon
                 onPress={() => setMakeModalVisible(false)}
                 style={makeStyles.closeButton}
-                color="#321b8f"
+                color="#9191ba"
                 name="close-box-outline"
                 type="material-community"
                 size="40">
@@ -573,7 +573,11 @@ export default function AddFriends({ navigation }) {
               </View> 
             </View>
 
-            <Text style={makeStyles.scrollViewTitle}>Select Friends</Text>
+            <View style={{width: "92%"}}>
+              <Divider borderColor="#a3a3bf" color="#a3a3bf" orientation="center">
+                Select Friends
+              </Divider>
+            </View>
             <ScrollView style={makeStyles.scrollContainer1} showsVerticalScrollIndicator={false}>
               <View style={makeStyles.scrollContainer2}>
                 {selectableFriendsArr.map((info, index) => (
@@ -867,7 +871,7 @@ const mainModalStyles = StyleSheet.create({
   },
   categoryText: {
     fontSize: 20,
-    color: "#a4a4f5",
+    color: "#c9c9ff",
     fontWeight: "500",
     marginTop: 25,
   },
@@ -879,16 +883,17 @@ const mainModalStyles = StyleSheet.create({
   },
 
   inputView: {
+    // backgroundColor: "grey",
     borderColor: "#6965ad",
-    borderWidth: 2,
+    borderBottomWidth: 2,
+    paddingBottom: 10,
     borderRadius: 7,
-    height: 45,
+    height: 55,
     width: "65%",
     alignItems: "center",
     flexDirection: "row",
-    marginTop: 50,
+    marginTop: 45,
     marginBottom: 10,
-    // backgroundColor: "grey",
   },
   inputText: {
     height: 50,
@@ -904,10 +909,8 @@ const mainModalStyles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     borderColor: "#6965ad",
-    borderLeftWidth: 2,
     backgroundColor: "#322e52",
-    borderTopRightRadius: 7,
-    borderBottomRightRadius: 7,
+    borderRadius: 5,
   },
   enterText: {
     color: "white",
@@ -1033,7 +1036,7 @@ const makeStyles = StyleSheet.create({
     alignItems: 'center',
     height: "65%",
     width: "80%",
-    backgroundColor: "#8a8ac2",
+    backgroundColor: "#1d1d29",//16161f
     borderRadius: 15,
     borderWidth: 3,
     borderColor: "black",
@@ -1043,7 +1046,7 @@ const makeStyles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#6d6dc7",
+    backgroundColor: "#34315e",
     borderTopLeftRadius: 15,
     borderTopRightRadius: 15,
     paddingVertical: 5,
@@ -1054,7 +1057,7 @@ const makeStyles = StyleSheet.create({
     // alignItems: "center",
   },
   titleText: {
-    color: "#e2deff",
+    color: "#dcdcfc",
     fontSize: 28,
     fontWeight: "300",
     letterSpacing: 1.7,
@@ -1065,20 +1068,20 @@ const makeStyles = StyleSheet.create({
   },
 
   scrollViewTitle: {
-    color: "#e2deff",
+    color: "#dcdcfc",
     fontSize: 23,
     fontWeight: "500",
     letterSpacing: 0.5,
     marginTop: 15,
   },
   scrollContainer1: {
-    backgroundColor: "#6d6dc7",
+    backgroundColor: "#34315e",
     width: "90%",
     maxHeight: 200,
     marginTop: 10,
-    borderRadius: 4,
+    borderRadius: 6,
     borderWidth: 2,
-    borderColor: "#343491",
+    borderColor: "black",
   },
   scrollContainer2: {
     // backgroundColor: "maroon",
@@ -1088,7 +1091,8 @@ const makeStyles = StyleSheet.create({
     alignItems: "center",
     height: 45,
     borderBottomWidth: 2,
-    borderColor: "#343491",
+    // borderTopWidth: 2,
+    borderColor: "#65659e",
     flexDirection: "row",
   },
   mapText: {
@@ -1102,7 +1106,7 @@ const makeStyles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   mapButton: {
-    backgroundColor: "#4d4db0",
+    backgroundColor: "#65659e",
     paddingHorizontal: 10,
     // paddingVertical: 10,
     height: "100%",
@@ -1139,20 +1143,24 @@ const makeStyles = StyleSheet.create({
   },
 
   createButton: {
+    marginTop: 30,
+    borderRadius: 7,
+    backgroundColor: '#FFFFFF',
     width: "90%",
+    height: 50,
+    marginBottom: 40,
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 30,
-    borderRadius: 5,
-    borderWidth: 2,
-    borderColor: "#343491",
-    backgroundColor: "#6d6dc7",
-    paddingVertical: 5,
+    shadowColor: 'rgba(227, 227, 255, 0.2)',
+    shadowOpacity: 0.8,
+    elevation: 6,
+    shadowRadius: 15,
+    shadowOffset : { width: 1, height: 13},
   },
+
   createText: {
-    color: "#e2deff",
-    fontSize: 30,
-    fontWeight: "300",
+    fontSize: 22,
+    fontWeight: "800",
     letterSpacing: 1.5,
   },
     
