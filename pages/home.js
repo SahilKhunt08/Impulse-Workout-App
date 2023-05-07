@@ -1,6 +1,5 @@
 //Issues
-//Workout name field changes when you edit but the doc id doesnt
-
+//pass params between files
 
 
 import React, { useState } from 'react'
@@ -11,6 +10,9 @@ import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, on
 import { addDoc, doc, enableNetwork, setDoc, getCountFromServer, collection, getDocs, namedQuery, updateDoc,getDoc, deleteDoc} from "firebase/firestore"; 
 import {db} from './firebase';
 import { async } from "@firebase/util";
+
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import Divider from 'react-native-divider';
 import { Icon } from '@rneui/themed';
@@ -24,19 +26,20 @@ import { BlurView } from 'expo-blur';
 
 
 
-export default function Home({navigation}) {
+export default function Home({route, navigation}) {
   React.useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       loadWorkouts();     
       initializeName()
       initializeDailyWorkouts()
+      // console.log(lastSignin) 
     });
     return unsubscribe;
   }, []);
 
   const auth = getAuth();
   const user = auth.currentUser;
-
+  // const {lastSigninTime} = route.params.lastSignin
   const [userID, setUserUID] = useState(user.email)
   const [userName, setUserName] = useState("")
   
@@ -120,12 +123,16 @@ export default function Home({navigation}) {
     const user = auth.currentUser
     setOpenNewWorkoutPage(false)
     const uID = Math.random()
+    
     await setDoc(doc(db, "accounts", user.uid, "workouts", workoutName), {
       description: workoutDesc,
       breakTime: breakTime,
       name: workoutName,
       workoutID: uID,
-      type: "Self"
+      type: "Self",
+      creator: userName,
+      creatorID: user.uid
+      
     });
 
     const docSnap = await getDoc(doc(db, "accounts", user.uid));
@@ -201,28 +208,24 @@ export default function Home({navigation}) {
   async function openSpecificWorkout(index) {
     setCurrStep(0);
     const exercises = []
-    let selectedName = ""
-    let selectedRestTime = 0
 
-    for (let i = 0; i < totalWorkoutsArr.length; i++) {
-      if (totalWorkoutsArr[i].workoutID == index) { 
-        selectedName = totalWorkoutsArr[i].name
-        selectedRestTime = totalWorkoutsArr[i].breakTime
-      }
-    }
-    const exerciseRef = collection(db, "accounts", user.uid, "workouts", selectedName, "exercises");
+    if(index.type != 'Impulse') {
+    const exerciseRef = collection(db, "accounts", index.creatorID, "workouts", index.name, "exercises");
     const exerciseDocs = await getDocs(exerciseRef)
     exerciseDocs.forEach(doc => {
       exercises.push(doc.data());
     })
+  }
 
     setCurrExercisesArr(exercises)
     setOpenSpecWorkout(true);
     recieveBreakTimes(0)
 
-let timerConfig = []
-let nameConfig = []
-let nextConfig = []
+
+
+  let timerConfig = []
+  let nameConfig = []
+  let nextConfig = []
     //config timing for timer
     //all exercises
     timerConfig.push(5)
@@ -238,7 +241,7 @@ let nextConfig = []
         nameConfig.push("Rest")
         nextConfig.push("Rest")
       }
-      timerConfig.push(selectedRestTime)
+      timerConfig.push(index.breakTime)
       nameConfig.push("Rest")
       nextConfig.push("Rest")
     }
@@ -521,52 +524,46 @@ let nextConfig = []
   return (
     <View style={backgroundStyle.container}>
         <View>
+        <View>
           <View flexDirection='row'>
             <Text style={backgroundStyle.titleText}> Welcome, {userName} </Text>
-            <TouchableOpacity style = {{marginLeft:72, marginTop:13}} onPress={temp}>
-              <Image source={ require('../assets/person3.png') } style={ { width: 60, height: 60 } } />
+
+            <TouchableOpacity style = {{marginLeft:330, marginTop:28, position: 'absolute'}} onPress={temp}>
+              <Image source={ require('../assets/person3.png') } style={ { width: 35, height: 35} } />
             </TouchableOpacity>
-          </View>
-          <ScrollView horizontal={true} alignSelf={'left'} marginLeft={0} marginBottom={10}>
+          </View> 
+          <Text style={backgroundStyle.timeText}> Last Sign in on 5/4 at 9:23 </Text>
+
+        </View>
+          
+
+          <ScrollView horizontal={true} alignSelf={'left'} showsHorizontalScrollIndicator={false}>
             
             {totalWorkoutsArr.map((info, index) => (
-            <View key={index}>
-              <View style={cardStyle.container}>
+              <View key={index} style={cardStyle.container}>
                 <Text style={cardStyle.titleText}>{info.name}</Text>
                 <TouchableOpacity style = {{position: 'absolute', paddingRight:10, marginTop: 12, marginLeft: 183}} onPress={() => editWorkout(info.workoutID)}>
-                        <Image source={ require('../assets/pencil.png') } style={ { width: 25, height: 30 } } />
+                        <Image source={ require('../assets/pencil1.png') } style={ { width: 25, height: 25 } } />
                 </TouchableOpacity> 
                 <TouchableOpacity style = {{position: 'absolute', paddingRight:10, marginTop: 10, marginLeft: 215}} onPress={() => deleteWorkout(info.workoutID)}>
-                        <Image source={ require('../assets/trashIcon.png') } style={ { width: 30, height: 35 } } />
+                        <Image source={ require('../assets/trashicon1.png') } style={ { width: 30, height: 30 } } />
                 </TouchableOpacity> 
 
                 <View style={cardStyle.image}>
-                    <TouchableOpacity style = {{paddingRight:10, left:'415%', marginTop: 105}} onPress={() => openSpecificWorkout(info.workoutID)}>
-                        <Image source={ require('../assets/arrow4.png') } style={ { width: 40, height: 45 } } />
+                    <TouchableOpacity style = {{paddingRight:10, marginLeft:205, marginTop: 90, position: 'absolute'}} onPress={() => openSpecificWorkout(info)}>
+                        <Image source={ require('../assets/arrow5.png') } style={ { width: 40, height: 40 } } />
                     </TouchableOpacity>         
                 </View>
                 <View>
                     <Text style={cardStyle.subText}>{info.description}</Text>
                 </View>
-                <Text style={cardStyle.arrowText}>Jump In</Text>         
+                <Text style={cardStyle.arrowText}></Text>         
               </View>
-            </View> 
             ))}  
 
           </ScrollView>
 
           <ScrollView horizontal={true} style={homeScrollMain.container} showsHorizontalScrollIndicator={false}>
-
-             
-                      <View style={homeScrollMain.scrollContainer}>
-
-            <Image source={ require('../assets/blurryBackground.jpeg') } style={homeScrollMain.banner} />
-            <Text style={homeScrollMain.titleText2}>Work In Progress</Text>
-
-           
-            </View>
-
-
               <View style={homeScrollMain.scrollContainer}>
 
               <Image source={ require('../assets/soloworkout.jpeg') } style={homeScrollMain.banner} />
@@ -577,22 +574,34 @@ let nextConfig = []
                     {totalImpulseWorkoutsArr.map((info, index) => (
                       <View key={index} style={homeScrollMain.workoutCard}>
                         <Text  style={cardStyle.titleText} backgroundColor={'#FFFFFF'}>{info.name}</Text>
+       
+                          <TouchableOpacity style = {{marginLeft: 260}} onPress={() => openSpecificWorkout(info)}>
+                          <Image source={ require('../assets/arrow5.png') } style={ { width: 20, height: 20 } } />
+                       </TouchableOpacity>
+                           
                       </View>
+                      
                     ))}  
-              </ScrollView>
+                  </ScrollView>
               </View>
               </View>
             
             <View style={homeScrollMain.scrollContainer}>
 
-                <Image source={ require('../assets/workingout.jpeg') } style={homeScrollMain.banner} />
+                <Image source={ require('../assets/workingTogether.jpeg') } style={homeScrollMain.banner} />
                 <Text style={homeScrollMain.titleText}>Friend Workouts</Text>
                 <View style={homeScrollMain.scrollContainer1}>
                   <ScrollView style={homeScrollMain.scrollContainer2}>
                     <View style={homeScrollMain.scrollContainer3}>
                       {totalFriendWorkoutsArr.map((info, index) => (
                           <View key={index} style={homeScrollMain.workoutCard1}>
+                          <View flexDirection={'row'}>
                             <Text style={cardStyle.titleText} backgroundColor={'#FFFFFF'}>{info.name}</Text>
+                            <Text style={homeScrollMain.friendName}>{info.creator}</Text>
+                          </View>
+                            <TouchableOpacity style = {{marginLeft: 260}} onPress={() => openSpecificWorkout(info)}>
+                          <Image source={ require('../assets/arrow5.png') } style={ { width: 20, height: 20 } } />
+                       </TouchableOpacity>
                           </View>
                           ))}  
                     </View>
@@ -637,6 +646,9 @@ let nextConfig = []
               <Text style={newWorkout.mainHeader}>Workout Creator</Text> 
             </View>
 
+          <View marginTop={13}>
+
+        
             <View style={newWorkout.subHeaderBackground}>
               <Text style={newWorkout.header}>1. Name</Text> 
             </View>
@@ -670,14 +682,11 @@ let nextConfig = []
      
            
 
-
-         <View style={newWorkout.subHeaderBackground}>
-              <Text style={newWorkout.header}>3. Set Breaks</Text> 
+        <View>
+          <View style={newWorkout.subHeaderBackground}>
+            <Text style={newWorkout.header}>3. Set Break Time</Text> 
          </View>
-
          <Text style={newWorkout.breakDesc}>  Select the time, in seconds, to rest between sets</Text> 
-
-
          <ScrollView horizontal={true} style={{marginTop: 4}}>
           <TouchableOpacity style={but5} onPress={() => recieveBreakTimes(1)}>
                 <Text style={newWorkout.breakText}>5</Text> 
@@ -716,6 +725,8 @@ let nextConfig = []
                 <Text style={newWorkout.breakText}>60</Text> 
             </TouchableOpacity>  
          </ScrollView>
+        </View>
+         
      
          <View style={newWorkout.subHeaderBackground}>
               <Text style={newWorkout.header}>4. Finish</Text> 
@@ -727,7 +738,7 @@ let nextConfig = []
 
 
           </View>
-        
+          </View>
         </Modal>
 
         <Modal
@@ -759,9 +770,10 @@ let nextConfig = []
             <CountdownCircleTimer
               key={currStep}
               isPlaying
+              isSmoothColorTransition	
               duration={timeConfigs[currStep]}
-              colors={['#004777','#F7B801', '#A30000', '#A30000 ']}   
-              colorsTime={[timeConfigs[currStep], timeConfigs[currStep]/2, timeConfigs[currStep]/3, 0]}
+              colors={['#8e8efa', '#af64bf', "#c44a9b"  ,"#ef1414"," #ff0000" ]}   
+              colorsTime={[timeConfigs[currStep], timeConfigs[currStep]/2, timeConfigs[currStep]/3,0]}
               onComplete={() => setCurrStep(currStep+1)} 
               updateInterval={1}>
               {({remainingTime, color}) => (
@@ -799,10 +811,6 @@ let nextConfig = []
           <Text style={editWorkouts.mainHeader}>Edit Workout</Text> 
 
         </View>
-
-        <Divider borderColor="#a3a3bf" color="#a3a3bf" orientation="center">
-          Name & Description
-        </Divider>
 
         <Text style={editWorkouts.name} >{selName}</Text>
 
@@ -853,11 +861,9 @@ let nextConfig = []
             </TouchableOpacity>  
         </ScrollView>
 
-<Divider marginTop={10} borderColor="#a3a3bf" color="#a3a3bf" orientation="center">
-          Exercises
-        </Divider>
+        <Text style={editWorkouts.title}>Exercises In This Workout</Text>
 
-        </View>
+
          
 
         
@@ -901,12 +907,13 @@ let nextConfig = []
       </ScrollView>
         
 
-      <View backgroundColor={"#404057"}>
+      <View backgroundColor={"#0d0d12"} marginBottom={10}>
         <TouchableOpacity style={editWorkouts.submitButton} onPress={submitWorkoutChanges}>
               <Text style={editWorkouts.submitText}>Save</Text> 
           </TouchableOpacity>
       </View>
       
+      </View>
 
       <Modal
           animationType="fade"
@@ -1164,7 +1171,7 @@ const mainScrollView = StyleSheet.create({
     width: "100%",
     // marginBottom: 70,
     
-    backgroundColor: "#404057",
+    backgroundColor: "#0d0d12",
     height: "50%",
     maxHeight: "50%",
 
@@ -1184,7 +1191,7 @@ const mainScrollView = StyleSheet.create({
     borderRadius: 7,
     marginBottom: 5.5,
     alignItems: "center",
-    height: 60,
+    
   },
   cardTextView: {
     marginLeft: 10,
@@ -1249,7 +1256,20 @@ const backgroundStyle = StyleSheet.create({
     fontSize: 27,
     alignSelf: "left",
     marginTop: 28,
+    marginBottom: 5,
     marginLeft: 10
+  },
+
+  timeText: {
+    color: "#404057",
+    fontWeight: "500",
+    fontSize: 17,
+    marginBottom: 25,
+
+    alignSelf: "left",
+    marginLeft: 15,
+
+    
   },
 
   cardView: {
@@ -1390,7 +1410,7 @@ const newWorkout = StyleSheet.create({
   breakButtonClicked: {
     borderRadius:9,
     borderWidth: 2,
-    borderColor: '#404057',
+    borderColor: '#8e8efa',
     paddingHorizontal: 15,
     paddingVertical: 8,
     backgroundColor: '#8e8efa',
@@ -1442,16 +1462,18 @@ const newWorkout = StyleSheet.create({
 
   subHeaderBackground: {
     fontWeight: "600",
-    backgroundColor: "#404057",
+    backgroundColor: "#0d0d12",
     alignSelf: "left",
-    marginTop: 25,
-    width: '100%'
+    marginTop: 20,
+    width: '100%',
+    borderWidth: 3,
+    borderBottomColor: '#8e8efa'
 
   },
 
   inputView: {
     borderColor: "#404057",
-    borderWidth: 4,
+    borderWidth: 1.5,
     borderRadius: 5,
     height: 55,
     width: 340,
@@ -1462,9 +1484,9 @@ const newWorkout = StyleSheet.create({
 
   inputView2: {
     borderColor: "#404057",
-    borderWidth: 4,
+    borderWidth: 1.5,
     borderRadius: 5,
-    height: 125,
+    height: 105,
     width: 340,
     marginTop: 25,
     marginLeft: 17,
@@ -1501,17 +1523,19 @@ const newWorkout = StyleSheet.create({
 const cardStyle = StyleSheet.create({
 
   container: {
-    backgroundColor: '#404057',
-    marginTop: 30,
-    margin: 6,
-    height: 160,
+    backgroundColor: '#0d0d12',
+    // marginTop: 50,
+    height: '85%',
     width: 255,
-    shadowColor: 'rgba(215, 215, 250, 0.2)',
+    marginLeft: 5,
     borderRadius: 10,
-    shadowOpacity: 0.5,
+    borderWidth: 2,
+    borderColor: '#404057',
+    borderBottomWidth:5,
+    borderBottomColor: '#FF0055',
     elevation: 6,
-    shadowRadius: 15,
-    shadowOffset : { width: 0, height: 5},
+ 
+
   },
 
   image: {
@@ -1521,7 +1545,8 @@ const cardStyle = StyleSheet.create({
   titleText: {
       color: "#ffffff",
       fontWeight: "500",
-      fontSize: 20,
+      fontSize: 25,
+      maxWidth: 170,
       alignSelf: "left",
       marginTop: 12,
       marginLeft: 12,
@@ -1531,9 +1556,9 @@ const cardStyle = StyleSheet.create({
   subText: {
       color: "#ffffff",
       marginTop: 10,
-      marginLeft: 10,
-      marginRight: 5
-
+      marginLeft: 12,
+      marginRight: 5,
+      fontSize: 15,
   },
 
   arrowText: {
@@ -1544,8 +1569,6 @@ const cardStyle = StyleSheet.create({
       marginTop: 115,
       marginLeft: 127,
       marginRight: 30,
-      position: 'absolute'
-
   }
 
 })
@@ -1578,8 +1601,18 @@ const specWorkout = StyleSheet.create({
 const editWorkouts = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#404057',
+    backgroundColor: '#0d0d12',
   },
+
+  title: {
+    fontSize: 22,
+    fontWeight: '900',
+    color: "#ffffff",
+    marginLeft: 46,
+    marginBottom: 15,
+    width: 600
+  }, 
+
   mainHeader: {
     fontWeight: "600",
     fontSize: 38,
@@ -1591,12 +1624,14 @@ const editWorkouts = StyleSheet.create({
   name: {
     fontSize: 39,
     marginLeft: 10,
-    color: '#A5A2A2'
+    marginTop:10,
+    color: '#404057'
+
   },
   desc: {
     fontSize: 25,
     marginLeft: 10,
-    color: '#A5A2A2'
+    color: '#404057'
   },
   submitText: {
     fontWeight: "700",
@@ -1763,9 +1798,21 @@ const homeScrollMain = StyleSheet.create({
   container: {
   
     height: 380,
-    marginTop: 300,
-    position: 'absolute'
+    marginTop: 10,
+    marginBottom: 30,
+   
   },
+
+  friendName: {
+    color: '#404057',
+    fontWeight: '700',
+    position: 'absolute',
+    marginTop: 5,
+    marginLeft: 235,
+    maxWidth: 100,
+  },
+
+  
 
   scrollContainer: {
       margin: 10,
@@ -1784,7 +1831,7 @@ const homeScrollMain = StyleSheet.create({
   },
   banner: {
       alignSelf: 'center',
-      height: 130,
+      height: 140,
       width: 310,
       borderRadius: 10,
       shadowColor: '#000000',
@@ -1798,22 +1845,29 @@ const homeScrollMain = StyleSheet.create({
     },
     titleText: {
       position:'absolute',
-      color: "#466D97",
+      color: "#00B592",
+      paddingLeft: 5,
+      paddingRight: 5,
+
+      backgroundColor:' rgba(0, 0, 0, 0.5)',
       fontWeight: "700",
-      fontSize: 20,
+      fontSize: 24,
       alignSelf: "left",
-      left: 125,
-      marginTop: 100
+      left: 0,
+      marginTop: 111
 
     },
     titleText1: {
       position:'absolute',
-      color: "#C03546",
+      color: "#FFA200",
       fontWeight: "700",
-      fontSize: 20,
+      fontSize: 24,
+      paddingLeft: 5,
+      paddingRight: 5,
       alignSelf: "left",
-      left: 110,
-      marginTop: 100
+      backgroundColor:' rgba(0, 0, 0, 0.5)',
+      left: 0,
+      marginTop: 111
 
     },
 
@@ -1823,7 +1877,7 @@ const homeScrollMain = StyleSheet.create({
       fontWeight: "700",
       fontSize: 20,
       alignSelf: "left",
-      left: 110,
+      left: 10,
       marginTop: 100
 
     },
@@ -1833,8 +1887,12 @@ const homeScrollMain = StyleSheet.create({
       marginLeft:4,
       height: 55,
       width: 300,
+      backgroundColor: "#0d0d12",
       borderRadius: 4,
-      backgroundColor: "#466D97"
+      borderWidth: 2,
+      borderColor: "#404057",
+      borderBottomWidth: 5,
+      borderBottomColor: "#00B592",
     },
 
     workoutCard: {
@@ -1842,7 +1900,11 @@ const homeScrollMain = StyleSheet.create({
       marginLeft:4,
       height: 55,
       width: 300,
+      backgroundColor: "#0d0d12",
       borderRadius: 4,
-      backgroundColor: "#C03546"
+      borderWidth: 2,
+      borderColor: "#404057",
+      borderBottomWidth: 5,
+      borderBottomColor: "#FFA200",  
     },
 })

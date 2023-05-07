@@ -117,7 +117,9 @@ export default function Profile({ navigation }) {
         description: workouts[i].description,
         name: workouts[i].name,
         workoutID: workouts[i].workoutID,
-        type: "Friend"
+        type: "Friend",
+        creator: workouts[i].creator,
+        creatorID: workouts[i].creatorID
     })
     }
     
@@ -159,8 +161,8 @@ export default function Profile({ navigation }) {
     const friendWorkoutRef = collection(db, "accounts", acceptedName, "workouts");
     const friendWorkoutDocs = await getDocs(friendWorkoutRef);
       friendWorkoutDocs.forEach(doc => {
-        if (doc.id != "temp") {
-        tempArr1.push(doc.data())
+        if (doc.id != "temp" && doc.data().type == 'Self') {
+          tempArr1.push(doc.data())
         }
     }) 
 
@@ -172,7 +174,7 @@ export default function Profile({ navigation }) {
      const selfWorkoutRef = collection(db, "accounts", user.uid, "workouts");
      const selfWorkoutDocs = await getDocs(selfWorkoutRef);
        selfWorkoutDocs.forEach(doc => {
-        if (doc.id != "temp") {
+        if (doc.id != "temp" && doc.data().type == 'Self') {
           tempArr.push(doc.data())
         }
          

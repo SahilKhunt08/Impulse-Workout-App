@@ -3,30 +3,30 @@ import React, { useState } from "react";
 import { StyleSheet, Text, View, Image, TextInput, Button, TouchableOpacity, StatusBar, Modal} from "react-native";
 import { auth } from './firebase';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
-import { addDoc, doc, enableNetwork, setDoc, collection, getDoc, getDocs, deleteDoc } from "firebase/firestore"; 
+import { addDoc, doc, enableNetwork, setDoc, collection, getDoc, getDocs, deleteDoc, updateDoc } from "firebase/firestore"; 
 import {db} from './firebase';
 import { async } from "@firebase/util";
 import Divider from 'react-native-divider';
 import { Icon } from '@rneui/themed';
 
-async function newDoc() {
+// async function newDoc() {
   
-  const auth = getAuth();
-  const user = auth.currentUser   
-  const usernameString = auth.currentUser.email.substring(0, auth.currentUser.email.indexOf("@"));
+//   const auth = getAuth();
+//   const user = auth.currentUser   
+//   const usernameString = auth.currentUser.email.substring(0, auth.currentUser.email.indexOf("@"));
 
-  await setDoc(doc(db, "accounts", user.uid, "friends", "temp"), {
-  });
-  await setDoc(doc(db, "accounts", user.uid, "requests", "temp"), {
-  });
-  await setDoc(doc(db, "accounts", user.uid, "workouts", "temp"), {
-    temp: 'temp'
-  });
-  await setDoc(doc(db, "accounts", user.uid), {
-    username: usernameString,
-    workouts: []
-    }
-  )}
+//   await setDoc(doc(db, "accounts", user.uid, "friends", "temp"), {
+//   });
+//   await setDoc(doc(db, "accounts", user.uid, "requests", "temp"), {
+//   });
+//   await setDoc(doc(db, "accounts", user.uid, "workouts", "temp"), {
+//     temp: 'temp'
+//   });
+//   await setDoc(doc(db, "accounts", user.uid), {
+//     username: usernameString,
+//     workouts: []
+//     }
+//   )}
 
 export default function Login({ navigation }) {
   const [email, setEmail] = useState("");
@@ -43,23 +43,52 @@ async function makeNewDoc() {
   const friendsRef = await setDoc(doc(db, "accounts", user.uid, "friends", "temp"), {});
   const requestsRef = await setDoc(doc(db, "accounts", user.uid, "requests", "temp"), {});
   const workoutRef = await setDoc(doc(db, "accounts", user.uid, "workouts", "temp"), {});
-  // const workout1Ref = await setDoc(doc(db, "accounts", user.uid, "workouts", "workout1"), {name: "workout1"});
-  // const workout2Ref = await setDoc(doc(db, "accounts", user.uid, "workouts", "workout2"), {name: "workout2"});
-  // const workout3Ref = await setDoc(doc(db, "accounts", user.uid, "workouts", "workout3"), {name: "workout3"});
-  // const workout4Ref = await setDoc(doc(db, "accounts", user.uid, "workouts", "workout4"), {name: "workout4"});
-  // const workout5Ref = await setDoc(doc(db, "accounts", user.uid, "workouts", "workout5"), {name: "workout5"});
-  const setTempField = await setDoc(doc(db, "accounts", user.uid), {
+  var date = new Date().getDate(); //Current Date
+  var month = new Date().getMonth() + 1; //Current Month
+  var hours = new Date().getHours(); //Current Hours
+  var min = new Date().getMinutes(); //Current Minutes
+  var sec = new Date().getSeconds(); //Current Seconds
+ 
+  await setDoc(doc(db, "accounts", user.uid), {
     username: newUsername,
     workoutsArr: [],
     leaderboardsArr: ["temp"],
     settings1: true,
     settings2: true,
+    lastSignin:  month + '/' + date 
+    + ' at ' + hours%12 + ':' + min + ':' + sec
   })
-  // navigation.replace('Impulse')
 
   navigation.navigate('Impulse') //Old version
   setModalVisible(false);
 }
+
+async function setLoginTime() {
+  const auth = getAuth();
+  const user = auth.currentUser  
+  var date = new Date().getDate(); //Current Date
+  var month = new Date().getMonth() + 1; //Current Month
+  var hours = new Date().getHours(); //Current Hours
+  var min = new Date().getMinutes(); //Current Minutes
+  var sec = new Date().getSeconds(); //Current Seconds
+  
+  const docRef1 = doc(db, "accounts", user.uid);
+  const docSnap1 = await getDoc(docRef1);
+  const lastSignin = docSnap1.data().lastSignin;  
+
+
+  await updateDoc(doc(db, "accounts", user.uid), {
+    lastSignin:  month + '/' + date 
+    + ' at ' + hours%12 + ':' + min 
+  })
+  console.log(lastSignin) 
+   navigation.navigate('Impulse', {
+      lastSignin: lastSignin
+    })
+  //Old version
+  
+}
+
   
   const handleRegister = () => {
     createUserWithEmailAndPassword(auth, newEmail, newPassword).then(() => {
@@ -81,6 +110,7 @@ async function makeNewDoc() {
       // ...
       console.log("Correct")
       // navigation.replace('Impulse')
+      setLoginTime();
       navigation.navigate('Impulse') //Old version
     })
     .catch((error) => {
