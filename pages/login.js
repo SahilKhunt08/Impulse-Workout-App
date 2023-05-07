@@ -2,12 +2,13 @@
 import React, { useState } from "react";
 import { StyleSheet, Text, View, Image, TextInput, Button, TouchableOpacity, StatusBar, Modal} from "react-native";
 import { auth } from './firebase';
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
-import { addDoc, doc, enableNetwork, setDoc, collection, getDoc, getDocs, deleteDoc, updateDoc } from "firebase/firestore"; 
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, sendPasswordResetEmail} from 'firebase/auth';
+import { addDoc, doc, enableNetwork, setDoc, collection, getDoc, getDocs, deleteDoc } from "firebase/firestore"; 
 import {db} from './firebase';
 import { async } from "@firebase/util";
 import Divider from 'react-native-divider';
 import { Icon } from '@rneui/themed';
+import FlashMessage, {showMessage, hideMessage } from "react-native-flash-message"; 
 
 // async function newDoc() {
   
@@ -36,7 +37,9 @@ export default function Login({ navigation }) {
   const [newPassword, setNewPassword] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
 
-async function makeNewDoc() {
+  const [tempBoolean, setTempBoolean] = useState(true);
+
+  async function makeNewDoc() {
   const auth = getAuth();
   const user = auth.currentUser   
   const usernameString = auth.currentUser.email.substring(0, auth.currentUser.email.indexOf("@"));
@@ -57,6 +60,7 @@ async function makeNewDoc() {
     settings2: true,
     lastSignin:  month + '/' + date 
     + ' at ' + hours%12 + ':' + min + ':' + sec
+    password: newPassword,
   })
 
   navigation.navigate('Impulse') //Old version
@@ -88,6 +92,7 @@ async function setLoginTime() {
   //Old version
   
 }
+  }
 
   
   const handleRegister = () => {
@@ -177,6 +182,51 @@ async function setLoginTime() {
   //     }
   // }
 
+  const handlePasswordReset = () => {
+    if(tempBoolean){
+      loginSuccess(true);
+      setTempBoolean(false);
+    } else {
+      loginSuccess(false);
+      setTempBoolean(true);
+    }
+
+    // console.log("RESET PASSWORD")
+    // const auth = getAuth();
+    // sendPasswordResetEmail(auth, email)
+    // .then(() => {
+    //   console.log("Password reset email sent!");
+    // })
+    // .catch((error) => {
+
+    //   const errorCode = error.code;
+    //   const errorMessage = error.message;
+    //   console.log(errorCode);
+    //   console.log(errorMessage);
+    // });
+  }
+
+  const loginSuccess = (didReset) => {
+    if(didReset == true){
+      showMessage({
+        // title: "Email Sent",
+        message: "Email Sent",
+        floating: true,
+        textStyle: newStyles.flashText,
+        titleStyle: newStyles.flashText,
+        icon: "success",
+      });
+    } else {
+      showMessage({
+        // title: "Login Failed",
+        message: "Email Failed",
+        floating: true,
+        textStyle: newStyles.flashText,
+        titleStyle: newStyles.flashText,
+        icon: "danger",
+      });
+    }
+  }
 
   return (
     <View style={newStyles.container}>
@@ -188,6 +238,8 @@ async function setLoginTime() {
         hidden={false}
       />
 
+      {/* <FlashMessage position="bottom" style={newStyles.flashStyle}/>  */}
+
       <View style={newStyles.loginContainer}>
         <Text style={newStyles.titleText}> Login to Impulse</Text>
         <Text style={newStyles.infoText}> Email </Text>
@@ -198,6 +250,7 @@ async function setLoginTime() {
             placeholderTextColor="#cccccc"
             onChangeText={(email) => setEmail(email)}
             keyboardAppearance="dark"
+            autoCapitalize='none'
           /> 
         </View> 
         <Text style={newStyles.infoText}> Password </Text>
@@ -211,16 +264,14 @@ async function setLoginTime() {
             keyboardAppearance="dark"
           /> 
         </View> 
-        <TouchableOpacity style={newStyles.forgotView}>
+        <TouchableOpacity style={newStyles.forgotView} onPress={handlePasswordReset}>
           <Text style={newStyles.forgotText}> Forgot Password? </Text> 
         </TouchableOpacity> 
       </View>
 
       <TouchableOpacity style={newStyles.loginBtn} onPress={handleLogin}>
         <Text style={newStyles.loginText}>LOGIN</Text> 
-      </TouchableOpacity> 
-
-     
+      </TouchableOpacity>  
 
       <View style={newStyles.dividerView}>
         <Divider borderColor="#a3a3bf" color="#a3a3bf" orientation="center">
@@ -276,6 +327,7 @@ async function setLoginTime() {
                   placeholderTextColor="#cccccc"
                   onChangeText={(newEmail) => setNewEmail(newEmail)}
                   keyboardAppearance="dark"
+                  autoCapitalize='none'
                 /> 
               </View> 
               <Text style={newStyles.infoText}> Password </Text>
@@ -305,6 +357,23 @@ async function setLoginTime() {
 }
 
 const newStyles = StyleSheet.create({
+  flashStyle: {
+    justifyContent: "center",
+    alignItems: "center",
+    fontSize: 40,
+    width: 180,
+    height: 50,
+    borderRadius: 100,
+    backgroundColor: "#8e8efa",
+    alignSelf: "center",
+  },
+  flashText: {
+    fontSize: 18,
+    fontWeight: "600",
+    letterSpacing: 1,
+    color: "white",
+  },
+
   container: {
     flex: 1,
     alignItems: "center",
