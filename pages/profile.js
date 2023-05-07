@@ -3,10 +3,13 @@ import { TouchableOpacity, Text, View, StyleSheet, Image, TextInput, ScrollView,
 import { Card } from 'react-native-paper';
 import { auth } from './firebase';
 import {db} from './firebase';
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, updatePassword, updateEmail, reauthenticateWithCredential, EmailAuthProvider } from 'firebase/auth';
 import { addDoc, getDoc, doc, enableNetwork, setDoc, getCountFromServer, collection, getDocs, namedQuery, query, deleteDoc, updateDoc} from "firebase/firestore"; 
 import { Icon } from '@rneui/themed';
 import Divider from 'react-native-divider';
+import FlashMessage, {showMessage, hideMessage } from "react-native-flash-message"; 
+
+var noPendingRequests = true;
 
 export default function Profile({ navigation }) {
 
@@ -19,6 +22,7 @@ export default function Profile({ navigation }) {
 
   const [newUsername, setNewUsername] = useState("");
   const [newEmail, setNewEmail] = useState("");
+  const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("")  
   const [sendingName, setSendingName] = useState("");
 
@@ -26,6 +30,7 @@ export default function Profile({ navigation }) {
   const [toggle2, setToggle2] = useState(false);
   const toggleSwitch1 = () => setToggle1(previousState => !previousState)
   const toggleSwitch2 = () => setToggle2(previousState => !previousState)
+
 
   React.useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
@@ -35,6 +40,8 @@ export default function Profile({ navigation }) {
   }, []);
 
   async function initialize() {
+    reloadUser();
+
     const docIdArr = [];
     const requestInfoArr = [];
     const querySnapshot = await getDocs(collection(db, "accounts", user.uid, "requests"));
@@ -54,15 +61,24 @@ export default function Profile({ navigation }) {
 
     setCount(currentNum);
     setRequestArr(requestInfoArr);
+    if(requestInfoArr.length == 0){
+      noPendingRequests = true;
+    } else {
+      noPendingRequests = false;
+    }
 
     const docRef2 = doc(db, "accounts", user.uid);
     const docSnap2 = await getDoc(docRef2);
 
     if (docSnap2.exists()) {
+      const auth = getAuth();
+      const user = auth.currentUser;
       setNewUsername(docSnap2.data().username);
+      setNewEmail(user.email);
       setWorkoutNamesArr(docSnap2.data().workoutsArr);
       setToggle1(docSnap2.data().settings1);
       setToggle2(docSnap2.data().settings2);
+      setOldPassword(docSnap2.data().password);
     } else {
       console.log("No such document!");
     }
@@ -77,9 +93,9 @@ export default function Profile({ navigation }) {
 
   async function sendFriendRequest() {
     if(sendingName.length > 0){
-      const auth = getAuth();
-      const user = auth.currentUser;
-      const docRef = doc(db, "accounts", user.uid);
+      const auth2 = getAuth();
+      const user2 = auth2.currentUser;
+      const docRef = doc(db, "accounts", user2.uid);
       const docSnap = await getDoc(docRef);
       let accountUsername = "";
       if (docSnap.exists()) {
@@ -90,17 +106,36 @@ export default function Profile({ navigation }) {
 
       const accountsColRef = collection(db, "accounts"); 
       const querySnapshot = await getDocs(accountsColRef);
+      var canSendRequest = false;
       if(sendingName !== accountUsername && sendingName !== "temp"){
         querySnapshot.forEach(doc => {
           if (sendingName === doc.data().username){
             if(doc.data().settings1 == true){
               addFriendToUserDoc(doc.id)
               setRequestName("");
-              console.log("matches");
+              canSendRequest = true;
             } else {
               console.log("Other user doesn't accept requests")
             }
           }
+        });
+      }
+
+      if(canSendRequest){
+        showMessage({
+          message: "Request Sent",
+          floating: true,
+          textStyle: newStyles.flashText,
+          titleStyle: newStyles.flashText,
+          icon: "success",
+        });
+      } else {
+        showMessage({
+          message: "Request Failed",
+          floating: true,
+          textStyle: newStyles.flashText,
+          titleStyle: newStyles.flashText,
+          icon: "danger",
         });
       }
     }
@@ -137,6 +172,9 @@ export default function Profile({ navigation }) {
     const newRequestArray = requestArr.filter(a => a.id !== index);
     setRequestArr(newRequestArray);
     console.log("Added Friend")
+    if(tempArr.length == 0){
+      noPendingRequests = true;
+    }
     let acceptedName = addedFriend[0].name;
 
     //Removed friend request
@@ -201,12 +239,17 @@ export default function Profile({ navigation }) {
 
     const tempArr = requestArr.filter(a => a.id !== index);
     setRequestArr(tempArr);
+    if(tempArr.length == 0){
+      noPendingRequests = true;
+    }
   }
 
   async function handleUpdate() {
+    reloadUser();
+    var allValidInputs = true;
+
     const docRef1 = doc(db, "accounts", user.uid);
     await updateDoc(docRef1, {
-      // username: newUsername,
       settings1: toggle1,
       settings2: toggle2,
     });
@@ -214,7 +257,58 @@ export default function Profile({ navigation }) {
       await updateDoc(docRef1, {
         username: newUsername,
       });
+    } else {
+      allValidInputs = false;
     }
+
+    const auth1 = getAuth();
+    const user1 = auth1.currentUser;
+    if(newEmail != user1.email){
+      if(newEmail.length > 0){
+        updateEmail(auth.currentUser, newEmail).then(() => {
+        }).catch((error) => {
+          console.log("New Email Error")
+          console.log(error.code);
+          console.log(error.message)
+          allValidInputs = false;
+        });
+      } else {
+        allValidInputs = false;
+      }
+    }
+
+    if(newPassword.length > 6 && newPassword != oldPassword){
+      updatePassword(user, newPassword).then(() => {
+        updateFirestorePassword();
+        setOldPassword(newPassword);
+        // Update successful.
+      }).catch((error) => {
+        console.log("New Password Error")
+        console.log(error.code);
+        console.log(error.message);
+        allValidInputs = false;
+      });
+    }
+    
+    if(allValidInputs){
+      showMessage({
+        message: "Update Successful",
+        floating: true,
+        textStyle: newStyles.flashText,
+        titleStyle: newStyles.flashText,
+        icon: "success",
+      });
+    } else {
+      showMessage({
+        message: "Some Inputs Invalid",
+        floating: true,
+        textStyle: newStyles.flashText,
+        titleStyle: newStyles.flashText,
+        icon: "danger",
+      });
+    }
+
+
   }
 
   const handleLogout = () => {
@@ -223,15 +317,45 @@ export default function Profile({ navigation }) {
     navigation.navigate('Login') //Old version
   }
 
+  async function reloadUser(){
+    const auth2 = getAuth();
+    const user2 = auth2.currentUser;
+    const docRef3 = doc(db, "accounts", user2.uid);
+    const docSnap3 = await getDoc(docRef3);
+    var credentialPassword = "";
+    if (docSnap3.exists()) {
+      credentialPassword = docSnap3.data().password;
+    } else {
+      console.log("No such document!");
+    }
+
+    const credential = EmailAuthProvider.credential(
+      user2.email,
+      credentialPassword,
+    );
+
+    reauthenticateWithCredential(user2, credential).then(() => {
+      // User re-authenticated.
+    }).catch((error) => {
+        console.log("Re-auth error");
+        console.log(error.code);
+        console.log(error.message);
+    });
+  }
+
+  async function updateFirestorePassword(){
+    const docRef1 = doc(db, "accounts", user.uid);
+    await updateDoc(docRef1, {
+      password: newPassword,
+    });
+  }
+
   return (
     <View style={styles.container}>
-      <ScrollView style={newStyles.scrollView1} showsVerticalScrollIndicator={false}>
-        <View style={newStyles.scrollView2}>
 
-          {/* <View style={{marginTop: 50}}></View>
-          <View style={newStyles.dividerView}>
-            <Text style={newStyles.dividerText}>Account Information</Text>
-          </View> */}
+      <ScrollView style={newStyles.scrollView1} showsVerticalScrollIndicator={false}>
+        
+        <View style={newStyles.scrollView2}>
 
           <View style={newStyles.accountInfoView}>
             <Text style={newStyles.infoText}> Username </Text>
@@ -250,23 +374,21 @@ export default function Profile({ navigation }) {
             <View style={newStyles.inputView}>
               <TextInput
                 style={newStyles.inputText}
-                editable={false}
-                placeholder="Work in Progress"
-                // placeholder="someone@example.com"
+                placeholder="someone@example.com"
                 placeholderTextColor="#cccccc"
                 onChangeText={(newEmail) => setNewEmail(newEmail)}
                 value={newEmail}
                 color={"#cccccc"}
                 keyboardAppearance="dark"
+                autoCapitalize='none'
               /> 
             </View> 
             <Text style={newStyles.infoText}> Password </Text>
             <View style={newStyles.inputView}>
               <TextInput
                 style={newStyles.inputText}
-                editable={false}
-                placeholder="Work in Progress"
-                // placeholder="Your Password"
+                // placeholder="Work in Progress"
+                placeholder="New Password"
                 placeholderTextColor="#cccccc"
                 secureTextEntry={true}
                 onChangeText={(newPassword) => setNewPassword(newPassword)}
@@ -276,10 +398,6 @@ export default function Profile({ navigation }) {
               /> 
             </View> 
           </View>
-
-          {/* <View style={newStyles.dividerView}>
-            <Text style={newStyles.dividerText}>General Settings</Text>
-          </View> */}
 
           <View style={newStyles.genSettingsContainer}>
             <View style={newStyles.settingsView}>
@@ -339,10 +457,6 @@ export default function Profile({ navigation }) {
             </Divider>
           </View>
 
-          {/* <View style={newStyles.dividerView}>
-            <Text style={newStyles.dividerText}>Friend Requests</Text>
-          </View> */}
-
           <View style={newStyles.friendRequestsContainer}>
             <View style={newStyles.requestingView}>
               <View style={newStyles.requestInput}>
@@ -362,48 +476,52 @@ export default function Profile({ navigation }) {
               </TouchableOpacity>
             </View>
             
-            <View style={styles.requestContainer}>
-              <ScrollView style={styles.scrollStyle} showsVerticalScrollIndicator={false}>
-                <View style={styles.container2}>
-                {requestArr.map((info, index) => (
-                <View key={index} style={styles.workoutCard}>
-                  <View style={styles.friendNameView}>
-                    <Text style={styles.friendNameText}> {info.name} </Text>
-                  </View>
-                  <View style={styles.twoButtonView}>
-                    <TouchableOpacity style={styles.requestButton1} onPress={() => addButton(info.id)}>
-                      <Icon 
-                        name="person-add"
-                        type="material"
-                        size={31}
-                        color="#8e8efa"
-                      />
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.requestButton2} onPress={() => denyButton(info.id)}>
-                      <Icon 
-                        name="person-remove"
-                        type="material"
-                        size={31}
-                        color="#8e8efa"
-                      />
-                    </TouchableOpacity>
-                    {/* <TouchableOpacity style={styles.requestButton1} onPress={() => addButton(info.id)}>
-                      <Text style={styles.requestText}>Add</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.requestButton2} onPress={() => denyButton(info.id)}>
-                      <Text style={styles.requestText}>Deny</Text>
-                    </TouchableOpacity> */}
-                  </View>
+            {noPendingRequests ? 
+              <View style={styles.requestContainer}>
+                <View style={styles.workoutCard}>
+                  <Text style={styles.noRequestsText}>No Requests Received</Text>
                 </View>
-                ))}
-                </View>
-              </ScrollView>
-            </View>
+              </View> 
+              : 
+              <View style={styles.requestContainer}>
+                <ScrollView style={styles.scrollStyle} showsVerticalScrollIndicator={false}>
+                  <View style={styles.container2}>
+                  {requestArr.map((info, index) => (
+                  <View key={index} style={styles.workoutCard}>
+                    <View style={styles.friendNameView}>
+                      <Text style={styles.friendNameText}> {info.name} </Text>
+                    </View>
+                    <View style={styles.twoButtonView}>
+                      <TouchableOpacity style={styles.requestButton1} onPress={() => addButton(info.id)}>
+                        <Icon 
+                          name="person-add"
+                          type="material"
+                          size={31}
+                          color="#8e8efa"
+                        />
+                      </TouchableOpacity>
+                      <TouchableOpacity style={styles.requestButton2} onPress={() => denyButton(info.id)}>
+                        <Icon 
+                          name="person-remove"
+                          type="material"
+                          size={31}
+                          color="#8e8efa"
+                        />
+                      </TouchableOpacity>
+                      {/* <TouchableOpacity style={styles.requestButton1} onPress={() => addButton(info.id)}>
+                        <Text style={styles.requestText}>Add</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity style={styles.requestButton2} onPress={() => denyButton(info.id)}>
+                        <Text style={styles.requestText}>Deny</Text>
+                      </TouchableOpacity> */}
+                    </View>
+                  </View>
+                  ))}
+                  </View>
+                </ScrollView>
+              </View>
+            }
           </View>
-
-          {/* <View style={newStyles.dividerView}>
-            <Text style={newStyles.dividerText}></Text>
-          </View> */}
 
           <TouchableOpacity style={newStyles.logoutBtn} onPress={() => handleLogout()}>
             <Icon 
@@ -423,6 +541,23 @@ export default function Profile({ navigation }) {
 }
 
 const newStyles = StyleSheet.create({
+  flashStyle: {
+    justifyContent: "center",
+    alignItems: "center",
+    fontSize: 40,
+    width: 180,
+    height: 50,
+    borderRadius: 100,
+    backgroundColor: "#8e8efa",
+    alignSelf: "center",
+  },
+  flashText: {
+    fontSize: 18,
+    fontWeight: "600",
+    letterSpacing: 1,
+    color: "white",
+  },
+
   scrollView1: {
     width: "100%",
   },
@@ -776,10 +911,12 @@ const styles = StyleSheet.create({
     fontSize: 17,
     fontWeight: "600",
   },
-});
 
-//Code for box shadows
-// shadowColor: '#171717',
-// shadowOffset: {width: -2, height: 4},
-// shadowOpacity: 0.2,
-// shadowRadius: 3,
+  noRequestsText: {
+    color: "rgba(220, 220, 252, 0.8)",
+    fontSize: 23,
+    marginBottom: 8,
+    fontWeight: "500",
+    letterSpacing: 1.2,
+  },
+});

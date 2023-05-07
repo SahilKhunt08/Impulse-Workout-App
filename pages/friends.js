@@ -12,8 +12,12 @@ import { Icon } from '@rneui/themed';
 import Divider from 'react-native-divider';
 import { TokenTypeHint } from "expo-auth-session";
 import { useScrollToTop } from "@react-navigation/native";
+import FlashMessage, {showMessage, hideMessage } from "react-native-flash-message"; 
 // import { Overlay } from 'react-native-elements';
 
+var hasNoFriends = true;
+var hasNoLeaderboards = true;
+ 
 export default function AddFriends({ navigation }) {
 
   const [friendID, setFriendID] = useState("")
@@ -133,6 +137,9 @@ export default function AddFriends({ navigation }) {
         sortedScoresArr: newSort2,
       });
     }
+    if(settingFinalArr.length > 0){
+      hasNoLeaderboards = false;
+    }
     setMyLeaderboardsArr(settingFinalArr);
 
     
@@ -141,6 +148,7 @@ export default function AddFriends({ navigation }) {
     querySnapshotFriends1.forEach((doc) => {
       if(doc.id != "temp"){
         tempFriendIDs.push(doc.id);
+        hasNoFriends = false;
       }
     });
 
@@ -255,7 +263,7 @@ export default function AddFriends({ navigation }) {
   }
 
   async function createLeaderboard(){
-    if(inputTitle.length > 5 && inputCategory.length > 5){
+    // if(inputTitle.length > 5 && inputCategory.length > 5){
       setMakeModalVisible(false);
       var participantsArr = [user.uid];
       var defaultScoresArr = [0];
@@ -278,15 +286,21 @@ export default function AddFriends({ navigation }) {
         if (docSnap.exists()) {
           var profileArr = docSnap.data().leaderboardsArr;
           profileArr.push(inputTitle);
-          await setDoc(doc(db, "accounts", participantsArr[i]), {
-            username: docSnap.data().username,
-            workoutsArr: docSnap.data().workoutsArr,
+          await updateDoc(doc(db, "accounts", participantsArr[i]), {
             leaderboardsArr: profileArr,
           });
         }
       }
       initialize();
-    }
+    // } else {
+    //   showMessage({
+    //     message: "Longer Inputs Required",
+    //     floating: true,
+    //     textStyle: makeStyles.flashText,
+    //     titleStyle: makeStyles.flashText,
+    //     icon: "danger",
+    //   });
+    // }
   }
 
   async function openMainModal(input){
@@ -409,93 +423,110 @@ export default function AddFriends({ navigation }) {
         <Text style={makeStyles.makeLeaderboardText}>View Your Friends</Text>
       </TouchableOpacity> */}
 
-      <View style={mainStyles.friendsContainer}>
-        <ScrollView style={mainStyles.scrollContainer1} showsVerticalScrollIndicator={false}>
-          <View style={mainStyles.scrollContainer2}>
-            <View style={mainStyles.scrollContainer3}>
-              {allFriendsArr1.map((info, index) => (
-                <View style={mainStyles.friendCard}key={index}>
-                  <View style={mainStyles.mainContent}>
-                    <TouchableOpacity onPress={() => {
-                      setChosenRemoveName(info.username);
-                      setChosenRemoveID(info.id);
-                      setRemoveFriendModalVis(true); 
-                      }}>
+      {hasNoFriends ? 
+        <View style={mainStyles.friendsContainer}>
+          <Text style={mainStyles.goAddFriendsText}>Add friends in profile page</Text>
+        </View> 
+       : 
+        <View style={mainStyles.friendsContainer}>
+          <ScrollView style={mainStyles.scrollContainer1} showsVerticalScrollIndicator={false}>
+            <View style={mainStyles.scrollContainer2}>
+              <View style={mainStyles.scrollContainer3}>
+                {allFriendsArr1.map((info, index) => (
+                  <View style={mainStyles.friendCard}key={index}>
+                    <View style={mainStyles.mainContent}>
+                      <TouchableOpacity onPress={() => {
+                        setChosenRemoveName(info.username);
+                        setChosenRemoveID(info.id);
+                        setRemoveFriendModalVis(true); 
+                        }}>
+                        <Icon
+                          color="#8e8ef3"
+                          name="person-remove"
+                          type="material"
+                          size="30">
+                        </Icon>
+                      </TouchableOpacity>
+                      <View style={mainStyles.usernameView}>
+                        <Text style={mainStyles.usernameText}>{info.username}</Text>
+                      </View>
+                    </View>
+                    <View style={mainStyles.dividerView}></View>
+                  </View>
+                ))}
+              </View>
+
+              <View style={mainStyles.scrollContainer3}>
+                {allFriendsArr2.map((info, index) => (
+                  <View style={mainStyles.friendCard}key={index}>
+                    <View style={mainStyles.mainContent}>
+                      <TouchableOpacity onPress={() => {
+                        setChosenRemoveName(info.username);
+                        setChosenRemoveID(info.id);
+                        setRemoveFriendModalVis(true); 
+                        }}>
+                        <Icon
+                          color="#8e8ef3"
+                          name="person-remove"
+                          type="material"
+                          size="30">
+                        </Icon>
+                      </TouchableOpacity>
+                      <View style={mainStyles.usernameView}>
+                        <Text style={mainStyles.usernameText}>{info.username}</Text>
+                      </View>
+                    </View>
+                    <View style={mainStyles.dividerView}></View>
+                  </View>
+                ))}
+              </View>
+            </View>          
+          </ScrollView>
+        </View>
+      }
+
+      {hasNoLeaderboards ? 
+        <View style={cardStyles.container1}>
+          <ScrollView style={cardStyles.container2}>
+            <View style={cardStyles.container3}>
+              <View style={cardStyles.cardView}>
+                <Text style={mainStyles.goAddFriendsText}>Make a Leaderboard</Text>
+              </View> 
+            </View>
+          </ScrollView>
+        </View>
+       : 
+        <View style={cardStyles.container1}>
+          <ScrollView style={cardStyles.container2} showsVerticalScrollIndicator={false}>
+            <View style={cardStyles.container3}>
+              {myLeaderboardsArr.map((info, index) => (
+                <TouchableOpacity key={index} style={cardStyles.cardView} onPress={() => openMainModal(info.name)}>
+                  <View style={cardStyles.headerView}>
+                    <View style={cardStyles.nameTextView}>
+                      <Text style={cardStyles.nameText}>{info.name}</Text>
+                    </View>
+                    <TouchableOpacity style={cardStyles.removeBtn}>
                       <Icon
-                        color="#8e8ef3"
-                        name="person-remove"
-                        type="material"
-                        size="30">
+                        name='close-box'
+                        type='material-community'
+                        color='#8e8ef3'
+                        size={30}
+                        onPress={() => {setDeleteModalVis(true); setChosenLeaderboard(info.name)}} >
                       </Icon>
                     </TouchableOpacity>
-                    <View style={mainStyles.usernameView}>
-                      <Text style={mainStyles.usernameText}>{info.username}</Text>
-                    </View>
                   </View>
-                  <View style={mainStyles.dividerView}></View>
-                </View>
+                  <View style={cardStyles.categoryTextView}>
+                    <Text style={cardStyles.categoryText}>{info.category}</Text>
+                  </View>
+                  <View style={cardStyles.placeTextView}>
+                    <Text style={cardStyles.placeText}>Place: {info.place}/{info.membersArr.length}</Text>
+                  </View>
+                </TouchableOpacity>
               ))}
             </View>
-
-            <View style={mainStyles.scrollContainer3}>
-              {allFriendsArr2.map((info, index) => (
-                <View style={mainStyles.friendCard}key={index}>
-                  <View style={mainStyles.mainContent}>
-                    <TouchableOpacity onPress={() => {
-                      setChosenRemoveName(info.username);
-                      setChosenRemoveID(info.id);
-                      setRemoveFriendModalVis(true); 
-                      }}>
-                      <Icon
-                        color="#8e8ef3"
-                        name="person-remove"
-                        type="material"
-                        size="30">
-                      </Icon>
-                    </TouchableOpacity>
-                    <View style={mainStyles.usernameView}>
-                      <Text style={mainStyles.usernameText}>{info.username}</Text>
-                    </View>
-                  </View>
-                  <View style={mainStyles.dividerView}></View>
-                </View>
-              ))}
-            </View>
-          </View>          
-        </ScrollView>
-
-      </View>
-
-      <View style={cardStyles.container1}>
-        <ScrollView style={cardStyles.container2} showsVerticalScrollIndicator={false}>
-          <View style={cardStyles.container3}>
-            {myLeaderboardsArr.map((info, index) => (
-              <TouchableOpacity key={index} style={cardStyles.cardView} onPress={() => openMainModal(info.name)}>
-                <View style={cardStyles.headerView}>
-                  <View style={cardStyles.nameTextView}>
-                    <Text style={cardStyles.nameText}>{info.name}</Text>
-                  </View>
-                  <TouchableOpacity style={cardStyles.removeBtn}>
-                    <Icon
-                      name='close-box'
-                      type='material-community'
-                      color='#8e8ef3'
-                      size={30}
-                      onPress={() => {setDeleteModalVis(true); setChosenLeaderboard(info.name)}} >
-                    </Icon>
-                  </TouchableOpacity>
-                </View>
-                <View style={cardStyles.categoryTextView}>
-                  <Text style={cardStyles.categoryText}>{info.category}</Text>
-                </View>
-                <View style={cardStyles.placeTextView}>
-                  <Text style={cardStyles.placeText}>Place: {info.place}/{info.membersArr.length}</Text>
-                </View>
-              </TouchableOpacity>
-            ))}
-          </View>
-        </ScrollView>
-      </View>
+          </ScrollView>
+        </View>
+      }
 
       <Modal  
         animationType="fade"
@@ -1124,6 +1155,13 @@ const makeStyles = StyleSheet.create({
     fontWeight: "300",
     letterSpacing: 1.5,
   },
+    
+  flashText: {
+    fontSize: 18,
+    fontWeight: "600",
+    letterSpacing: 1,
+    color: "white",
+  },
 })
 
 const mainStyles = StyleSheet.create({
@@ -1197,5 +1235,15 @@ const mainStyles = StyleSheet.create({
     hieght: 1,
     width: "100%",
     borderBottomColor: "#babade",
-  }
+  },
+
+  goAddFriendsText: {
+    color: "rgba(220, 220, 252, 0.8)",
+    fontSize: 23,
+    marginBottom: 8,
+    fontWeight: "500",
+    letterSpacing: 1.2,
+    alignSelf: "center",
+    marginTop: 10,
+  },
 })

@@ -17,6 +17,7 @@ import { makeStyles } from "@rneui/base";
 import { isEmpty } from "@firebase/util";
 import Divider from 'react-native-divider';
 import { BlurView } from 'expo-blur';
+import FlashMessage, {showMessage, hideMessage } from "react-native-flash-message"; 
 
 var modalMusclePath1 = require("./muscleImages/default1.png");
 var modalMusclePath2 = require("./muscleImages/default2.png");
@@ -33,6 +34,7 @@ export default function Workout({ navigation }) {
   const [workoutBtnStyleArr, setWorkoutBtnStyleArr] = useState([]);
   const [searchBarText, setSearchBarText] = useState([]);
   const [modalAddVisible, setModalAddVisible] = useState(false);
+  const [flashIcon, setFlashIcon] = useState("");
 
   const [setting1, setSetting1] = useState(0);
   const [setting2, setSetting2] = useState(0);
@@ -451,18 +453,29 @@ export default function Workout({ navigation }) {
         console.error(error);
       });
     } else if(searchBarText != "" && filter == false){
-      setExerciseArr([])
-        const options = {
-          method: 'GET',
-          url: 'https://exercises-by-api-ninjas.p.rapidapi.com/v1/exercises',
-          params: {name: searchBarText},
-          headers: {
-            'X-RapidAPI-Key': 'd1b21c7c74msh10859b8b93cc3adp10d1c8jsncacbeda663df',
-            'X-RapidAPI-Host': 'exercises-by-api-ninjas.p.rapidapi.com'
-          }
-        };
-      axios.request(options).then(function (response) {
-      	displayData(response.data);
+        setExerciseArr([])
+          const options = {
+            method: 'GET',
+            url: 'https://exercises-by-api-ninjas.p.rapidapi.com/v1/exercises',
+            params: {name: searchBarText},
+            headers: {
+              'X-RapidAPI-Key': 'd1b21c7c74msh10859b8b93cc3adp10d1c8jsncacbeda663df',
+              'X-RapidAPI-Host': 'exercises-by-api-ninjas.p.rapidapi.com'
+            }
+          };
+        axios.request(options).then(function (response) {
+          displayData(response.data);
+          console.log(response.data.length);
+          if(response.data.length == 0) {
+          setFlashIcon("danger");
+          showMessage({
+            // title: "Login Failed",
+            message: "Email Failed",
+            floating: true,
+            textStyle: styles.flashText,
+            titleStyle: styles.flashText,
+          });
+        }
       }).catch(function (error) {
       	console.error(error);
       });
@@ -654,6 +667,9 @@ export default function Workout({ navigation }) {
 
   return (
     <View style={styles.mainContainer}>
+
+      <FlashMessage position="bottom" icon={flashIcon} style={styles.flashStyle}/> 
+
       <View style={styles.searchView}>
         <TouchableOpacity style = {{paddingRight:10}} onPress={() => setfilterModalVis(true)}>
           <Image source={ require('../assets/filter1.png') } style={ { width: 35, height: 35 } } />
@@ -1464,6 +1480,23 @@ const mainScrollView = StyleSheet.create({
 })
 
 const styles = StyleSheet.create({
+  flashStyle: {
+    justifyContent: "center",
+    alignItems: "center",
+    fontSize: 40,
+    width: 180,
+    height: 50,
+    borderRadius: 100,
+    backgroundColor: "#8e8efa",
+    alignSelf: "center",
+  },
+  flashText: {
+    fontSize: 18,
+    fontWeight: "600",
+    letterSpacing: 1,
+    color: "white",
+  },
+
   mainContainer:{//
     flex: 1,
     alignItems: "center",
