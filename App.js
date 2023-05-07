@@ -5,13 +5,13 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React, { useState } from "react";
 import { Icon } from '@rneui/themed';
+import FlashMessage, {showMessage, hideMessage } from "react-native-flash-message"; 
 
 import Home from "./pages/home";
 import Workout from "./pages/workout";
 import Friends from "./pages/friends";
 import Profile from "./pages/profile";
 import Login from "./pages/login";
-
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -163,6 +163,27 @@ export default function App() {
         />
         <Stack.Screen name="Impulse" component={Impulse}/>
       </Stack.Navigator>
+      <FlashMessage position="bottom" style={styles.flashStyle}/> 
     </NavigationContainer>
   );
 }
+
+const styles = StyleSheet.create({
+  flashStyle: {
+    justifyContent: "center",
+    alignItems: "center",
+    fontSize: 40,
+    width: "80%",
+    height: 50,
+    borderRadius: 100,
+    backgroundColor: "#8e8efa",
+    alignSelf: "center",
+    marginBottom: 70,
+  },
+  flashText: {
+    fontSize: 18,
+    fontWeight: "600",
+    letterSpacing: 1,
+    color: "white",
+  },
+})

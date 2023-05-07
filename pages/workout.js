@@ -17,6 +17,7 @@ import { makeStyles } from "@rneui/base";
 import { isEmpty } from "@firebase/util";
 import Divider from 'react-native-divider';
 import { BlurView } from 'expo-blur';
+import FlashMessage, {showMessage, hideMessage } from "react-native-flash-message"; 
 
 var modalMusclePath1 = require("./muscleImages/default1.png");
 var modalMusclePath2 = require("./muscleImages/default2.png");
@@ -432,26 +433,35 @@ export default function Workout({ navigation }) {
   const submitInput = (filter) => {
     if(filter == true) {
       setfilterModalVis(false);
-      setExerciseArr([])
-        const options = {
-          method: 'GET',
-          url: 'https://exercises-by-api-ninjas.p.rapidapi.com/v1/exercises',
-          params: { muscle: muscles,
-                    difficulty: difficulty,
-                    type: type
-                  },
-          headers: {
-            'X-RapidAPI-Key': 'd1b21c7c74msh10859b8b93cc3adp10d1c8jsncacbeda663df',
-            'X-RapidAPI-Host': 'exercises-by-api-ninjas.p.rapidapi.com'
-          }
-        };
+      setExerciseArr([]);
+      const options = {
+        method: 'GET',
+        url: 'https://exercises-by-api-ninjas.p.rapidapi.com/v1/exercises',
+        params: { muscle: muscles,
+        difficulty: difficulty,
+                  type: type
+                },
+        headers: {
+          'X-RapidAPI-Key': 'd1b21c7c74msh10859b8b93cc3adp10d1c8jsncacbeda663df',
+          'X-RapidAPI-Host': 'exercises-by-api-ninjas.p.rapidapi.com'
+        }
+      };
       axios.request(options).then(function (response) {
         displayData(response.data);
+        if(response.data.length == 0) {
+          showMessage({
+            message: "No Results",
+            floating: true,
+            textStyle: styles.flashText,
+            titleStyle: styles.flashText,
+            icon: "danger",
+          });
+        }
       }).catch(function (error) {
         console.error(error);
       });
     } else if(searchBarText != "" && filter == false){
-      setExerciseArr([])
+        setExerciseArr([]);
         const options = {
           method: 'GET',
           url: 'https://exercises-by-api-ninjas.p.rapidapi.com/v1/exercises',
@@ -461,10 +471,27 @@ export default function Workout({ navigation }) {
             'X-RapidAPI-Host': 'exercises-by-api-ninjas.p.rapidapi.com'
           }
         };
-      axios.request(options).then(function (response) {
-      	displayData(response.data);
-      }).catch(function (error) {
-      	console.error(error);
+        axios.request(options).then(function (response) {
+          displayData(response.data);
+          if(response.data.length == 0) {
+            showMessage({
+              message: "No Results",
+              floating: true,
+              textStyle: styles.flashText,
+              titleStyle: styles.flashText,
+              icon: "danger",
+            });
+          }
+        }).catch(function (error) {
+          console.error(error);
+        });
+    } else if (searchBarText == ""){
+      showMessage({
+        message: "Input Exercise",
+        floating: true,
+        textStyle: styles.flashText,
+        titleStyle: styles.flashText,
+        icon: "danger",
       });
     }
   }
@@ -654,6 +681,7 @@ export default function Workout({ navigation }) {
 
   return (
     <View style={styles.mainContainer}>
+
       <View style={styles.searchView}>
         <TouchableOpacity style = {{paddingRight:10}} onPress={() => setfilterModalVis(true)}>
           <Image source={ require('../assets/filter1.png') } style={ { width: 35, height: 35 } } />
@@ -800,14 +828,14 @@ export default function Workout({ navigation }) {
                 <Icon
                   onPress={() => setModalAddVisible(!modalAddVisible)}
                   style={modalAddStyles.closeButton}
-                  color="#8a7ed9"
+                  color="#8a80d1"
                   name="close-box-outline"
                   type="material-community"
                   size="40"
                 />
               </View>
               <View style={modalAddStyles.dividerView}>
-                <Divider borderColor="#8a7ed9" color="#e2deff" orientation="center">Time On</Divider>
+                <Divider borderColor="#7f6bb5" color="#e2deff" orientation="center">Time On</Divider>
               </View>
               <View style={modalAddStyles.scrollContainer1}>
                 <ScrollView horizontal={true} style={modalAddStyles.scrollContainer2} showsHorizontalScrollIndicator={false}>
@@ -822,7 +850,7 @@ export default function Workout({ navigation }) {
                 </ScrollView>
               </View> 
               <View style={modalAddStyles.dividerView}>
-                <Divider borderColor="#8a7ed9" color="#e2deff" orientation="center">Number of Sets</Divider>
+                <Divider borderColor="#7f6bb5" color="#e2deff" orientation="center">Number of Sets</Divider>
               </View>
               <View style={modalAddStyles.scrollContainer1}>
                 <ScrollView horizontal={true} style={modalAddStyles.scrollContainer2} showsHorizontalScrollIndicator={false}>
@@ -836,7 +864,7 @@ export default function Workout({ navigation }) {
                 </ScrollView>
               </View>
               <View style={modalAddStyles.dividerView}>
-                <Divider borderColor="#8a7ed9" color="#e2deff" orientation="center">Rest Per Set</Divider>
+                <Divider borderColor="#7f6bb5" color="#e2deff" orientation="center">Rest Per Set</Divider>
               </View>
               <View style={modalAddStyles.scrollContainer1}>
                 <ScrollView horizontal={true} style={modalAddStyles.scrollContainer2} showsHorizontalScrollIndicator={false}>
@@ -1099,7 +1127,7 @@ const modalStyles = StyleSheet.create({
   },
   modalView: {
     margin: 20,
-    backgroundColor: "#1a1a29", //'#404057', //0d0d12
+    backgroundColor: "#11111a", //'#404057', //0d0d12 //1a1a29
     alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: {
@@ -1217,6 +1245,8 @@ const modalStyles = StyleSheet.create({
     alignItems: "center",
     borderWidth: 3,
     borderRadius: 7,
+    // borderWidth: 3,
+    // borderColor: "#7c6f9e",
   },
   flipCard: {
     height: 200 * 1.8,
@@ -1326,7 +1356,7 @@ const modalAddStyles = StyleSheet.create({
     backgroundColor: "#404057",//'#404057', //0d0d12 //26, 26, 41
     borderRadius: 15,
     borderWidth: 2,
-    borderColor: "#8a7ed9",
+    borderColor: "#7f6bb5",//8a7ed9
   },
   titleView1: {
     width: "100%",
@@ -1402,11 +1432,11 @@ const modalAddStyles = StyleSheet.create({
 
   saveButton: {
     borderRadius: 5,
-    borderWidth: 3,
-    borderColor: "#8a7ed9",
-    backgroundColor: "#67678f",
-    marginTop: 22,
-    paddingHorizontal: 20,
+    // borderWidth: 3,
+    borderColor: "#7d73bf",
+    backgroundColor: "#5a5a7d",
+    marginTop: 30,
+    paddingHorizontal: 80,
     paddingVertical: 8,
   },
   saveText: {
@@ -1449,6 +1479,9 @@ const mainScrollView = StyleSheet.create({
   cardText1: {
     color: "#e0e0e0",
     fontSize: 16,
+    overflow: "hidden",
+    maxHeight: 25,
+    maxWidth: "90%",
   },
   cardText2: {
     color: "#a8a8a8",
@@ -1464,6 +1497,23 @@ const mainScrollView = StyleSheet.create({
 })
 
 const styles = StyleSheet.create({
+  flashStyle: {
+    justifyContent: "center",
+    alignItems: "center",
+    fontSize: 40,
+    width: 180,
+    height: 50,
+    borderRadius: 100,
+    backgroundColor: "#8e8efa",
+    alignSelf: "center",
+  },
+  flashText: {
+    fontSize: 18,
+    fontWeight: "600",
+    letterSpacing: 1,
+    color: "white",
+  },
+
   mainContainer:{//
     flex: 1,
     alignItems: "center",
