@@ -59,7 +59,7 @@ export default function Login({ navigation }) {
     settings1: true,
     settings2: true,
     lastSignin:  month + '/' + date 
-    + ' at ' + hours%12 + ':' + min + ':' + sec
+    + ' at ' + hours%12 + ':' + min + ':' + sec,
     password: newPassword,
   })
 
@@ -354,7 +354,7 @@ async function setLoginTime() {
       </Modal>
     </View> 
   );
-}
+
 
 const newStyles = StyleSheet.create({
   flashStyle: {
