@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { StyleSheet, Text, View, Image, TextInput, Button, TouchableOpacity, StatusBar, Modal} from "react-native";
 import { auth } from './firebase';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, sendPasswordResetEmail} from 'firebase/auth';
-import { addDoc, doc, enableNetwork, setDoc, collection, getDoc, getDocs, deleteDoc } from "firebase/firestore"; 
+import { addDoc, doc, enableNetwork, setDoc, collection, getDoc, getDocs, deleteDoc, updateDoc} from "firebase/firestore"; 
 import {db} from './firebase';
 import { async } from "@firebase/util";
 import Divider from 'react-native-divider';
@@ -59,7 +59,7 @@ export default function Login({ navigation }) {
     settings1: true,
     settings2: true,
     lastSignin:  month + '/' + date 
-    + ' at ' + hours%12 + ':' + min + ':' + sec
+    + ' at ' + hours%12 + ':' + min + ':' + sec,
     password: newPassword,
   })
 
@@ -91,8 +91,8 @@ async function setLoginTime() {
     })
   //Old version
   
-}
   }
+
 
   
   const handleRegister = () => {
@@ -354,7 +354,8 @@ async function setLoginTime() {
       </Modal>
     </View> 
   );
-}
+    }
+
 
 const newStyles = StyleSheet.create({
   flashStyle: {
