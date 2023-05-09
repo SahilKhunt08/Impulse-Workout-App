@@ -702,14 +702,10 @@ export default function AddFriends({ navigation }) {
         </BlurView>
       </Modal>
 
-      <View style={mainStyles.addButtonContainer}>
-        <TouchableOpacity style={mainStyles.addButtonView} onPress={() => openSettigsModal()}>
-          <Icon 
-            name='add-circle'
-            type='material'
-            color='#8e8ef3'
-            size={60}>
-          </Icon>
+      <View  style={mainStyles.addButtonContainer}>
+        <TouchableOpacity style={mainStyles.plusButton} onPress={() => openSettigsModal()}>
+          <Text style={mainStyles.plusText}>+</Text>
+
         </TouchableOpacity>
       </View>
 
@@ -1173,6 +1169,32 @@ const makeStyles = StyleSheet.create({
 })
 
 const mainStyles = StyleSheet.create({
+  plusButton: {
+    position: 'absolute',
+    right: 10,
+    bottom: 10,
+    // marginTop: 585,
+    // marginLeft: 287,
+    borderRadius:7,
+    paddingHorizontal: 10,
+    backgroundColor: '#8e8efa',
+    shadowColor: 'rgba(227, 227, 255, 0.2)',
+    shadowOpacity: 0.8,
+    elevation: 6,
+    shadowRadius: 15,
+    borderRadius: 100,
+    margin: 5,
+    shadowOffset : { width: 1, height: 13},
+    width: 50,
+    height: 50
+},
+
+plusText: {
+  fontWeight: "900",
+  fontSize: 40,
+  fontStyle: 'italic',
+  color: '#ffffff',
+},
   container: {
     flex: 1,
     alignItems: "center",

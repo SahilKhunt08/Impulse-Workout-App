@@ -97,6 +97,9 @@ export default function Home({route, navigation}) {
 
   const [selDailyWorkout, setSelDailyWorkout] = useState("")
 
+  const [isPaused, setIsPaused] = useState(false);
+
+
   async function initializeName() {
     const docSnap = await getDoc(doc(db, "accounts", user.uid));
     const name = docSnap.data().username; 
@@ -521,6 +524,17 @@ export default function Home({route, navigation}) {
     }
   }
 
+  const pausePlayButton = () => {
+    if (isPaused) {
+      console.log("fdf")
+      setIsPaused(false)
+    } else {
+      console.log("fdfsss")
+      setIsPaused(true)
+    }
+
+  }
+
   return (
     <View style={backgroundStyle.container}>
         <View>
@@ -784,9 +798,12 @@ export default function Home({route, navigation}) {
 
           <View>
               <Text style={specWorkout.header}>Next Exercise: {nextNameConfigs[currStep]}</Text> 
-
           </View>
         </View>
+
+
+
+       
            
         </Modal>
 

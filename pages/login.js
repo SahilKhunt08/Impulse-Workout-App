@@ -3,31 +3,13 @@ import React, { useState } from "react";
 import { StyleSheet, Text, View, Image, TextInput, Button, TouchableOpacity, StatusBar, Modal} from "react-native";
 import { auth } from './firebase';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, sendPasswordResetEmail} from 'firebase/auth';
-import { addDoc, doc, enableNetwork, setDoc, collection, getDoc, getDocs, deleteDoc } from "firebase/firestore"; 
+import { addDoc, doc, enableNetwork, setDoc, collection, getDoc, getDocs, deleteDoc, updateDoc } from "firebase/firestore"; 
 import {db} from './firebase';
 import { async } from "@firebase/util";
 import Divider from 'react-native-divider';
 import { Icon } from '@rneui/themed';
 import FlashMessage, {showMessage, hideMessage } from "react-native-flash-message"; 
 
-// async function newDoc() {
-  
-//   const auth = getAuth();
-//   const user = auth.currentUser   
-//   const usernameString = auth.currentUser.email.substring(0, auth.currentUser.email.indexOf("@"));
-
-//   await setDoc(doc(db, "accounts", user.uid, "friends", "temp"), {
-//   });
-//   await setDoc(doc(db, "accounts", user.uid, "requests", "temp"), {
-//   });
-//   await setDoc(doc(db, "accounts", user.uid, "workouts", "temp"), {
-//     temp: 'temp'
-//   });
-//   await setDoc(doc(db, "accounts", user.uid), {
-//     username: usernameString,
-//     workouts: []
-//     }
-//   )}
 
 export default function Login({ navigation }) {
   const [email, setEmail] = useState("");
@@ -92,7 +74,7 @@ async function setLoginTime() {
   //Old version
   
 }
-  }
+
 
   
   const handleRegister = () => {
@@ -125,62 +107,6 @@ async function setLoginTime() {
     });
   }
 
-  // async function deleteSelected(selectedArr) {
-  //   const deleteWorkouts = selectedArr
-  //   for (let i = 0; i < deleteWorkouts.length; i++) {
-  //     await deleteDoc(doc(db, "accounts", user.uid, "workouts", deleteWorkouts[i].name));
-  //   }
-  // }
-
-  // async function setFriendWorkouts() {
-  //   const auth = getAuth();
-  //   const user = auth.currentUser;
-  //   //first clear
-  //   const workoutsDeleteArr = []
-  //   const deleteWorkoutRef = collection(db, "accounts", user.uid, "workouts");
-  //   const deleteWorkoutDocs = await getDocs(deleteWorkoutRef);
-  //   deleteWorkoutDocs.forEach(doc => {
-  //     if (doc.id != "temp" && doc.data().type == "Friend") {
-  //       workoutsDeleteArr.push(doc.data())
-  //     }
-  //   })  
-  //   deleteSelected(workoutsDeleteArr)
-
-  //   //then get all friend workouts
-
-  //   const friends = []
-  //       const friendsRef = collection(db, "accounts", user.uid, "friends");
-  //       const friendsDocs = await getDocs(friendsRef);
-  //       friendsDocs.forEach(doc => {
-  //         if (doc.id != "temp") {
-  //           friends.push(doc.id)
-  //         }
-  //       })  
-
-  //       const addingWorkouts = []
-
-  //       for (let i = 0; i < friends.length; i++) {
-  //         const fWorkoutsRef = collection(db, "accounts", friends[i], "workouts");
-  //         const fWorkoutDocs = await getDocs(fWorkoutsRef);
-
-  //           fWorkoutDocs.forEach(doc => {
-  //           if (doc.id != "temp") {
-  //             addingWorkouts.push(doc.data())
-  //           }
-  //         })  
-  //       }
-        
-
-  //     for (let i = 0; i < addingWorkouts.length; i++) {
-  //       await setDoc(doc(db, "accounts", user.uid, "workouts", addingWorkouts[i].name), {
-  //         description: addingWorkouts[i].description,
-  //         breakTime: addingWorkouts[i].breakTime,
-  //         name: addingWorkouts[i].name,
-  //         workoutID: addingWorkouts[i].workoutID,
-  //         type: "Friend"
-  //       });
-  //     }
-  // }
 
   const handlePasswordReset = () => {
     if(tempBoolean){
@@ -354,7 +280,7 @@ async function setLoginTime() {
       </Modal>
     </View> 
   );
-
+}
 
 const newStyles = StyleSheet.create({
   flashStyle: {
