@@ -183,27 +183,28 @@ async function setLoginTime() {
   // }
 
   const handlePasswordReset = () => {
-    if(tempBoolean){
+    // if(tempBoolean){
+    //   loginSuccess(true);
+    //   setTempBoolean(false);
+    // } else {
+    //   loginSuccess(false);
+    //   setTempBoolean(true);
+    // }
+
+    console.log("RESET PASSWORD")
+    const auth = getAuth();
+    sendPasswordResetEmail(auth, email)
+    .then(() => {
+      console.log("Password reset email sent!");
       loginSuccess(true);
-      setTempBoolean(false);
-    } else {
+    })
+    .catch((error) => {
       loginSuccess(false);
-      setTempBoolean(true);
-    }
-
-    // console.log("RESET PASSWORD")
-    // const auth = getAuth();
-    // sendPasswordResetEmail(auth, email)
-    // .then(() => {
-    //   console.log("Password reset email sent!");
-    // })
-    // .catch((error) => {
-
-    //   const errorCode = error.code;
-    //   const errorMessage = error.message;
-    //   console.log(errorCode);
-    //   console.log(errorMessage);
-    // });
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      console.log(errorCode);
+      console.log(errorMessage);
+    });
   }
 
   const loginSuccess = (didReset) => {

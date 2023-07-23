@@ -1,7 +1,6 @@
 //Issues
 //pass params between files
 
-
 import React, { useState } from 'react'
 import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity, ScrollView, Button, Modal, Settings} from "react-native";
 import Card1 from "./components/card1";
@@ -10,21 +9,15 @@ import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, on
 import { addDoc, doc, enableNetwork, setDoc, getCountFromServer, collection, getDocs, namedQuery, updateDoc,getDoc, deleteDoc} from "firebase/firestore"; 
 import {db} from './firebase';
 import { async } from "@firebase/util";
-
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-
 import Divider from 'react-native-divider';
 import { Icon } from '@rneui/themed';
-
 import { CountdownCircleTimer } from 'react-native-countdown-circle-timer'
-
-
 import HomeScroll from './homeScroll';
-
 import { BlurView } from 'expo-blur';
 
-
+var hasNoWorkouts = true;
 
 export default function Home({route, navigation}) {
   React.useEffect(() => {
@@ -97,6 +90,10 @@ export default function Home({route, navigation}) {
 
   const [selDailyWorkout, setSelDailyWorkout] = useState("")
 
+  const [welcomeMessage, setWelcomeMessage] = useState("Good Morning");
+  const [deleteModalVis, setDeleteModalVis] = useState(false);
+  const [deletingWorkoutIndex, setDeletingWorkoutIndex] = useState(-1);
+
   async function initializeName() {
     const docSnap = await getDoc(doc(db, "accounts", user.uid));
     const name = docSnap.data().username; 
@@ -116,7 +113,6 @@ export default function Home({route, navigation}) {
       loadDailyWorkout(dailyWorkouts[currDailyNum])
     }
   }
-
 
   async function createWorkout() {
     const auth = getAuth();
@@ -145,8 +141,6 @@ export default function Home({route, navigation}) {
     loadWorkouts()
   }
 
-
-
   async function loadWorkouts() {
     const allSelfWorkoutsArr = []
     const allFriendWorkoutArr = []
@@ -156,11 +150,13 @@ export default function Home({route, navigation}) {
       workoutDocs.forEach(doc => {
         if (doc.id != "temp" && doc.data().type == "Self") {
           allSelfWorkoutsArr.push(doc.data())
+          hasNoWorkouts = false;
         } else if ((doc.id != "temp" && doc.data().type == "Friend")) {
           allFriendWorkoutArr.push(doc.data())
+          hasNoWorkouts = false;
         }
       })        
-
+      
       const impulseWorkoutRef = collection(db, "challenges");
       const impulseWorkoutDocs = await getDocs(impulseWorkoutRef);
       impulseWorkoutDocs.forEach(doc => {
@@ -175,7 +171,7 @@ export default function Home({route, navigation}) {
       setTotalFriendWorkoutsArr(allFriendWorkoutArr)
 
       setTotalImpulseWorkoutsArr(allImpulseWorkoutArr)
-
+      console.log("||||||||||" + hasNoWorkouts);
   }
 
   async function temp () {
@@ -190,7 +186,6 @@ export default function Home({route, navigation}) {
   //   })  
   //   console.log(workoutsDeleteArr.length)
   //   deleteSelected(workoutsDeleteArr)
-
   }
 
   async function loadDailyWorkout(name) {
@@ -251,7 +246,6 @@ export default function Home({route, navigation}) {
     setNameConfigs(nameConfig)
     setNextNameConfigs(nextConfig)
   }
-
   
   const selectSetting = (type, index) => {
     if(type == 1){
@@ -361,29 +355,31 @@ export default function Home({route, navigation}) {
   }
 
   async function deleteWorkout(index) {
-    const auth = getAuth();
-    const user = auth.currentUser;
+    setDeleteModalVis(true);
+    setDeletingWorkoutIndex(index);
+    // const auth = getAuth();
+    // const user = auth.currentUser;
 
-    let deleteName = ""
+    // let deleteName = ""
 
-    for (let i = 0; i < totalWorkoutsArr.length; i++) {
-      if (totalWorkoutsArr[i].workoutID == index) { 
-        deleteName = totalWorkoutsArr[i].name
-      }
-    }
+    // for (let i = 0; i < totalWorkoutsArr.length; i++) {
+    //   if (totalWorkoutsArr[i].workoutID == index) { 
+    //     deleteName = totalWorkoutsArr[i].name
+    //   }
+    // }
 
-    const docSnap = await getDoc(doc(db, "accounts", user.uid));
-    const docRef1 = doc(db, "accounts", user.uid);
-    const tempArr1 = docSnap.data().workoutsArr;  
-    const deleteIndex = tempArr1.indexOf(deleteName)
+    // const docSnap = await getDoc(doc(db, "accounts", user.uid));
+    // const docRef1 = doc(db, "accounts", user.uid);
+    // const tempArr1 = docSnap.data().workoutsArr;  
+    // const deleteIndex = tempArr1.indexOf(deleteName)
 
-    tempArr1.splice(deleteIndex, deleteIndex+1)
-    await updateDoc(docRef1, {
-      workoutsArr: tempArr1,
-    })
+    // tempArr1.splice(deleteIndex, deleteIndex+1)
+    // await updateDoc(docRef1, {
+    //   workoutsArr: tempArr1,
+    // })
 
-    await deleteDoc(doc(db, "accounts", user.uid, "workouts", deleteName));
-    loadWorkouts()
+    // await deleteDoc(doc(db, "accounts", user.uid, "workouts", deleteName));
+    // loadWorkouts()
   }
   
   const recieveBreakTimes = (input) => {
@@ -521,6 +517,35 @@ export default function Home({route, navigation}) {
     }
   }
 
+  async function deleteWorkoutQuestion(answer) {
+    if(answer == true){
+      const auth = getAuth();
+      const user = auth.currentUser;
+
+      let deleteName = ""
+
+      for (let i = 0; i < totalWorkoutsArr.length; i++) {
+        if (totalWorkoutsArr[i].workoutID == deletingWorkoutIndex) { 
+          deleteName = totalWorkoutsArr[i].name
+        }
+      }
+
+      const docSnap = await getDoc(doc(db, "accounts", user.uid));
+      const docRef1 = doc(db, "accounts", user.uid);
+      const tempArr1 = docSnap.data().workoutsArr;  
+      const deleteIndex = tempArr1.indexOf(deleteName)
+
+      tempArr1.splice(deleteIndex, deleteIndex+1)
+      await updateDoc(docRef1, {
+        workoutsArr: tempArr1,
+      })
+
+      await deleteDoc(doc(db, "accounts", user.uid, "workouts", deleteName));
+      loadWorkouts()
+    }
+    setDeleteModalVis(false);
+  }
+
   return (
     <View style={backgroundStyle.container}>
         <View>
@@ -532,10 +557,16 @@ export default function Home({route, navigation}) {
               <Image source={ require('../assets/person3.png') } style={ { width: 35, height: 35} } />
             </TouchableOpacity>
           </View> 
-          <Text style={backgroundStyle.timeText}> Last Sign in on 5/4 at 9:23 </Text>
+          <Text style={backgroundStyle.timeText}> {welcomeMessage} </Text>
 
         </View>
           
+
+        {hasNoWorkouts ?
+          <View style={cardStyle.tempContainer}>
+            <Text style={cardStyle.tempText}>Create a Workout</Text>
+          </View>
+        :
 
           <ScrollView horizontal={true} alignSelf={'left'} showsHorizontalScrollIndicator={false}>
             
@@ -550,7 +581,7 @@ export default function Home({route, navigation}) {
                 </TouchableOpacity> 
 
                 <View style={cardStyle.image}>
-                    <TouchableOpacity style = {{paddingRight:10, marginLeft:205, marginTop: 90, position: 'absolute'}} onPress={() => openSpecificWorkout(info)}>
+                    <TouchableOpacity style = {{paddingRight:10, marginLeft:208, marginTop: 108, position: 'absolute'}} onPress={() => openSpecificWorkout(info)}>
                         <Image source={ require('../assets/arrow5.png') } style={ { width: 40, height: 40 } } />
                     </TouchableOpacity>         
                 </View>
@@ -562,6 +593,9 @@ export default function Home({route, navigation}) {
             ))}  
 
           </ScrollView>
+
+        }
+
 
           <ScrollView horizontal={true} style={homeScrollMain.container} showsHorizontalScrollIndicator={false}>
               <View style={homeScrollMain.scrollContainer}>
@@ -576,7 +610,7 @@ export default function Home({route, navigation}) {
                         <Text  style={cardStyle.titleText} backgroundColor={'#FFFFFF'}>{info.name}</Text>
        
                           <TouchableOpacity style = {{marginLeft: 260}} onPress={() => openSpecificWorkout(info)}>
-                          <Image source={ require('../assets/arrow5.png') } style={ { width: 20, height: 20 } } />
+                          <Image source={ require('../assets/arrow5a.png') } style={ { width: 20, height: 20 } } />
                        </TouchableOpacity>
                            
                       </View>
@@ -600,7 +634,7 @@ export default function Home({route, navigation}) {
                             <Text style={homeScrollMain.friendName}>{info.creator}</Text>
                           </View>
                             <TouchableOpacity style = {{marginLeft: 260}} onPress={() => openSpecificWorkout(info)}>
-                          <Image source={ require('../assets/arrow5.png') } style={ { width: 20, height: 20 } } />
+                          <Image source={ require('../assets/arrow5b.png') } style={ { width: 20, height: 20 } } />
                        </TouchableOpacity>
                           </View>
                           ))}  
@@ -633,31 +667,24 @@ export default function Home({route, navigation}) {
         }}>
 
           <View style={newWorkout.container}>
-
-          <View style={{flexDirection: 'row', marginTop: 10, marginLeft: 25}}>
-           
-           </View>
-
-            <View style={newWorkout.headerBackground}>
-
-            <TouchableOpacity onPress={() => setOpenNewWorkoutPage(false)} >
-                <Text style={newWorkout.returnText}>x</Text> 
-            </TouchableOpacity> 
-              <Text style={newWorkout.mainHeader}>Workout Creator</Text> 
+            <View style={{marginTop: 80, marginBottom: 15, width: "100%", height: 50, justifyContent: "center", alignItems: "center"}}>
+              <View style={newWorkout.headerBackground}>
+                <Text style={newWorkout.mainHeader}>Workout Creator</Text> 
+              </View>
             </View>
 
           <View marginTop={13}>
-
         
             <View style={newWorkout.subHeaderBackground}>
               <Text style={newWorkout.header}>1. Name</Text> 
+              <View style={newWorkout.purpleDivider}></View>
             </View>
 
            <View style={newWorkout.inputView}>
             <TextInput
               style={newWorkout.inputText}
               placeholder="Workout Name"
-              placeholderTextColor="#ffffff"
+              placeholderTextColor="#9c9c9c"
               onChangeText={(workoutName) => setWorkoutName(workoutName)}
               keyboardAppearance="dark"
             /> 
@@ -666,14 +693,15 @@ export default function Home({route, navigation}) {
           
           <View style={newWorkout.subHeaderBackground}>
               <Text style={newWorkout.header}>2. Describe </Text> 
+              <View style={newWorkout.purpleDivider}></View>
          </View>
 
          <View style={newWorkout.inputView2}>
             <TextInput
               style={newWorkout.inputText1}
               placeholder="Description"
-              placeholderTextColor="#ffffff"
-              fontSize={30}
+              placeholderTextColor="#9c9c9c"
+              fontSize={25}
               maxLength={150}
               onChangeText={(workoutDesc) => setWorkoutDesc(workoutDesc)}
               keyboardAppearance="dark"
@@ -684,10 +712,10 @@ export default function Home({route, navigation}) {
 
         <View>
           <View style={newWorkout.subHeaderBackground}>
-            <Text style={newWorkout.header}>3. Set Break Time</Text> 
+            <Text style={newWorkout.header}>3. Rest Between Sets</Text> 
+            <View style={newWorkout.purpleDivider}></View>
          </View>
-         <Text style={newWorkout.breakDesc}>  Select the time, in seconds, to rest between sets</Text> 
-         <ScrollView horizontal={true} style={{marginTop: 4}}>
+         <ScrollView horizontal={true} style={{marginTop: 5, marginLeft: 20, marginRight: 20,}} showsHorizontalScrollIndicator={false}>
           <TouchableOpacity style={but5} onPress={() => recieveBreakTimes(1)}>
                 <Text style={newWorkout.breakText}>5</Text> 
             </TouchableOpacity> 
@@ -727,18 +755,19 @@ export default function Home({route, navigation}) {
          </ScrollView>
         </View>
          
-     
-         <View style={newWorkout.subHeaderBackground}>
-              <Text style={newWorkout.header}>4. Finish</Text> 
-         </View>
-
+        <View style={newWorkout.createLeaveView}>
          <TouchableOpacity style={newWorkout.submitButton} onPress={createWorkout}>
               <Text style={newWorkout.submitText}>Create</Text> 
           </TouchableOpacity>  
+          <TouchableOpacity style={newWorkout.submitButton} onPress={() => setOpenNewWorkoutPage(false)}>
+              <Text style={newWorkout.submitText}>Return</Text> 
+          </TouchableOpacity>  
+          </View>
 
 
           </View>
           </View>
+
         </Modal>
 
         <Modal
@@ -751,9 +780,7 @@ export default function Home({route, navigation}) {
           <View style={specWorkout.container}>
          
           <View style={{flexDirection: 'row', marginTop: 50}}>           
-            <TouchableOpacity style={{marginTop: 0, marginRight: 25}} onPress={() => setOpenSpecWorkout(false)} >
-                  <Text style={newWorkout.returnText}>x</Text> 
-            </TouchableOpacity>        
+       
             <Text style={specWorkout.title}>Impulse</Text> 
           </View>
 
@@ -786,6 +813,9 @@ export default function Home({route, navigation}) {
               <Text style={specWorkout.header}>Next Exercise: {nextNameConfigs[currStep]}</Text> 
 
           </View>
+                      <TouchableOpacity style={specWorkout.returnButton} onPress={() => setOpenSpecWorkout(false)} >
+                  <Text style={specWorkout.returnText}>Return</Text> 
+            </TouchableOpacity> 
         </View>
            
         </Modal>
@@ -822,7 +852,7 @@ export default function Home({route, navigation}) {
           Break Times
         </Divider>
 
-        <ScrollView horizontal={true} style={{marginLeft: 7}}>
+        <ScrollView showsHorizontalScrollIndicator={false} horizontal={true} style={{marginLeft: 7}}>
           <TouchableOpacity style={but5} onPress={() => recieveBreakTimes(1)}>
                 <Text style={newWorkout.breakText}>5</Text> 
             </TouchableOpacity> 
@@ -885,7 +915,7 @@ export default function Home({route, navigation}) {
                       color="#FF0000"
                       name="delete"
                       type="material"
-                      size="20"
+                      size="30"
                   />
                 </TouchableOpacity>
                 <TouchableOpacity
@@ -897,7 +927,7 @@ export default function Home({route, navigation}) {
                     color="#c8c5db"
                     name="menu"
                     type="material"
-                    size="20"
+                    size="30"
                   />
                 </TouchableOpacity>
               </View>
@@ -990,10 +1020,89 @@ export default function Home({route, navigation}) {
 
         </Modal>
         </Modal>
+
+        <Modal  
+          animationType="fade"
+          transparent={true}
+          visible={deleteModalVis}
+          onRequestClose={() => {Alert.alert('Modal has been closed.'); setDeleteModalVis(!deleteModalVis); }}>
+          <BlurView intensity={35} tint="dark" style={deleteModalStyles.modalContainer}>
+            <View style={deleteModalStyles.modalView}>
+              <View style={deleteModalStyles.titleView}>
+                <Text style={deleteModalStyles.titleText1}>Delete Workout</Text>
+                <Text style={deleteModalStyles.titleText2}>Are you sure you want to delete this workout?</Text>
+              </View>
+              <View style={deleteModalStyles.answerView}>
+                <TouchableOpacity style={deleteModalStyles.button} onPress={() => deleteWorkoutQuestion(true)}>
+                  <Text style={deleteModalStyles.buttonText1}>YES</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={deleteModalStyles.button} onPress={() => deleteWorkoutQuestion(false)}>
+                  <Text style={deleteModalStyles.buttonText2}>NO</Text>
+                </TouchableOpacity>
+              </View>
+
+            </View>
+          </BlurView>
+        </Modal>
     </View>
    
   )
 }
+
+const deleteModalStyles = StyleSheet.create({
+    modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalView: {
+    shadowColor: 'white',
+    shadowOffset: {width: 0, height: 0},
+    shadowOpacity: 0.2,
+    shadowRadius: 10,
+    // backgroundColor: "#1a1a29", //'#404057', //0d0d12
+    backgroundColor: "#bac1d2",
+    alignItems: 'center',
+    height: "21%",
+    width: "80%",
+    borderRadius: 12,
+  },
+  titleView: {
+    // backgroundColor: "red",
+    height: "70%",
+    alignItems: "center",
+  },
+  answerView: {
+    height: "30%",
+    flexDirection: "row",
+    borderTopWidth: 0.5,
+    borderTopColor: "#898e9c",
+  },
+  button: {
+    justifyContent: "center",
+    alignItems: "center",
+    width: "50%",
+  },
+  titleText1: {
+    color: "#5f5fb3",
+    fontSize: 23,
+    fontWeight: "500",
+    marginTop: 15,
+  },
+  titleText2: {
+    fontSize: 18,
+    marginTop: 15,
+    textAlign: "center",
+  },
+  buttonText1: {
+    fontSize: 18,
+    fontWeight: "500",
+  },
+  buttonText2: {
+    fontSize: 18,
+    fontWeight: "500",
+  },
+})
 
 const styles = StyleSheet.create({
 
@@ -1195,7 +1304,7 @@ const mainScrollView = StyleSheet.create({
   },
   cardTextView: {
     marginLeft: 10,
-    width: "85%",
+    width: "80%",
   },
   cardText1: {
     color: "#e0e0e0",
@@ -1261,7 +1370,7 @@ const backgroundStyle = StyleSheet.create({
   },
 
   timeText: {
-    color: "#404057",
+    color: "#4a4a66",
     fontWeight: "500",
     fontSize: 17,
     marginBottom: 25,
@@ -1378,21 +1487,15 @@ const newWorkout = StyleSheet.create({
 
   },
 
-  mainHeader: {
-    fontWeight: "600",
-    fontSize: 38,
-    color: "#ffffff",
-    alignSelf: "left",
-    marginLeft:4
-  },
 
   header: {
-    fontWeight: "600",
-    fontSize: 38,
+    fontWeight: "500",
+    fontSize: 30,
     color: "#ffffff",
     alignSelf: "left",
     marginLeft: 20
   },
+
 
   breakButton: {
     borderRadius:9,
@@ -1437,37 +1540,64 @@ const newWorkout = StyleSheet.create({
 
   submitButton: {
     borderRadius:9,
-    paddingHorizontal: 15,
-    paddingVertical: 8,
     width: 150,
-    marginLeft: 110,
-    marginBottom: 55.5 ,
-    marginTop:20,
+    height: 45,
     backgroundColor: '#8e8efa',
     shadowColor: 'rgba(227, 227, 255, 0.2)',
     shadowOpacity: 0.8,
     elevation: 6,
     shadowRadius: 15,
     shadowOffset : { width: 1, height: 13},
+    justifyContent: "center",
+    alignItems: "center",
+    marginHorizontal: 17,
+  },
+
+  submitText: {
+    fontWeight: "700",
+    fontSize: 22,
+    color: "#ffffff",
+  },
+
+  createLeaveView: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 80,
+  },
+
+  purpleDivider: {
+    backgroundColor: "#8e8efa",
+    height: 2.5,
+    width: 350,
+    marginLeft: 20, 
+    
   },
 
   headerBackground: {
     fontWeight: "600",
     backgroundColor: "#404057",
+    width: '60%',
+    flexDirection: 'row',
+    justifyContent: "center",
+    alignItems: "center",
+    paddingVertical: 5,
+    borderRadius: 15,
+  },
+
+  mainHeader: {
+    fontWeight: "600",
+    fontSize: 28,
+    color: "#ffffff",
     alignSelf: "left",
-    marginTop: 45,
-    width: '100%',
-    flexDirection: 'row'
+
   },
 
   subHeaderBackground: {
     fontWeight: "600",
-    backgroundColor: "#0d0d12",
     alignSelf: "left",
     marginTop: 20,
     width: '100%',
-    borderWidth: 3,
-    borderBottomColor: '#8e8efa'
 
   },
 
@@ -1476,8 +1606,9 @@ const newWorkout = StyleSheet.create({
     borderWidth: 1.5,
     borderRadius: 5,
     height: 55,
-    width: 340,
-    marginTop: 25,
+    width: 355,
+    marginTop: 10,
+    marginBottom: 20,
     marginLeft: 17,
     alignItems: "center",
   },
@@ -1486,15 +1617,15 @@ const newWorkout = StyleSheet.create({
     borderColor: "#404057",
     borderWidth: 1.5,
     borderRadius: 5,
-    height: 105,
-    width: 340,
-    marginTop: 25,
+    height: 55,
+    width: 355,
+    marginTop: 10,
+    marginBottom: 20,
     marginLeft: 17,
     alignItems: "center",
   },
 
   inputText: {
-    height: 50,
     width: "100%",
     flex: 1,
     fontSize: 25,
@@ -1507,20 +1638,34 @@ const newWorkout = StyleSheet.create({
     flex: 1,
     fontStyle: 'italic',
     paddingLeft: 15,
-    paddingTop: 10,
     paddingRight: 15,
-    color: "#ffffff",
-  },
-  
-  submitText: {
-    fontWeight: "700",
-    fontSize: 22,
-    marginLeft: 22,
     color: "#ffffff",
   },
 })
 
 const cardStyle = StyleSheet.create({
+
+  tempContainer: {
+    backgroundColor: '#0d0d12',
+    // marginTop: 50,
+    height: 160,
+    width: 365,
+    marginLeft: 10,
+    borderRadius: 10,
+    borderWidth: 2,
+    borderColor: '#404057',
+    borderBottomWidth:5,
+    borderBottomColor: '#FF0055',
+    elevation: 6,
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 25,
+  },
+  tempText: {
+    fontSize: 25,
+    fontWeight: "500",
+    color: "white",
+  },
 
   container: {
     backgroundColor: '#0d0d12',
@@ -1585,7 +1730,6 @@ const specWorkout = StyleSheet.create({
     fontSize: 62,
     fontWeight: '900%',
     color: "#8e8efa",
-    marginRight: 55,
     marginTop: 10
   }, 
 
@@ -1594,7 +1738,31 @@ const specWorkout = StyleSheet.create({
     fontWeight: '900%',
     color: "#ffffff",
     marginTop: 40,
-  }
+  },
+
+  returnButton: {
+    borderRadius:9,
+    width: "60%",
+    height: 45,
+    backgroundColor: '#8e8efa',
+    shadowColor: 'rgba(227, 227, 255, 0.2)',
+    shadowOpacity: 0.8,
+    elevation: 6,
+    shadowRadius: 15,
+    shadowOffset : { width: 1, height: 13},
+    justifyContent: "center",
+    alignItems: "center",
+    marginHorizontal: 17,
+    marginTop: 150,
+
+  },
+
+  returnText: {
+    fontWeight: "600",
+    fontSize: 35,
+    color: "black",
+    letterSpacing: 1.25,
+  },
 
 })
 
@@ -1797,10 +1965,9 @@ const modalAddStyles = StyleSheet.create({
 const homeScrollMain = StyleSheet.create({
   container: {
   
-    height: 380,
+    height: 400,
     marginTop: 10,
-    marginBottom: 30,
-   
+    // marginBottom: 10,
   },
 
   friendName: {
@@ -1815,12 +1982,15 @@ const homeScrollMain = StyleSheet.create({
   
 
   scrollContainer: {
-      margin: 10,
+      marginLeft: 10,
+      marginRight: 10,
+      marginTop: 10,
+      marginBottom: 10,
       // backgroundColor: "grey",
     },
 
     scrollContainer1: {
-      height: 200,
+      height: 205,
       // backgroundColor: "red",
     },
   scrollContainer2: {
