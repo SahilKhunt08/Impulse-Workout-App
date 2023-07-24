@@ -581,7 +581,7 @@ export default function Home({route, navigation}) {
                 </TouchableOpacity> 
 
                 <View style={cardStyle.image}>
-                    <TouchableOpacity style = {{paddingRight:10, marginLeft:208, marginTop: 108, position: 'absolute'}} onPress={() => openSpecificWorkout(info)}>
+                    <TouchableOpacity style = {{paddingRight:10, marginLeft:208, marginTop: 98, position: 'absolute'}} onPress={() => openSpecificWorkout(info)}>
                         <Image source={ require('../assets/arrow5.png') } style={ { width: 40, height: 40 } } />
                     </TouchableOpacity>         
                 </View>
@@ -607,10 +607,10 @@ export default function Home({route, navigation}) {
                   <ScrollView>
                     {totalImpulseWorkoutsArr.map((info, index) => (
                       <View key={index} style={homeScrollMain.workoutCard}>
-                        <Text  style={cardStyle.titleText} backgroundColor={'#FFFFFF'}>{info.name}</Text>
+                        <Text style={cardStyle.titleText} backgroundColor={'#FFFFFF'}>{info.name}</Text>
        
-                          <TouchableOpacity style = {{marginLeft: 260}} onPress={() => openSpecificWorkout(info)}>
-                          <Image source={ require('../assets/arrow5a.png') } style={ { width: 20, height: 20 } } />
+                          <TouchableOpacity style = {{marginLeft: 273, bottom:17}} onPress={() => openSpecificWorkout(info)}>
+                          <Image source={ require('../assets/arrow5.png') } style={ { width: 20, height: 20 } } />
                        </TouchableOpacity>
                            
                       </View>
@@ -852,7 +852,7 @@ export default function Home({route, navigation}) {
           Break Times
         </Divider>
 
-        <ScrollView showsHorizontalScrollIndicator={false} horizontal={true} style={{marginLeft: 7}}>
+        <ScrollView showsHorizontalScrollIndicator={false} horizontal={true} style={{marginLeft: 7, height: 70}}>
           <TouchableOpacity style={but5} onPress={() => recieveBreakTimes(1)}>
                 <Text style={newWorkout.breakText}>5</Text> 
             </TouchableOpacity> 
@@ -961,7 +961,7 @@ export default function Home({route, navigation}) {
                 <Icon
                   onPress={() => setModalAddVisible(!modalAddVisible)}
                   style={modalAddStyles.closeButton}
-                  color="#8a7ed9"
+                  color="#FF0055"
                   name="close-box-outline"
                   type="material-community"
                   size="40"
@@ -1577,7 +1577,7 @@ const newWorkout = StyleSheet.create({
   headerBackground: {
     fontWeight: "600",
     backgroundColor: "#404057",
-    width: '60%',
+    width: '70%',
     flexDirection: 'row',
     justifyContent: "center",
     alignItems: "center",
@@ -1691,7 +1691,7 @@ const cardStyle = StyleSheet.create({
       color: "#ffffff",
       fontWeight: "500",
       fontSize: 25,
-      maxWidth: 170,
+      maxWidth: 260,
       alignSelf: "left",
       marginTop: 12,
       marginLeft: 12,
@@ -1704,6 +1704,8 @@ const cardStyle = StyleSheet.create({
       marginLeft: 12,
       marginRight: 5,
       fontSize: 15,
+      maxHeight:110,
+      maxWidth: 190
   },
 
   arrowText: {
@@ -1778,6 +1780,7 @@ const editWorkouts = StyleSheet.create({
     color: "#ffffff",
     marginLeft: 46,
     marginBottom: 15,
+    paddingTop: 15,
     width: 600
   }, 
 
@@ -1793,13 +1796,19 @@ const editWorkouts = StyleSheet.create({
     fontSize: 39,
     marginLeft: 10,
     marginTop:10,
-    color: '#404057'
+    color: '#404057',
+    textAlign: 'center',
+    marginRight: 10,
+
 
   },
   desc: {
     fontSize: 25,
     marginLeft: 10,
-    color: '#404057'
+    color: '#404057',
+    textAlign: 'center',
+    marginRight: 10,
+
   },
   submitText: {
     fontWeight: "700",
@@ -1868,8 +1877,8 @@ const modalAddStyles = StyleSheet.create({
     width: "70%",
     backgroundColor: "#404057",//'#404057', //0d0d12 //26, 26, 41
     borderRadius: 15,
-    borderWidth: 2,
-    borderColor: "#8a7ed9",
+    borderWidth: 1,
+    borderColor: "#000000",
   },
   titleView1: {
     width: "100%",
@@ -1946,10 +1955,10 @@ const modalAddStyles = StyleSheet.create({
   },
 
   saveButton: {
-    borderRadius: 5,
-    borderWidth: 3,
-    borderColor: "#8a7ed9",
-    backgroundColor: "#67678f",
+    borderRadius: 10,
+    // borderWidth: 2,
+    // borderColor: "#FFFFFF",
+    backgroundColor: "#8e8efa",
     marginTop: 22,
     paddingHorizontal: 20,
     paddingVertical: 8,
@@ -1957,7 +1966,7 @@ const modalAddStyles = StyleSheet.create({
   saveText: {
     letterSpacing: 2,
     fontSize: 23,
-    fontWeight: "300",
+    fontWeight: "600",
     color: "#f1f0fc",
   },
 })
