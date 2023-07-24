@@ -1,23 +1,26 @@
-
 import React, { useState } from "react";
-import { StyleSheet, Text, View, TouchableOpacity, TextInput, FlatList, ScrollView, Pressable, Modal, Image } from 'react-native';
-import { Button } from 'react-native-paper';
+import {
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  TextInput,
+  ScrollView,
+  Modal,
+  Image,
+} from "react-native";
 import axios from "axios";
-import { Card } from 'react-native-paper';
-import { auth } from './firebase';
-import {db} from './firebase';
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
-import { addDoc, doc, enableNetwork, setDoc, getCountFromServer, collection, getDocs, namedQuery, query, getDoc } from "firebase/firestore"; 
-import { Icon } from '@rneui/themed';
-import FlipCard from 'react-native-flip-card'
-import { NavigationContainer } from '@react-navigation/native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { makeStyles } from "@rneui/base";
-import { isEmpty } from "@firebase/util";
-import Divider from 'react-native-divider';
-import { BlurView } from 'expo-blur';
-import FlashMessage, {showMessage, hideMessage } from "react-native-flash-message"; 
+import { db } from "./firebase";
+import { getAuth } from "firebase/auth";
+import { doc, setDoc, getDoc } from "firebase/firestore";
+import { Icon } from "@rneui/themed";
+import FlipCard from "react-native-flip-card";
+import Divider from "react-native-divider";
+import { BlurView } from "expo-blur";
+import FlashMessage, {
+  showMessage,
+  hideMessage,
+} from "react-native-flash-message";
 
 var modalMusclePath1 = require("./muscleImages/default1.png");
 var modalMusclePath2 = require("./muscleImages/default2.png");
@@ -26,7 +29,7 @@ export default function Workout({ navigation }) {
   const [counter, setCount] = useState(3);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalInfo, setModalInfo] = useState([]);
-  const [exerciseArr, setExerciseArr] = useState([]) // {id: "0", equipment: 'equipment1', muscle: "muscle1"}
+  const [exerciseArr, setExerciseArr] = useState([]); // {id: "0", equipment: 'equipment1', muscle: "muscle1"}
   const [modalIndex, setModalIndex] = useState(0);
   const [fixModalIndex, setFixModalIndex] = useState(true);
   const [workoutNameArr, setWorkoutNameArr] = useState([]);
@@ -46,12 +49,14 @@ export default function Workout({ navigation }) {
 
   const auth = getAuth();
   const user = auth.currentUser;
-  
-//Filter PAGE
 
-  const [filterModalVis, setfilterModalVis] = useState(false)
+  //Filter PAGE
+
+  const [filterModalVis, setfilterModalVis] = useState(false);
   const [styleBeginner, setStyleBeginner] = useState(vedantStyles.loginBtn);
-  const [styleIntermediate, setStyleIntermediate] = useState(vedantStyles.loginBtn);
+  const [styleIntermediate, setStyleIntermediate] = useState(
+    vedantStyles.loginBtn
+  );
   const [styleExpert, setStyleExpert] = useState(vedantStyles.loginBtn);
 
   const [styleAbdom, setStyleAbdom] = useState(vedantStyles.loginBtn);
@@ -79,18 +84,18 @@ export default function Workout({ navigation }) {
   const [styleStretch, setStyleStretch] = useState(vedantStyles.loginBtn);
   const [styleStrong, setStyleStrong] = useState(vedantStyles.loginBtn);
 
-  const [difficulty, setDifficulty] = useState(""); 
-  const [muscles, setMuscles] = useState("")
-  const [type, setType] = useState("")
+  const [difficulty, setDifficulty] = useState("");
+  const [muscles, setMuscles] = useState("");
+  const [type, setType] = useState("");
 
   React.useEffect(() => {
-    const listener = navigation.addListener('focus', () => {
-      loadWorkouts();
+    const listener = navigation.addListener("focus", () => {
+      loadPage();
     });
     return listener;
   }, []);
 
-  async function loadWorkouts() {
+  async function loadPage() {
     const docRef = doc(db, "accounts", user.uid);
     const docSnap = await getDoc(docRef);
 
@@ -99,276 +104,273 @@ export default function Workout({ navigation }) {
       setWorkoutNameArr(tempArr1);
       setWorkoutSelected(tempArr1[0]);
       var tempArr2 = [buttonRowStyles.buttonOn];
-      for(var i = 1; i < tempArr1.length; i++){
+      for (var i = 1; i < tempArr1.length; i++) {
         tempArr2[i] = buttonRowStyles.buttonOff;
       }
       setWorkoutBtnStyleArr(tempArr2);
     } else {
-      console.log("loadWorkouts function error");
+      console.log("loadPage function error");
     }
+
+    console.log(searchBarText + "fdwwwwwwwwwwwwwwwwwwww");
   }
 
   const recieveButtonClicks = (input) => {
-
     if (input < 4) {
-      setStyleBeginner(vedantStyles.loginBtn)
-      setStyleIntermediate(vedantStyles.loginBtn)
-      setStyleExpert(vedantStyles.loginBtn)
+      setStyleBeginner(vedantStyles.loginBtn);
+      setStyleIntermediate(vedantStyles.loginBtn);
+      setStyleExpert(vedantStyles.loginBtn);
       if (input == 1) {
-        if(styleBeginner == vedantStyles.loginBtn) {
-          setStyleBeginner(vedantStyles.loginBtnClicked)
-          setDifficulty("beginner")
-        } else { 
-          setStyleBeginner(vedantStyles.loginBtn)
-          setDifficulty(null)
-         }
+        if (styleBeginner == vedantStyles.loginBtn) {
+          setStyleBeginner(vedantStyles.loginBtnClicked);
+          setDifficulty("beginner");
+        } else {
+          setStyleBeginner(vedantStyles.loginBtn);
+          setDifficulty(null);
+        }
       } else if (input == 2) {
-        if(styleIntermediate == vedantStyles.loginBtn) {
-          setStyleIntermediate(vedantStyles.loginBtnClicked)
-          setDifficulty("intermediate")
-        } else { 
-          setStyleIntermediate(vedantStyles.loginBtn)
-          setDifficulty(null)
+        if (styleIntermediate == vedantStyles.loginBtn) {
+          setStyleIntermediate(vedantStyles.loginBtnClicked);
+          setDifficulty("intermediate");
+        } else {
+          setStyleIntermediate(vedantStyles.loginBtn);
+          setDifficulty(null);
         }
       } else if (input == 3) {
-        if(styleExpert == vedantStyles.loginBtn) {
-          setStyleExpert(vedantStyles.loginBtnClicked)
-          setDifficulty("expert")
-        } else { 
-          setStyleExpert(vedantStyles.loginBtn)
-          setDifficulty(null)
+        if (styleExpert == vedantStyles.loginBtn) {
+          setStyleExpert(vedantStyles.loginBtnClicked);
+          setDifficulty("expert");
+        } else {
+          setStyleExpert(vedantStyles.loginBtn);
+          setDifficulty(null);
         }
       }
-    
+    } else if (input < 20) {
+      setStyleAbdom(vedantStyles.loginBtn);
+      setStyleAbduct(vedantStyles.loginBtn);
+      setStyleAdd(vedantStyles.loginBtn);
+      setStyleBiceps(vedantStyles.loginBtn);
+      setStyleTriceps(vedantStyles.loginBtn);
+      setStyleLats(vedantStyles.loginBtn);
+      setStyleFore(vedantStyles.loginBtn);
+      setStyleTraps(vedantStyles.loginBtn);
+      setStyleChest(vedantStyles.loginBtn);
+      setStyleNeck(vedantStyles.loginBtn);
+      setStyleLowBack(vedantStyles.loginBtn);
+      setStyleMidBack(vedantStyles.loginBtn);
+      setStyleCalves(vedantStyles.loginBtn);
+      setStyleGlutes(vedantStyles.loginBtn);
+      setStyleHams(vedantStyles.loginBtn);
+      setStyleQuads(vedantStyles.loginBtn);
 
-   } else if (input < 20) {
-    setStyleAbdom(vedantStyles.loginBtn)
-    setStyleAbduct(vedantStyles.loginBtn)
-    setStyleAdd(vedantStyles.loginBtn)
-    setStyleBiceps(vedantStyles.loginBtn)
-    setStyleTriceps(vedantStyles.loginBtn)
-    setStyleLats(vedantStyles.loginBtn)
-    setStyleFore(vedantStyles.loginBtn)
-    setStyleTraps(vedantStyles.loginBtn)
-    setStyleChest(vedantStyles.loginBtn)
-    setStyleNeck(vedantStyles.loginBtn)
-    setStyleLowBack(vedantStyles.loginBtn)
-    setStyleMidBack(vedantStyles.loginBtn)
-    setStyleCalves(vedantStyles.loginBtn)
-    setStyleGlutes(vedantStyles.loginBtn)
-    setStyleHams(vedantStyles.loginBtn)
-    setStyleQuads(vedantStyles.loginBtn)
-
-      if (input == 4) { 
-        if (styleAbdom == vedantStyles.loginBtn ) {
-          setStyleAbdom(vedantStyles.loginBtnClicked)
-          setMuscles("abdominals")
+      if (input == 4) {
+        if (styleAbdom == vedantStyles.loginBtn) {
+          setStyleAbdom(vedantStyles.loginBtnClicked);
+          setMuscles("abdominals");
         } else {
-          setMuscles(null)
-          setStyleAbdom(vedantStyles.loginBtn)
+          setMuscles(null);
+          setStyleAbdom(vedantStyles.loginBtn);
         }
-      } else if (input == 5) { 
+      } else if (input == 5) {
         if (styleAbduct == vedantStyles.loginBtn) {
-          setStyleAbduct(vedantStyles.loginBtnClicked)
-          setMuscles("abductors")
+          setStyleAbduct(vedantStyles.loginBtnClicked);
+          setMuscles("abductors");
         } else {
-          setMuscles(null)
-          setStyleAbduct(vedantStyles.loginBtn)
-        }        
-      } else if (input == 6) { 
+          setMuscles(null);
+          setStyleAbduct(vedantStyles.loginBtn);
+        }
+      } else if (input == 6) {
         if (styleAdd == vedantStyles.loginBtn) {
-          setStyleAdd(vedantStyles.loginBtnClicked)
-          setMuscles("adductors")
+          setStyleAdd(vedantStyles.loginBtnClicked);
+          setMuscles("adductors");
         } else {
-          setMuscles(null)
-          setStyleAdd(vedantStyles.loginBtn)
-        }   
-      } else if (input == 7) { 
+          setMuscles(null);
+          setStyleAdd(vedantStyles.loginBtn);
+        }
+      } else if (input == 7) {
         if (styleBiceps == vedantStyles.loginBtn) {
-          setStyleBiceps(vedantStyles.loginBtnClicked)
-          setMuscles("biceps")
+          setStyleBiceps(vedantStyles.loginBtnClicked);
+          setMuscles("biceps");
         } else {
-          setMuscles(null)
-          setStyleBiceps(vedantStyles.loginBtn)
-        }  
-      } else if (input == 8) { 
+          setMuscles(null);
+          setStyleBiceps(vedantStyles.loginBtn);
+        }
+      } else if (input == 8) {
         if (styleTriceps == vedantStyles.loginBtn) {
-          setStyleTriceps(vedantStyles.loginBtnClicked)
-          setMuscles("triceps")
+          setStyleTriceps(vedantStyles.loginBtnClicked);
+          setMuscles("triceps");
         } else {
-          setMuscles(null)
-          setStyleTriceps(vedantStyles.loginBtn)
+          setMuscles(null);
+          setStyleTriceps(vedantStyles.loginBtn);
         }
-      } else if (input == 9) { 
+      } else if (input == 9) {
         if (styleLats == vedantStyles.loginBtn) {
-          setStyleLats(vedantStyles.loginBtnClicked)
-          setMuscles("lats")
+          setStyleLats(vedantStyles.loginBtnClicked);
+          setMuscles("lats");
         } else {
-          setMuscles(null)
-          setStyleLats(vedantStyles.loginBtn)
+          setMuscles(null);
+          setStyleLats(vedantStyles.loginBtn);
         }
-      } else if (input == 10) { 
+      } else if (input == 10) {
         if (styleFore == vedantStyles.loginBtn) {
-          setStyleFore(vedantStyles.loginBtnClicked)
-          setMuscles("forearms")
+          setStyleFore(vedantStyles.loginBtnClicked);
+          setMuscles("forearms");
         } else {
-          setMuscles(null)
-          setStyleFore(vedantStyles.loginBtn)
+          setMuscles(null);
+          setStyleFore(vedantStyles.loginBtn);
         }
-      } else if (input == 11) { 
+      } else if (input == 11) {
         if (styleTraps == vedantStyles.loginBtn) {
-          setStyleTraps(vedantStyles.loginBtnClicked)
-          setMuscles("traps")
+          setStyleTraps(vedantStyles.loginBtnClicked);
+          setMuscles("traps");
         } else {
-          setMuscles(null)
-          setStyleTraps(vedantStyles.loginBtn)
+          setMuscles(null);
+          setStyleTraps(vedantStyles.loginBtn);
         }
-      } else if (input == 12) { 
+      } else if (input == 12) {
         if (styleChest == vedantStyles.loginBtn) {
-          setStyleChest(vedantStyles.loginBtnClicked)
-          setMuscles("chest")
+          setStyleChest(vedantStyles.loginBtnClicked);
+          setMuscles("chest");
         } else {
-          setMuscles(null)
-          setStyleChest(vedantStyles.loginBtn)
+          setMuscles(null);
+          setStyleChest(vedantStyles.loginBtn);
         }
-      } else if (input == 13) { 
+      } else if (input == 13) {
         if (styleNeck == vedantStyles.loginBtn) {
-          setStyleNeck(vedantStyles.loginBtnClicked)
-          setMuscles("neck")
+          setStyleNeck(vedantStyles.loginBtnClicked);
+          setMuscles("neck");
         } else {
-          setMuscles(null)
-          setStyleNeck(vedantStyles.loginBtn)
+          setMuscles(null);
+          setStyleNeck(vedantStyles.loginBtn);
         }
-      } else if (input == 14) { 
+      } else if (input == 14) {
         if (styleLowBack == vedantStyles.loginBtn) {
-          setStyleLowBack(vedantStyles.loginBtnClicked)
-          setMuscles("lower_back")
+          setStyleLowBack(vedantStyles.loginBtnClicked);
+          setMuscles("lower_back");
         } else {
-          setMuscles(null)
-          setStyleLowBack(vedantStyles.loginBtn)
+          setMuscles(null);
+          setStyleLowBack(vedantStyles.loginBtn);
         }
-      } else if (input == 15) { 
+      } else if (input == 15) {
         if (styleMidBack == vedantStyles.loginBtn) {
-          setStyleMidBack(vedantStyles.loginBtnClicked)
-          setMuscles("middle_back")
+          setStyleMidBack(vedantStyles.loginBtnClicked);
+          setMuscles("middle_back");
         } else {
-          setMuscles(null)
-          setStyleMidBack(vedantStyles.loginBtn)
+          setMuscles(null);
+          setStyleMidBack(vedantStyles.loginBtn);
         }
-      } else if (input == 16) { 
+      } else if (input == 16) {
         if (styleCalves == vedantStyles.loginBtn) {
-          setStyleCalves(vedantStyles.loginBtnClicked)
-          setMuscles("calves")
+          setStyleCalves(vedantStyles.loginBtnClicked);
+          setMuscles("calves");
         } else {
-          setMuscles(null)
-          setStyleCalves(vedantStyles.loginBtn)
+          setMuscles(null);
+          setStyleCalves(vedantStyles.loginBtn);
         }
-      } else if (input == 17) { 
+      } else if (input == 17) {
         if (styleGlutes == vedantStyles.loginBtn) {
-          setStyleGlutes(vedantStyles.loginBtnClicked)
-          setMuscles("glutes")
+          setStyleGlutes(vedantStyles.loginBtnClicked);
+          setMuscles("glutes");
         } else {
-          setMuscles(null)
-          setStyleGlutes(vedantStyles.loginBtn)
+          setMuscles(null);
+          setStyleGlutes(vedantStyles.loginBtn);
         }
-      } else if (input == 18) { 
+      } else if (input == 18) {
         if (styleHams == vedantStyles.loginBtn) {
-          setStyleHams(vedantStyles.loginBtnClicked)
-          setMuscles("hamstrings")
+          setStyleHams(vedantStyles.loginBtnClicked);
+          setMuscles("hamstrings");
         } else {
-          setMuscles(null)
-          setStyleHams(vedantStyles.loginBtn)
+          setMuscles(null);
+          setStyleHams(vedantStyles.loginBtn);
         }
-      } else if (input == 19) { 
+      } else if (input == 19) {
         if (styleQuads == vedantStyles.loginBtn) {
-          setStyleQuads(vedantStyles.loginBtnClicked)
-          setMuscles("quadriceps")
+          setStyleQuads(vedantStyles.loginBtnClicked);
+          setMuscles("quadriceps");
         } else {
-          setMuscles(null)
-          setStyleQuads(vedantStyles.loginBtn)
+          setMuscles(null);
+          setStyleQuads(vedantStyles.loginBtn);
         }
       }
     } else {
-      setStyleCardio(vedantStyles.loginBtn)
-      setStyleOly(vedantStyles.loginBtn)
-      setStylePlyo(vedantStyles.loginBtn)
-      setStylePower(vedantStyles.loginBtn)
-      setStyleStrength(vedantStyles.loginBtn)
-      setStyleStretch(vedantStyles.loginBtn)
-      setStyleStrong(vedantStyles.loginBtn)
-      if (input == 20) { 
+      setStyleCardio(vedantStyles.loginBtn);
+      setStyleOly(vedantStyles.loginBtn);
+      setStylePlyo(vedantStyles.loginBtn);
+      setStylePower(vedantStyles.loginBtn);
+      setStyleStrength(vedantStyles.loginBtn);
+      setStyleStretch(vedantStyles.loginBtn);
+      setStyleStrong(vedantStyles.loginBtn);
+      if (input == 20) {
         if (styleCardio == vedantStyles.loginBtn) {
-          setStyleCardio(vedantStyles.loginBtnClicked)
-          setType("cardio")
+          setStyleCardio(vedantStyles.loginBtnClicked);
+          setType("cardio");
         } else {
-          setStyleCardio(vedantStyles.loginBtn)
-          setType(null)
+          setStyleCardio(vedantStyles.loginBtn);
+          setType(null);
         }
-      } else if (input == 21) { 
+      } else if (input == 21) {
         if (styleOly == vedantStyles.loginBtn) {
-          setStyleOly(vedantStyles.loginBtnClicked)
-          setType("olympic_weightlifting")
+          setStyleOly(vedantStyles.loginBtnClicked);
+          setType("olympic_weightlifting");
         } else {
-          setStyleOly(vedantStyles.loginBtn)
-          setType(null)
+          setStyleOly(vedantStyles.loginBtn);
+          setType(null);
         }
-      } else if (input == 22) { 
+      } else if (input == 22) {
         if (stylePlyo == vedantStyles.loginBtn) {
-          setStylePlyo(vedantStyles.loginBtnClicked)
-          setType("plyometrics")
+          setStylePlyo(vedantStyles.loginBtnClicked);
+          setType("plyometrics");
         } else {
-          setStylePlyo(vedantStyles.loginBtn)
-          setType(null)
+          setStylePlyo(vedantStyles.loginBtn);
+          setType(null);
         }
-      } else if (input == 23) { 
+      } else if (input == 23) {
         if (stylePower == vedantStyles.loginBtn) {
-          setStylePower(vedantStyles.loginBtnClicked)
-          setType("powerlifting")
+          setStylePower(vedantStyles.loginBtnClicked);
+          setType("powerlifting");
         } else {
-          setStylePower(vedantStyles.loginBtn)
-          setType(null)
+          setStylePower(vedantStyles.loginBtn);
+          setType(null);
         }
-      } else if (input == 24) { 
+      } else if (input == 24) {
         if (styleStrength == vedantStyles.loginBtn) {
-          setStyleStrength(vedantStyles.loginBtnClicked)
-          setType("strength")
+          setStyleStrength(vedantStyles.loginBtnClicked);
+          setType("strength");
         } else {
-          setStyleStrength(vedantStyles.loginBtn)
-          setType(null)
+          setStyleStrength(vedantStyles.loginBtn);
+          setType(null);
         }
-      } else if (input == 25) { 
+      } else if (input == 25) {
         if (styleStretch == vedantStyles.loginBtn) {
-          setStyleStretch(vedantStyles.loginBtnClicked)
-          setType("stretching")
-
+          setStyleStretch(vedantStyles.loginBtnClicked);
+          setType("stretching");
         } else {
-          setStyleStretch(vedantStyles.loginBtn)
-          setType(null)
+          setStyleStretch(vedantStyles.loginBtn);
+          setType(null);
         }
-      } 
-      else if (input == 26) { 
+      } else if (input == 26) {
         if (styleStrong == vedantStyles.loginBtn) {
-          setStyleStrong(vedantStyles.loginBtnClicked)
-          setType("strongman")
+          setStyleStrong(vedantStyles.loginBtnClicked);
+          setType("strongman");
         } else {
-          setStyleStrong(vedantStyles.loginBtn)
-          setType(null)
+          setStyleStrong(vedantStyles.loginBtn);
+          setType(null);
         }
-      } else if (input == 27) { 
-        console.log(muscles)
-      } 
+      } else if (input == 27) {
+        console.log(muscles);
+      }
     }
-  }
+  };
 
   async function saveExercise(name) {
     var index = -1;
-    for(var i = 0; i < exerciseArr.length; i++){
-      if(name == exerciseArr[i].name){
+    for (var i = 0; i < exerciseArr.length; i++) {
+      if (name == exerciseArr[i].name) {
         index = exerciseArr[i].id;
         i = exerciseArr.length;
       }
     }
-    const temp1 = exerciseArr.filter(a => a.id === index);
+    const temp1 = exerciseArr.filter((a) => a.id === index);
     const docRef = await setDoc(doc(db, "exercises", temp1[0].name), {
       difficulty: temp1[0].difficulty,
       equipment: temp1[0].equipment,
@@ -377,14 +379,16 @@ export default function Workout({ navigation }) {
       type: temp1[0].type,
       instructions: temp1[0].instructions,
     });
-  
-    const newExerciseArr = exerciseArr.filter(a => a.id !== index);
+
+    const newExerciseArr = exerciseArr.filter((a) => a.id !== index);
     setExerciseArr(newExerciseArr);
     // console.log("Save Exercise")
 
-    console.log(temp1[0].name + " ||| " + workoutSelected);
-    const docRef2 = await setDoc(doc(db, "accounts", user.uid, workoutSelected, temp1[0].name), {
-    });
+    // console.log(temp1[0].name + " ||| " + workoutSelected);
+    const docRef2 = await setDoc(
+      doc(db, "accounts", user.uid, workoutSelected, temp1[0].name),
+      {}
+    );
   }
 
   async function saveExercise2() {
@@ -392,14 +396,14 @@ export default function Workout({ navigation }) {
 
     setModalAddVisible(false);
     var index = -1;
-    for(var i = 0; i < exerciseArr.length; i++){
-      if(name == exerciseArr[i].name){
+    for (var i = 0; i < exerciseArr.length; i++) {
+      if (name == exerciseArr[i].name) {
         index = exerciseArr[i].id;
         i = exerciseArr.length;
       }
     }
 
-    const temp1 = exerciseArr.filter(a => a.id === index);
+    const temp1 = exerciseArr.filter((a) => a.id === index);
     const docRef = await setDoc(doc(db, "exercises", temp1[0].name), {
       difficulty: temp1[0].difficulty,
       equipment: temp1[0].equipment,
@@ -409,15 +413,26 @@ export default function Workout({ navigation }) {
       instructions: temp1[0].instructions,
     });
 
-    const newExerciseArr = exerciseArr.filter(a => a.id !== index);
+    const newExerciseArr = exerciseArr.filter((a) => a.id !== index);
     setExerciseArr(newExerciseArr);
 
-    const docRef2 = await setDoc(doc(db, "accounts", user.uid, "workouts", workoutSelected, "exercises", temp1[0].name), {
-      setsNum: setting1,
-      restNum: setting2, 
-      activeNum: setting3,
-      name: temp1[0].name
-    });
+    const docRef2 = await setDoc(
+      doc(
+        db,
+        "accounts",
+        user.uid,
+        "workouts",
+        workoutSelected,
+        "exercises",
+        temp1[0].name
+      ),
+      {
+        setsNum: setting1,
+        restNum: setting2,
+        activeNum: setting3,
+        name: temp1[0].name,
+      }
+    );
   }
 
   const addInfo = () => {
@@ -425,55 +440,33 @@ export default function Workout({ navigation }) {
     // fruits.push({
     //   id: counter, equipment: "tools", muscle: "lats",
     // });
-    setExerciseArr([...exerciseArr, {id: counter, equipment: "tools", muscle: "lats",}])
-    setCount(counter + 1)
+    setExerciseArr([
+      ...exerciseArr,
+      { id: counter, equipment: "tools", muscle: "lats" },
+    ]);
+    setCount(counter + 1);
     // console.log(counter);
-  }
- 
+  };
+
   const submitInput = (filter) => {
-    if(filter == true) {
+    if (filter == true) {
       setfilterModalVis(false);
       setExerciseArr([]);
       const options = {
-        method: 'GET',
-        url: 'https://exercises-by-api-ninjas.p.rapidapi.com/v1/exercises',
-        params: { muscle: muscles,
-        difficulty: difficulty,
-                  type: type
-                },
+        method: "GET",
+        url: "https://exercises-by-api-ninjas.p.rapidapi.com/v1/exercises",
+        params: { muscle: muscles, difficulty: difficulty, type: type },
         headers: {
-          'X-RapidAPI-Key': 'd1b21c7c74msh10859b8b93cc3adp10d1c8jsncacbeda663df',
-          'X-RapidAPI-Host': 'exercises-by-api-ninjas.p.rapidapi.com'
-        }
+          "X-RapidAPI-Key":
+            "d1b21c7c74msh10859b8b93cc3adp10d1c8jsncacbeda663df",
+          "X-RapidAPI-Host": "exercises-by-api-ninjas.p.rapidapi.com",
+        },
       };
-      axios.request(options).then(function (response) {
-        displayData(response.data);
-        if(response.data.length == 0) {
-          showMessage({
-            message: "No Results",
-            floating: true,
-            textStyle: styles.flashText,
-            titleStyle: styles.flashText,
-            icon: "danger",
-          });
-        }
-      }).catch(function (error) {
-        console.error(error);
-      });
-    } else if(searchBarText != "" && filter == false){
-        setExerciseArr([]);
-        const options = {
-          method: 'GET',
-          url: 'https://exercises-by-api-ninjas.p.rapidapi.com/v1/exercises',
-          params: {name: searchBarText},
-          headers: {
-            'X-RapidAPI-Key': 'd1b21c7c74msh10859b8b93cc3adp10d1c8jsncacbeda663df',
-            'X-RapidAPI-Host': 'exercises-by-api-ninjas.p.rapidapi.com'
-          }
-        };
-        axios.request(options).then(function (response) {
+      axios
+        .request(options)
+        .then(function (response) {
           displayData(response.data);
-          if(response.data.length == 0) {
+          if (response.data.length == 0) {
             showMessage({
               message: "No Results",
               floating: true,
@@ -482,10 +475,40 @@ export default function Workout({ navigation }) {
               icon: "danger",
             });
           }
-        }).catch(function (error) {
+        })
+        .catch(function (error) {
           console.error(error);
         });
-    } else if (searchBarText == ""){
+    } else if (searchBarText != "" && filter == false) {
+      setExerciseArr([]);
+      const options = {
+        method: "GET",
+        url: "https://exercises-by-api-ninjas.p.rapidapi.com/v1/exercises",
+        params: { name: searchBarText },
+        headers: {
+          "X-RapidAPI-Key":
+            "d1b21c7c74msh10859b8b93cc3adp10d1c8jsncacbeda663df",
+          "X-RapidAPI-Host": "exercises-by-api-ninjas.p.rapidapi.com",
+        },
+      };
+      axios
+        .request(options)
+        .then(function (response) {
+          displayData(response.data);
+          if (response.data.length == 0) {
+            showMessage({
+              message: "No Results",
+              floating: true,
+              textStyle: styles.flashText,
+              titleStyle: styles.flashText,
+              icon: "danger",
+            });
+          }
+        })
+        .catch(function (error) {
+          console.error(error);
+        });
+    } else if (searchBarText == "") {
       showMessage({
         message: "Input Exercise",
         floating: true,
@@ -494,29 +517,29 @@ export default function Workout({ navigation }) {
         icon: "danger",
       });
     }
-  }
+  };
 
   const displayData = (input) => {
     console.log("----------------------");
     // setExerciseArr(exerciseArr => [...exerciseArr, allData]);
-    for(var i = 0; i < input.length; i++){
+    for (var i = 0; i < input.length; i++) {
       input[i].id = counter + i;
       // input[i].id = i + 1;
     }
     setCount(counter + 10);
     setExerciseArr(input);
-  }
+  };
 
   async function selectWorkout(index) {
     setWorkoutSelected(workoutNameArr[index]);
-    for(var i = 0; i < workoutNameArr.length; i++){
+    for (var i = 0; i < workoutNameArr.length; i++) {
       workoutBtnStyleArr[i] = buttonRowStyles.buttonOff;
     }
     workoutBtnStyleArr[index] = buttonRowStyles.buttonOn;
   }
 
   const setPath = (muscleName) => {
-    switch(muscleName) { 
+    switch (muscleName) {
       case "abdominals":
         modalMusclePath1 = require("./muscleImages/abdominals1.png");
         modalMusclePath2 = require("./muscleImages/default2.png");
@@ -524,7 +547,7 @@ export default function Workout({ navigation }) {
       case "abductors":
         modalMusclePath1 = require("./muscleImages/default1.png");
         modalMusclePath2 = require("./muscleImages/abductors1.png");
-        break;  
+        break;
       case "adductors":
         modalMusclePath1 = require("./muscleImages/adductors1.png");
         modalMusclePath2 = require("./muscleImages/adductors2.png");
@@ -564,7 +587,7 @@ export default function Workout({ navigation }) {
       case "middle_back":
         modalMusclePath1 = require("./muscleImages/default1.png");
         modalMusclePath2 = require("./muscleImages/middle_back1.png");
-        break;                  
+        break;
       case "neck":
         modalMusclePath1 = require("./muscleImages/neck1.png");
         modalMusclePath2 = require("./muscleImages/neck2.png");
@@ -585,106 +608,108 @@ export default function Workout({ navigation }) {
         modalMusclePath1 = require("./muscleImages/default1.png");
         modalMusclePath2 = require("./muscleImages/triceps1.png");
         break;
-      default: 
+      default:
         modalMusclePath1 = require("./muscleImages/default1.png");
         modalMusclePath2 = require("./muscleImages/default2.png");
-      } 
-  }
+    }
+  };
 
   const modalButtons = (action) => {
-    var tempIndex = modalIndex; 
-    if(fixModalIndex){
+    var tempIndex = modalIndex;
+    if (fixModalIndex) {
       setFixModalIndex(false);
       tempIndex -= exerciseArr[0].id;
     }
 
-    if (action == "ADD"){
+    if (action == "ADD") {
       // saveExercise(exerciseArr[tempIndex].name);
       setModalAddVisible(true);
-      setSetting1(setNumArr[0])
+      setSetting1(setNumArr[0]);
       setSetting2(timeArr[0]);
       setSetting3(timeArr[0]);
-      for(var i = 0; i < setNumArr.length; i++){
+      for (var i = 0; i < setNumArr.length; i++) {
         settingStyleArr1[i] = modalAddStyles.timeButtonOff;
       }
-      for(var i = 0; i < timeArr.length; i++){
+      for (var i = 0; i < timeArr.length; i++) {
         settingStyleArr2[i] = modalAddStyles.timeButtonOff;
         settingStyleArr3[i] = modalAddStyles.timeButtonOff;
       }
       settingStyleArr1[0] = modalAddStyles.timeButtonOn;
       settingStyleArr2[0] = modalAddStyles.timeButtonOn;
       settingStyleArr3[0] = modalAddStyles.timeButtonOn;
-      
-    } 
-    else if (action == "LEFT"){
+    } else if (action == "LEFT") {
       tempIndex--;
-      if(tempIndex < 0){
-        tempIndex = exerciseArr.length - 1
-      } 
-    } 
-    else if (action == "RIGHT"){
+      if (tempIndex < 0) {
+        tempIndex = exerciseArr.length - 1;
+      }
+    } else if (action == "RIGHT") {
       tempIndex++;
-      if(tempIndex > exerciseArr.length - 1){
+      if (tempIndex > exerciseArr.length - 1) {
         tempIndex = 0;
       }
     }
 
     var update = true;
     var count = 0;
-    // if(exerciseArr.length == 1 && action == "ADD"){ 
+    // if(exerciseArr.length == 1 && action == "ADD"){
     //   setModalVisible(!modalVisible);
     //   update = false;
-    // } 
+    // }
     // else if (action == "ADD") {
     //   if(tempIndex + 1> exerciseArr.length - 1){
     //     tempIndex = 0;
     //   } else {
     //     count = 1;
     //   }
-    // } 
-    if(update) {
+    // }
+    if (update) {
       setModalIndex(tempIndex);
       setPath(exerciseArr[tempIndex + count].muscle);
       setModalInfo({
         id: exerciseArr[tempIndex + count].id,
-        name: exerciseArr[tempIndex + count].name, 
+        name: exerciseArr[tempIndex + count].name,
         type: exerciseArr[tempIndex + count].type,
-        muscle: exerciseArr[tempIndex + count].muscle, 
-        equipment: exerciseArr[tempIndex + count].equipment, 
-        difficulty: exerciseArr[tempIndex + count].difficulty, 
-        instructions: exerciseArr[tempIndex + count].instructions
-      }); 
+        muscle: exerciseArr[tempIndex + count].muscle,
+        equipment: exerciseArr[tempIndex + count].equipment,
+        difficulty: exerciseArr[tempIndex + count].difficulty,
+        instructions: exerciseArr[tempIndex + count].instructions,
+      });
     }
-  }
+  };
 
   const selectSetting = (type, index) => {
-    if(type == 1){
+    if (type == 1) {
       setSetting1(setNumArr[index]);
-      for(var i = 0; i < setNumArr.length; i++){
+      for (var i = 0; i < setNumArr.length; i++) {
         settingStyleArr1[i] = modalAddStyles.timeButtonOff;
       }
       settingStyleArr1[index] = modalAddStyles.timeButtonOn;
     } else if (type == 2) {
       setSetting2(timeArr[index]);
-      for(var i = 0; i < timeArr.length; i++){
+      for (var i = 0; i < timeArr.length; i++) {
         settingStyleArr2[i] = modalAddStyles.timeButtonOff;
       }
       settingStyleArr2[index] = modalAddStyles.timeButtonOn;
     } else if (type == 3) {
       setSetting3(timeArr[index]);
-      for(var i = 0; i < timeArr.length; i++){
+      for (var i = 0; i < timeArr.length; i++) {
         settingStyleArr3[i] = modalAddStyles.timeButtonOff;
       }
       settingStyleArr3[index] = modalAddStyles.timeButtonOn;
     }
-  }
+  };
 
   return (
     <View style={styles.mainContainer}>
-
       <View style={styles.searchView}>
-        <TouchableOpacity style = {{paddingRight:10}} onPress={() => setfilterModalVis(true)}>
-          <Image source={ require('../assets/filter1.png') } style={ { width: 35, height: 35 } } />
+        <TouchableOpacity
+          style={{ paddingRight: 10 }}
+          onPress={() => setfilterModalVis(true)}
+        >
+          <Image
+            source={require("../assets/filter1.png")}
+            style={{ width: 35, height: 35 }}
+          />
         </TouchableOpacity>
         <View style={vedantStyles.inputView}>
           <TextInput
@@ -693,21 +718,35 @@ export default function Workout({ navigation }) {
             placeholderTextColor="#cccccc"
             onChangeText={(searchBarText) => setSearchBarText(searchBarText)}
             keyboardAppearance="dark"
-          /> 
-        </View> 
-        <TouchableOpacity style = {{paddingLeft:6}} onPress={() => submitInput(false)}>
-            <Image source={ require('../assets/search.png') } style={ { width: 40, height: 40 } } />
+          />
+        </View>
+        <TouchableOpacity
+          style={{ paddingLeft: 6 }}
+          onPress={() => submitInput(false)}
+        >
+          <Image
+            source={require("../assets/search.png")}
+            style={{ width: 40, height: 40 }}
+          />
         </TouchableOpacity>
       </View>
 
       <View style={buttonRowStyles.container}>
-        <ScrollView horizontal={true} style={buttonRowStyles.scrollView} showsHorizontalScrollIndicator={false}>
+        <ScrollView
+          horizontal={true}
+          style={buttonRowStyles.scrollView}
+          showsHorizontalScrollIndicator={false}
+        >
           <View style={buttonRowStyles.buttonsView}>
             {workoutNameArr.map((info, index) => (
-              <TouchableOpacity key={index} style={workoutBtnStyleArr[index]} onPress={() => selectWorkout(index)}>
+              <TouchableOpacity
+                key={index}
+                style={workoutBtnStyleArr[index]}
+                onPress={() => selectWorkout(index)}
+              >
                 <Text style={buttonRowStyles.buttonText}> {info} </Text>
               </TouchableOpacity>
-          ))}
+            ))}
           </View>
         </ScrollView>
       </View>
@@ -716,11 +755,15 @@ export default function Workout({ navigation }) {
         animationType="slide"
         transparent={true}
         visible={modalVisible}
-        onRequestClose={() => {Alert.alert("Modal has been closed."); setModalVisible(!modalVisible); }}>
+        onRequestClose={() => {
+          Alert.alert("Modal has been closed.");
+          setModalVisible(!modalVisible);
+        }}
+      >
         <View style={modalStyles.modalContainer}>
           <View style={modalStyles.modalView}>
             <ScrollView showsVerticalScrollIndicator={false}>
-              <View style={{alignItems: "center"}}>
+              <View style={{ alignItems: "center" }}>
                 <View style={modalStyles.titleView}>
                   <Text style={modalStyles.titleText}>{modalInfo.name}</Text>
                 </View>
@@ -731,84 +774,120 @@ export default function Workout({ navigation }) {
                       <View style={modalStyles.infoTextView1}>
                         <Text style={modalStyles.infoText1}> Difficulty </Text>
                       </View>
-                      <Text style={modalStyles.infoText2}>{ modalInfo.difficulty }</Text>
+                      <Text style={modalStyles.infoText2}>
+                        {modalInfo.difficulty}
+                      </Text>
                     </View>
                     <View style={modalStyles.infoTextContainer}>
                       <View style={modalStyles.infoTextView1}>
                         <Text style={modalStyles.infoText1}> Category </Text>
                       </View>
-                      <Text style={modalStyles.infoText2}>{ modalInfo.type }</Text>
+                      <Text style={modalStyles.infoText2}>
+                        {modalInfo.type}
+                      </Text>
                     </View>
-                    <View style={[modalStyles.infoTextContainer, modalStyles.infoTextViewTweak]}>
+                    <View
+                      style={[
+                        modalStyles.infoTextContainer,
+                        modalStyles.infoTextViewTweak,
+                      ]}
+                    >
                       <View style={modalStyles.infoTextView1}>
                         <Text style={modalStyles.infoText1}> Equipment </Text>
                       </View>
-                      <Text style={modalStyles.infoText2}>{ modalInfo.equipment }</Text>
+                      <Text style={modalStyles.infoText2}>
+                        {modalInfo.equipment}
+                      </Text>
                     </View>
                   </View>
 
                   <View style={modalStyles.flipCardView1}>
                     <View style={modalStyles.flipCardView2}>
-                      <FlipCard style={modalStyles.flipCard}
+                      <FlipCard
+                        style={modalStyles.flipCard}
                         friction={6}
                         perspective={100000}
                         flipHorizontal={true}
                         flipVertical={false}
                         flip={false}
-                        clickable={true}>
+                        clickable={true}
+                      >
                         <View style={modalStyles.flipContainers}>
-                          <Image source={ modalMusclePath1 } style={modalStyles.imageStyle} />
+                          <Image
+                            source={modalMusclePath1}
+                            style={modalStyles.imageStyle}
+                          />
                         </View>
                         <View style={modalStyles.flipContainers}>
-                          <Image source={ modalMusclePath2 } style={modalStyles.imageStyle} />
+                          <Image
+                            source={modalMusclePath2}
+                            style={modalStyles.imageStyle}
+                          />
                         </View>
                       </FlipCard>
                       <View style={modalStyles.flipMuscleView}>
-                        <Text style={modalStyles.flipMuscleText}>{ modalInfo.muscle }</Text>
+                        <Text style={modalStyles.flipMuscleText}>
+                          {modalInfo.muscle}
+                        </Text>
                       </View>
                     </View>
-                  </View>  
+                  </View>
                 </View>
                 <View style={modalStyles.controlView}>
-                  <TouchableOpacity style={modalStyles.controlButtons} onPress={() => modalButtons("LEFT")}>
-                    <Icon 
+                  <TouchableOpacity
+                    style={modalStyles.controlButtons}
+                    onPress={() => modalButtons("LEFT")}
+                  >
+                    <Icon
                       name="arrow-left-drop-circle"
                       type="material-community"
                       size={55}
                       color="#fff"
                     />
-                  </TouchableOpacity> 
-                  <TouchableOpacity style={modalStyles.controlButtons} onPress={() => modalButtons("ADD")}>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={modalStyles.controlButtons}
+                    onPress={() => modalButtons("ADD")}
+                  >
                     <Icon
                       name="plus-circle"
                       type="material-community"
                       size={70}
                       color="#fff"
                     />
-                  </TouchableOpacity> 
-                  <TouchableOpacity style={modalStyles.controlButtons} onPress={() => modalButtons("RIGHT")}>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={modalStyles.controlButtons}
+                    onPress={() => modalButtons("RIGHT")}
+                  >
                     <Icon
                       name="arrow-right-drop-circle"
                       type="material-community"
                       size={55}
                       color="#fff"
                     />
-                  </TouchableOpacity> 
+                  </TouchableOpacity>
                 </View>
-                
-                <TouchableOpacity style={modalStyles.returnButton} onPress={() => setModalVisible(!modalVisible)}>
+
+                <TouchableOpacity
+                  style={modalStyles.returnButton}
+                  onPress={() => setModalVisible(!modalVisible)}
+                >
                   <Text style={modalStyles.returnText}>Return</Text>
                 </TouchableOpacity>
 
                 <View style={modalStyles.directionsView}>
                   <ScrollView showsVerticalScrollIndicator={false}>
                     <View>
-                      <Text style={modalStyles.directionsTitle}>Directions</Text>
-                      <Text style={modalStyles.directionsBody}>{modalInfo.instructions}</Text>
+                      <Text style={modalStyles.directionsTitle}>
+                        Directions
+                      </Text>
+                      <Text style={modalStyles.directionsBody}>
+                        {modalInfo.instructions}
+                      </Text>
                     </View>
                   </ScrollView>
                 </View>
-
               </View>
             </ScrollView>
           </View>
@@ -818,12 +897,22 @@ export default function Workout({ navigation }) {
           animationType="fade"
           transparent={true}
           visible={modalAddVisible}
-          onRequestClose={() => {Alert.alert('Modal has been closed.'); setModalAddVisible(!modalAddVisible); }}>
-          <BlurView intensity={65} tint="dark" style={modalAddStyles.modalContainer}>
+          onRequestClose={() => {
+            Alert.alert("Modal has been closed.");
+            setModalAddVisible(!modalAddVisible);
+          }}
+        >
+          <BlurView
+            intensity={65}
+            tint="dark"
+            style={modalAddStyles.modalContainer}
+          >
             <View style={modalAddStyles.modalView}>
               <View style={modalAddStyles.titleView1}>
                 <View style={modalAddStyles.titleView2}>
-                  <Text style={modalAddStyles.titleText}>Exercise Settings</Text>
+                  <Text style={modalAddStyles.titleText}>
+                    Exercise Settings
+                  </Text>
                 </View>
                 <Icon
                   onPress={() => setModalAddVisible(!modalAddVisible)}
@@ -835,56 +924,110 @@ export default function Workout({ navigation }) {
                 />
               </View>
               <View style={modalAddStyles.dividerView}>
-                <Divider borderColor="#7f6bb5" color="#e2deff" orientation="center">Time On</Divider>
+                <Divider
+                  borderColor="#7f6bb5"
+                  color="#e2deff"
+                  orientation="center"
+                >
+                  Time On
+                </Divider>
               </View>
               <View style={modalAddStyles.scrollContainer1}>
-                <ScrollView horizontal={true} style={modalAddStyles.scrollContainer2} showsHorizontalScrollIndicator={false}>
-                  <View style={modalAddStyles.scrollContainer3}> 
+                <ScrollView
+                  horizontal={true}
+                  style={modalAddStyles.scrollContainer2}
+                  showsHorizontalScrollIndicator={false}
+                >
+                  <View style={modalAddStyles.scrollContainer3}>
                     {timeArr.map((info, index) => (
                       <TouchableOpacity
-                        key={index} style={settingStyleArr3[index]} onPress={() => {selectSetting(3, index)}}>
-                        <Text style={modalAddStyles.timeButtonText}>{info}</Text>
+                        key={index}
+                        style={settingStyleArr3[index]}
+                        onPress={() => {
+                          selectSetting(3, index);
+                        }}
+                      >
+                        <Text style={modalAddStyles.timeButtonText}>
+                          {info}
+                        </Text>
                       </TouchableOpacity>
                     ))}
                   </View>
                 </ScrollView>
-              </View> 
+              </View>
               <View style={modalAddStyles.dividerView}>
-                <Divider borderColor="#7f6bb5" color="#e2deff" orientation="center">Number of Sets</Divider>
+                <Divider
+                  borderColor="#7f6bb5"
+                  color="#e2deff"
+                  orientation="center"
+                >
+                  Number of Sets
+                </Divider>
               </View>
               <View style={modalAddStyles.scrollContainer1}>
-                <ScrollView horizontal={true} style={modalAddStyles.scrollContainer2} showsHorizontalScrollIndicator={false}>
-                  <View style={modalAddStyles.scrollContainer3}> 
+                <ScrollView
+                  horizontal={true}
+                  style={modalAddStyles.scrollContainer2}
+                  showsHorizontalScrollIndicator={false}
+                >
+                  <View style={modalAddStyles.scrollContainer3}>
                     {setNumArr.map((info, index) => (
-                      <TouchableOpacity key={index} style={settingStyleArr1[index]} onPress={() => {selectSetting(1, index)}}>
-                        <Text style={modalAddStyles.timeButtonText}>{info}</Text>
+                      <TouchableOpacity
+                        key={index}
+                        style={settingStyleArr1[index]}
+                        onPress={() => {
+                          selectSetting(1, index);
+                        }}
+                      >
+                        <Text style={modalAddStyles.timeButtonText}>
+                          {info}
+                        </Text>
                       </TouchableOpacity>
                     ))}
                   </View>
                 </ScrollView>
               </View>
               <View style={modalAddStyles.dividerView}>
-                <Divider borderColor="#7f6bb5" color="#e2deff" orientation="center">Rest Per Set</Divider>
+                <Divider
+                  borderColor="#7f6bb5"
+                  color="#e2deff"
+                  orientation="center"
+                >
+                  Rest Per Set
+                </Divider>
               </View>
               <View style={modalAddStyles.scrollContainer1}>
-                <ScrollView horizontal={true} style={modalAddStyles.scrollContainer2} showsHorizontalScrollIndicator={false}>
-                  <View style={modalAddStyles.scrollContainer3}> 
+                <ScrollView
+                  horizontal={true}
+                  style={modalAddStyles.scrollContainer2}
+                  showsHorizontalScrollIndicator={false}
+                >
+                  <View style={modalAddStyles.scrollContainer3}>
                     {timeArr.map((info, index) => (
                       <TouchableOpacity
-                        key={index} style={settingStyleArr2[index]} onPress={() => {selectSetting(2, index)}}>
-                        <Text style={modalAddStyles.timeButtonText}>{info}</Text>
+                        key={index}
+                        style={settingStyleArr2[index]}
+                        onPress={() => {
+                          selectSetting(2, index);
+                        }}
+                      >
+                        <Text style={modalAddStyles.timeButtonText}>
+                          {info}
+                        </Text>
                       </TouchableOpacity>
                     ))}
                   </View>
                 </ScrollView>
-              </View> 
+              </View>
 
-              <TouchableOpacity style={modalAddStyles.saveButton} onPress={saveExercise2}>
+              <TouchableOpacity
+                style={modalAddStyles.saveButton}
+                onPress={saveExercise2}
+              >
                 <Text style={modalAddStyles.saveText}>SAVE</Text>
               </TouchableOpacity>
             </View>
           </BlurView>
-
         </Modal>
       </Modal>
 
@@ -892,150 +1035,247 @@ export default function Workout({ navigation }) {
         animationType="slide"
         visible={filterModalVis}
         onRequestClose={() => {
-          Alert.alert('Modal has been closed.');
+          Alert.alert("Modal has been closed.");
           setModalVisible(!modalVisible);
-        }}>
+        }}
+      >
+        <View style={vedantStyles.container}>
+          <View style={{ marginTop: 75 }}>
+            <View style={{ marginRight: 210, flexDirection: "row" }}>
+              <Text style={vedantStyles.titleText}>Filters</Text>
+              <Image
+                source={require("../assets/filter1.png")}
+                style={{
+                  width: 35,
+                  height: 35,
+                  paddingRight: 10,
+                  marginTop: 5,
+                }}
+              />
+            </View>
+          </View>
+          <View style={vedantStyles.filterContainer}>
+            <Text style={vedantStyles.filterHeader}>Difficulty</Text>
+            <View style={{ flexDirection: "row", marginBottom: 5 }}>
+              <View>
+                <TouchableOpacity
+                  style={styleBeginner}
+                  onPress={() => recieveButtonClicks(1)}
+                >
+                  <Text style={vedantStyles.loginText}>Beginner</Text>
+                </TouchableOpacity>
+              </View>
+              <TouchableOpacity
+                style={styleIntermediate}
+                onPress={() => recieveButtonClicks(2)}
+              >
+                <Text style={vedantStyles.loginText}>Intermediate</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styleExpert}
+                onPress={() => recieveButtonClicks(3)}
+              >
+                <Text style={vedantStyles.loginText}>Expert</Text>
+              </TouchableOpacity>
+            </View>
 
-    <View style={vedantStyles.container}>
-     <View style={{marginTop:75}}>
-      <View style={{marginRight:210, flexDirection: 'row'}}>
-        <Text style={vedantStyles.titleText}>Filters</Text>
-            <Image source={ require('../assets/filter1.png') } style={ { width: 35, height: 35, paddingRight:10, marginTop:5 } } />
-      </View>
-    </View>
-      <View style={vedantStyles.filterContainer}>
-      
-        <Text style={vedantStyles.filterHeader}>Difficulty</Text>
-        <View style={{flexDirection: 'row', marginBottom: 5}}>
-          <View> 
-          <TouchableOpacity style={styleBeginner} onPress={() => recieveButtonClicks(1)} >
-              <Text style={vedantStyles.loginText}>Beginner</Text> 
-          </TouchableOpacity>
-          </View> 
-          <TouchableOpacity style={styleIntermediate} onPress={() => recieveButtonClicks(2)}>
-              <Text style={vedantStyles.loginText}>Intermediate</Text> 
-          </TouchableOpacity> 
-          <TouchableOpacity style={styleExpert} onPress={() => recieveButtonClicks(3)}>
-              <Text style={vedantStyles.loginText}>Expert</Text> 
-          </TouchableOpacity> 
+            <Text style={vedantStyles.filterHeader}>Muscle Group</Text>
+            <View style={{ flexDirection: "row" }}>
+              <TouchableOpacity
+                style={styleAbdom}
+                onPress={() => recieveButtonClicks(4)}
+              >
+                <Text style={vedantStyles.loginText}>Abdominals</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styleAbduct}
+                onPress={() => recieveButtonClicks(5)}
+              >
+                <Text style={vedantStyles.loginText}>Abductors</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styleAdd}
+                onPress={() => recieveButtonClicks(6)}
+              >
+                <Text style={vedantStyles.loginText}>Adductors</Text>
+              </TouchableOpacity>
+            </View>
+
+            <View style={{ flexDirection: "row" }}>
+              <TouchableOpacity
+                style={styleBiceps}
+                onPress={() => recieveButtonClicks(7)}
+              >
+                <Text style={vedantStyles.loginText}>Biceps</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styleTriceps}
+                onPress={() => recieveButtonClicks(8)}
+              >
+                <Text style={vedantStyles.loginText}>Triceps</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styleLats}
+                onPress={() => recieveButtonClicks(9)}
+              >
+                <Text style={vedantStyles.loginText}>Lats</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styleFore}
+                onPress={() => recieveButtonClicks(10)}
+              >
+                <Text style={vedantStyles.loginText}>Forearms</Text>
+              </TouchableOpacity>
+            </View>
+
+            <View style={{ flexDirection: "row" }}>
+              <TouchableOpacity
+                style={styleTraps}
+                onPress={() => recieveButtonClicks(11)}
+              >
+                <Text style={vedantStyles.loginText}>Traps</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styleChest}
+                onPress={() => recieveButtonClicks(12)}
+              >
+                <Text style={vedantStyles.loginText}>Chest</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styleNeck}
+                onPress={() => recieveButtonClicks(13)}
+              >
+                <Text style={vedantStyles.loginText}>Neck</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styleLowBack}
+                onPress={() => recieveButtonClicks(14)}
+              >
+                <Text style={vedantStyles.loginText}>Lower Back</Text>
+              </TouchableOpacity>
+            </View>
+
+            <View style={{ flexDirection: "row" }}>
+              <TouchableOpacity
+                style={styleMidBack}
+                onPress={() => recieveButtonClicks(15)}
+              >
+                <Text style={vedantStyles.loginText}>Middle Back</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styleCalves}
+                onPress={() => recieveButtonClicks(16)}
+              >
+                <Text style={vedantStyles.loginText}>Calves</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styleGlutes}
+                onPress={() => recieveButtonClicks(17)}
+              >
+                <Text style={vedantStyles.loginText}>Glutes</Text>
+              </TouchableOpacity>
+            </View>
+
+            <View style={{ flexDirection: "row" }}>
+              <TouchableOpacity
+                style={styleHams}
+                onPress={() => recieveButtonClicks(18)}
+              >
+                <Text style={vedantStyles.loginText}>Hamstrings</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styleQuads}
+                onPress={() => recieveButtonClicks(19)}
+              >
+                <Text style={vedantStyles.loginText}>Quadriceps</Text>
+              </TouchableOpacity>
+            </View>
+
+            <Text style={vedantStyles.filterHeader}>Type</Text>
+            <View style={{ flexDirection: "row" }}>
+              <TouchableOpacity
+                style={styleCardio}
+                onPress={() => recieveButtonClicks(20)}
+              >
+                <Text style={vedantStyles.loginText}>Cardio</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styleOly}
+                onPress={() => recieveButtonClicks(21)}
+              >
+                <Text style={vedantStyles.loginText}>
+                  Olympic Weightlifting
+                </Text>
+              </TouchableOpacity>
+            </View>
+
+            <View style={{ flexDirection: "row" }}>
+              <TouchableOpacity
+                style={stylePlyo}
+                onPress={() => recieveButtonClicks(22)}
+              >
+                <Text style={vedantStyles.loginText}>Plyometrics</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={stylePower}
+                onPress={() => recieveButtonClicks(23)}
+              >
+                <Text style={vedantStyles.loginText}>Powerlifting</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styleStrength}
+                onPress={() => recieveButtonClicks(24)}
+              >
+                <Text style={vedantStyles.loginText}>Strength</Text>
+              </TouchableOpacity>
+            </View>
+
+            <View style={{ flexDirection: "row" }}>
+              <TouchableOpacity
+                style={styleStretch}
+                onPress={() => recieveButtonClicks(25)}
+              >
+                <Text style={vedantStyles.loginText}>Stretching</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styleStrong}
+                onPress={() => recieveButtonClicks(26)}
+              >
+                <Text style={vedantStyles.loginText}>Strongman</Text>
+              </TouchableOpacity>
+            </View>
+
+            <View style={vedantStyles.filterButtonsView}>
+              <TouchableOpacity
+                onPress={() => setfilterModalVis(false)}
+                style={vedantStyles.backBtnView}
+              >
+                <Text style={vedantStyles.backText}>Back</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => submitInput(true)}
+                style={vedantStyles.searchBtnView}
+              >
+                <Text style={vedantStyles.searchText}>Search</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
         </View>
-
-        <Text style={vedantStyles.filterHeader}>Muscle Group</Text>
-        <View style={{flexDirection: 'row'}}>
-          <TouchableOpacity style={styleAbdom} onPress={() => recieveButtonClicks(4)}>
-              <Text style={vedantStyles.loginText}>Abdominals</Text> 
-          </TouchableOpacity> 
-          <TouchableOpacity style={styleAbduct} onPress={() => recieveButtonClicks(5)}>
-              <Text style={vedantStyles.loginText}>Abductors</Text> 
-          </TouchableOpacity> 
-          <TouchableOpacity style={styleAdd} onPress={() => recieveButtonClicks(6)}>
-              <Text style={vedantStyles.loginText}>Adductors</Text> 
-          </TouchableOpacity> 
-        </View>
-
-        <View style={{flexDirection: 'row'}}>
-          <TouchableOpacity style={styleBiceps} onPress={() => recieveButtonClicks(7)}>
-              <Text style={vedantStyles.loginText}>Biceps</Text> 
-          </TouchableOpacity> 
-          <TouchableOpacity style={styleTriceps} onPress={() => recieveButtonClicks(8)}>
-              <Text style={vedantStyles.loginText}>Triceps</Text> 
-          </TouchableOpacity> 
-          <TouchableOpacity style={styleLats} onPress={() => recieveButtonClicks(9)}>
-              <Text style={vedantStyles.loginText}>Lats</Text> 
-          </TouchableOpacity> 
-          <TouchableOpacity style={styleFore} onPress={() => recieveButtonClicks(10)}>
-              <Text style={vedantStyles.loginText}>Forearms</Text> 
-          </TouchableOpacity> 
-        </View>
-
-        <View style={{flexDirection: 'row'}}>
-          <TouchableOpacity style={styleTraps} onPress={() => recieveButtonClicks(11)}>
-              <Text style={vedantStyles.loginText}>Traps</Text> 
-          </TouchableOpacity> 
-          <TouchableOpacity style={styleChest} onPress={() => recieveButtonClicks(12)}>
-              <Text style={vedantStyles.loginText}>Chest</Text> 
-          </TouchableOpacity> 
-          <TouchableOpacity style={styleNeck} onPress={() => recieveButtonClicks(13)}>
-              <Text style={vedantStyles.loginText}>Neck</Text> 
-          </TouchableOpacity> 
-          <TouchableOpacity style={styleLowBack} onPress={() => recieveButtonClicks(14)}>
-              <Text style={vedantStyles.loginText}>Lower Back</Text> 
-          </TouchableOpacity>
-        </View>
-
-        <View style={{flexDirection: 'row'}}>
-          <TouchableOpacity style={styleMidBack} onPress={() => recieveButtonClicks(15)}>
-              <Text style={vedantStyles.loginText}>Middle Back</Text> 
-          </TouchableOpacity> 
-          <TouchableOpacity style={styleCalves} onPress={() => recieveButtonClicks(16)}>
-              <Text style={vedantStyles.loginText}>Calves</Text> 
-          </TouchableOpacity> 
-          <TouchableOpacity style={styleGlutes} onPress={() => recieveButtonClicks(17)}>
-              <Text style={vedantStyles.loginText}>Glutes</Text> 
-          </TouchableOpacity> 
-        </View>
-
-        <View style={{flexDirection: 'row'}}>
-          <TouchableOpacity style={styleHams} onPress={() => recieveButtonClicks(18)}>
-              <Text style={vedantStyles.loginText}>Hamstrings</Text> 
-          </TouchableOpacity> 
-          <TouchableOpacity style={styleQuads} onPress={() => recieveButtonClicks(19)}>
-              <Text style={vedantStyles.loginText}>Quadriceps</Text> 
-          </TouchableOpacity> 
-        </View>
-
-        <Text style={vedantStyles.filterHeader}>Type</Text>
-        <View style={{flexDirection: 'row'}}>
-          <TouchableOpacity style={styleCardio} onPress={() => recieveButtonClicks(20)}>
-              <Text style={vedantStyles.loginText}>Cardio</Text> 
-          </TouchableOpacity> 
-          <TouchableOpacity style={styleOly} onPress={() => recieveButtonClicks(21)}>
-              <Text style={vedantStyles.loginText}>Olympic Weightlifting</Text> 
-          </TouchableOpacity> 
-        </View>
-
-        <View style={{flexDirection: 'row'}}>
-          <TouchableOpacity style={stylePlyo} onPress={() => recieveButtonClicks(22)}>
-              <Text style={vedantStyles.loginText}>Plyometrics</Text> 
-          </TouchableOpacity> 
-          <TouchableOpacity style={stylePower} onPress={() => recieveButtonClicks(23)}>
-              <Text style={vedantStyles.loginText}>Powerlifting</Text> 
-          </TouchableOpacity> 
-          <TouchableOpacity style={styleStrength} onPress={() => recieveButtonClicks(24)}>
-              <Text style={vedantStyles.loginText}>Strength</Text> 
-          </TouchableOpacity> 
-        </View>
-
-        <View style={{flexDirection: 'row'}}>
-          <TouchableOpacity style={styleStretch} onPress={() => recieveButtonClicks(25)}>
-              <Text style={vedantStyles.loginText}>Stretching</Text> 
-          </TouchableOpacity> 
-          <TouchableOpacity style={styleStrong} onPress={() => recieveButtonClicks(26)}>
-              <Text style={vedantStyles.loginText}>Strongman</Text> 
-          </TouchableOpacity> 
-        </View>
-      
-        <View style={vedantStyles.filterButtonsView}>
-          <TouchableOpacity onPress={() => setfilterModalVis(false)} style={vedantStyles.backBtnView}>
-
-            <Text style={vedantStyles.backText}>Back</Text> 
-          </TouchableOpacity> 
-          <TouchableOpacity onPress={() => submitInput(true)} style={vedantStyles.searchBtnView}>
-            <Text style={vedantStyles.searchText}>Search</Text> 
-          </TouchableOpacity> 
-        </View>
-
-      </View>
-    </View>
       </Modal>
 
-      <ScrollView style={mainScrollView.scrollContainer1} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        style={mainScrollView.scrollContainer1}
+        showsVerticalScrollIndicator={false}
+      >
         <View style={mainScrollView.scrollContainer2}>
           {exerciseArr.map((info, index) => (
             <View key={index} style={mainScrollView.cardComp}>
               <View style={mainScrollView.cardTextView}>
                 <Text style={mainScrollView.cardText1}> {info.name} </Text>
-                <Text style={mainScrollView.cardText2}> {info.difficulty} </Text>
+                <Text style={mainScrollView.cardText2}>
+                  {" "}
+                  {info.difficulty}{" "}
+                </Text>
               </View>
               <View style={styles.buttonView}>
                 <TouchableOpacity
@@ -1047,12 +1287,13 @@ export default function Workout({ navigation }) {
                     setPath(info.muscle);
                     setModalInfo({
                       id: info.id,
-                      name: info.name, 
+                      name: info.name,
                       type: info.type,
-                      muscle: info.muscle, 
-                      equipment: info.equipment, 
-                      difficulty: info.difficulty, 
-                      instructions: info.instructions});
+                      muscle: info.muscle,
+                      equipment: info.equipment,
+                      difficulty: info.difficulty,
+                      instructions: info.instructions,
+                    });
                   }}
                 >
                   <Icon
@@ -1077,7 +1318,7 @@ export default function Workout({ navigation }) {
 const buttonRowStyles = StyleSheet.create({
   container: {
     alignItems: "center",
-    justifyContent: 'center',
+    justifyContent: "center",
     height: "7%",
     width: "100%",
     marginBottom: 10,
@@ -1087,7 +1328,7 @@ const buttonRowStyles = StyleSheet.create({
   },
   buttonsView: {
     alignItems: "center",
-    justifyContent: 'center',
+    justifyContent: "center",
     flexDirection: "row",
   },
   buttonOn: {
@@ -1114,22 +1355,20 @@ const buttonRowStyles = StyleSheet.create({
     fontWeight: "500",
     color: "#fff",
   },
-
-})
+});
 
 const modalStyles = StyleSheet.create({
-
   modalContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     marginTop: 12,
   },
   modalView: {
     margin: 20,
     backgroundColor: "#11111a", //'#404057', //0d0d12 //1a1a29
-    alignItems: 'center',
-    shadowColor: '#000',
+    alignItems: "center",
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 2,
@@ -1144,7 +1383,7 @@ const modalStyles = StyleSheet.create({
   titleView: {
     backgroundColor: "#505075",
     padding: 12,
-    borderRadius: 15,    
+    borderRadius: 15,
     justifyContent: "center",
     alignContent: "center",
     marginTop: 10,
@@ -1152,7 +1391,7 @@ const modalStyles = StyleSheet.create({
     maxHeight: 60,
     width: "90%",
     flexDirection: "row",
-    shadowColor: '#fff',
+    shadowColor: "#fff",
     shadowOffset: {
       width: 0,
       height: 3,
@@ -1161,13 +1400,13 @@ const modalStyles = StyleSheet.create({
     shadowRadius: 5,
   },
   titleText: {
-    color: 'white',
-    fontWeight: 'bold',
+    color: "white",
+    fontWeight: "bold",
     alignSelf: "center",
     fontSize: 20,
   },
 
-  mainContentView:{
+  mainContentView: {
     flexDirection: "row",
     // backgroundColor: "#3e3e57",
     height: 400,
@@ -1182,7 +1421,7 @@ const modalStyles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 3,
-    borderColor: "#7c6f9e",//8e8efa//7c6f9e
+    borderColor: "#7c6f9e", //8e8efa//7c6f9e
     borderRadius: 7,
   },
 
@@ -1234,11 +1473,10 @@ const modalStyles = StyleSheet.create({
   },
 
   flipCardView1: {
-    // backgroundColor: "grey", 
-    maxHeight: 200*2, 
+    // backgroundColor: "grey",
+    maxHeight: 200 * 2,
     width: "50%",
     alignItems: "center",
-    
   },
   flipCardView2: {
     backgroundColor: "#8e8efa",
@@ -1290,7 +1528,7 @@ const modalStyles = StyleSheet.create({
     marginHorizontal: 15,
     alignItems: "center",
     justifyContent: "center",
-    shadowColor: '#fff',
+    shadowColor: "#fff",
     shadowOffset: {
       width: 0,
       height: 3,
@@ -1341,22 +1579,22 @@ const modalStyles = StyleSheet.create({
     marginRight: 10,
     lineHeight: 25,
   },
-})
+});
 
 const modalAddStyles = StyleSheet.create({
   modalContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   modalView: {
-    alignItems: 'center',
+    alignItems: "center",
     height: "54%",
     width: "70%",
-    backgroundColor: "#404057",//'#404057', //0d0d12 //26, 26, 41
+    backgroundColor: "#404057", //'#404057', //0d0d12 //26, 26, 41
     borderRadius: 15,
     borderWidth: 2,
-    borderColor: "#7f6bb5",//8a7ed9
+    borderColor: "#7f6bb5", //8a7ed9
   },
   titleView1: {
     width: "100%",
@@ -1410,7 +1648,7 @@ const modalAddStyles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  timeButtonOn : {
+  timeButtonOn: {
     width: 40,
     height: 30,
     borderRightWidth: 1,
@@ -1425,7 +1663,7 @@ const modalAddStyles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "300",
   },
-    dividerView: {
+  dividerView: {
     width: "92%",
     marginVertical: 10,
   },
@@ -1445,7 +1683,7 @@ const modalAddStyles = StyleSheet.create({
     fontWeight: "300",
     color: "#f1f0fc",
   },
-})
+});
 
 const mainScrollView = StyleSheet.create({
   scrollContainer1: {
@@ -1494,7 +1732,7 @@ const mainScrollView = StyleSheet.create({
     justifyContent: "flex-end",
     alignSelf: "flex-end",
   },
-})
+});
 
 const styles = StyleSheet.create({
   flashStyle: {
@@ -1514,12 +1752,14 @@ const styles = StyleSheet.create({
     color: "white",
   },
 
-  mainContainer:{//
+  mainContainer: {
+    //
     flex: 1,
     alignItems: "center",
-    backgroundColor: '#0d0d12',
+    backgroundColor: "#0d0d12",
   },
-  searchView: {//
+  searchView: {
+    //
     // width: "100%",
     height: 45,
     marginBottom: 20,
@@ -1527,20 +1767,21 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     marginTop: 20,
   },
-  buttonView: {//
+  buttonView: {
+    //
     alignContent: "center",
     flexDirection: "row",
     justifyContent: "center",
   },
-})
+});
 
 const vedantStyles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    backgroundColor: '#0d0d12',
+    backgroundColor: "#0d0d12",
   },
-  filterContainer: { 
+  filterContainer: {
     alignItems: "center",
   },
   titleText: {
@@ -1555,39 +1796,39 @@ const vedantStyles = StyleSheet.create({
     fontWeight: "600",
     color: "#ffffff",
     margin: 5,
-    marginTop: 15
+    marginTop: 15,
   },
   modalText: {
     marginBottom: 15,
-    textAlign: 'center',
+    textAlign: "center",
   },
   dividerView: {
     width: "87%",
   },
   loginBtn: {
-    borderRadius:7,
+    borderRadius: 7,
     paddingHorizontal: 15,
     paddingVertical: 8,
-    backgroundColor: '#FFFFFF',
-    shadowColor: 'rgba(227, 227, 255, 0.2)',
+    backgroundColor: "#FFFFFF",
+    shadowColor: "rgba(227, 227, 255, 0.2)",
     shadowOpacity: 0.8,
     elevation: 6,
     shadowRadius: 15,
     margin: 5,
-    shadowOffset : { width: 1, height: 13},
+    shadowOffset: { width: 1, height: 13 },
   },
 
   loginBtnClicked: {
-    borderRadius:7,
+    borderRadius: 7,
     paddingHorizontal: 15,
     paddingVertical: 8,
-    backgroundColor: '#8e8efa',
-    shadowColor: 'rgba(227, 227, 255, 0.2)',
+    backgroundColor: "#8e8efa",
+    shadowColor: "rgba(227, 227, 255, 0.2)",
     shadowOpacity: 0.8,
     elevation: 6,
     shadowRadius: 15,
     margin: 5,
-    shadowOffset : { width: 1, height: 13},
+    shadowOffset: { width: 1, height: 13 },
   },
   loginText: {
     fontWeight: "600",
@@ -1684,5 +1925,4 @@ const vedantStyles = StyleSheet.create({
   searchBtnView: {
     width: "50%",
   },
-
-})
+});
