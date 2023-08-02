@@ -354,84 +354,75 @@ export default function Profile({ navigation }) {
       <ScrollView style={newStyles.scrollView1} showsVerticalScrollIndicator={false}>
         
         <View style={newStyles.scrollView2}>
-
-          <View style={newStyles.accountInfoView}>
-            <Text style={newStyles.infoText}> Username </Text>
-            <View style={newStyles.inputView}>
-              <TextInput
-                style={newStyles.inputText}
-                placeholder="Example"
-                placeholderTextColor="#cccccc"
-                onChangeText={(newUsername) => setNewUsername(newUsername)}
-                value={newUsername}
-                color={"#cccccc"}
-                keyboardAppearance="dark"
-              /> 
-            </View> 
-            <Text style={newStyles.infoText}> Email </Text>
-            <View style={newStyles.inputView}>
-              <TextInput
-                style={newStyles.inputText}
-                placeholder="someone@example.com"
-                placeholderTextColor="#cccccc"
-                onChangeText={(newEmail) => setNewEmail(newEmail)}
-                value={newEmail}
-                color={"#cccccc"}
-                keyboardAppearance="dark"
-                autoCapitalize='none'
-              /> 
-            </View> 
-            <Text style={newStyles.infoText}> Password </Text>
-            <View style={newStyles.inputView}>
-              <TextInput
-                style={newStyles.inputText}
-                // placeholder="Work in Progress"
-                placeholder="New Password"
-                placeholderTextColor="#cccccc"
-                secureTextEntry={true}
-                onChangeText={(newPassword) => setNewPassword(newPassword)}
-                value={newPassword}
-                color={"#cccccc"}
-                keyboardAppearance="dark"
-              /> 
-            </View> 
-          </View>
-
-          <View style={newStyles.genSettingsContainer}>
-            <View style={newStyles.settingsView}>
-              <View style={newStyles.settingsSplit1}>
-                <Icon 
-                  name="group"
-                  type="material"
-                  size={31}
-                  color="#8e8efa"
-                />
-              </View>
-              <View style={newStyles.settingsSplit2}>
-                <Text style={newStyles.settingsText}>Receive Requests</Text>
-              </View>
-              <View style={newStyles.settingsSplit3}>
-                <Switch
-                  style={newStyles.switchStyle}
-                  trackColor={{true: '#8e8efa', false: '#767577'}}
-                  thumbColor={toggle1 ? '#f4f3f4' : '#f4f3f4'}
-                  ios_backgroundColor="#3e3e3e"
-                  onValueChange={toggleSwitch1}
-                  value={toggle1}
-                />
-              </View>
-              </View>
-              <View style={newStyles.settingsView}>
-                <View style={newStyles.settingsSplit1}>
-                  <Icon 
-                    name="leaderboard"
-                    type="material"
-                    size={31}
-                    color="#8e8efa"
-                  />
-                </View>
-                <View style={newStyles.settingsSplit2}>
-                  <Text style={newStyles.settingsText}>Receive Invites</Text>
+          {hasNoFriends ? (
+            <View style={mainStyles.friendsContainer}>
+              <Text style={mainStyles.goAddFriendsText}>
+                Add Some Friends Below
+              </Text>
+            </View>
+          ) : (
+            <View style={mainStyles.friendsContainer}>
+              <ScrollView
+                style={mainStyles.scrollContainer1}
+                showsVerticalScrollIndicator={false}
+              >
+                <View style={mainStyles.scrollContainer2}>
+                  <View style={mainStyles.scrollContainer3}>
+                    {allFriendsArr1.map((info, index) => (
+                      <View style={mainStyles.friendCard} key={index}>
+                        <View style={mainStyles.mainContent}>
+                          <TouchableOpacity
+                            onPress={() => {
+                              setChosenRemoveName(info.username);
+                              setChosenRemoveID(info.id);
+                              setRemoveFriendModalVis(true);
+                            }}
+                          >
+                            <Icon
+                              color="#8e8ef3"
+                              name="person-remove"
+                              type="material"
+                              size="30"
+                            ></Icon>
+                          </TouchableOpacity>
+                          <View style={mainStyles.usernameView}>
+                            <Text style={mainStyles.usernameText}>
+                              {info.username}
+                            </Text>
+                          </View>
+                        </View>
+                        <View style={mainStyles.dividerView}></View>
+                      </View>
+                    ))}
+                  </View>
+                  <View style={mainStyles.scrollContainer3}>
+                    {allFriendsArr2.map((info, index) => (
+                      <View style={mainStyles.friendCard} key={index}>
+                        <View style={mainStyles.mainContent}>
+                          <TouchableOpacity
+                            onPress={() => {
+                              setChosenRemoveName(info.username);
+                              setChosenRemoveID(info.id);
+                              setRemoveFriendModalVis(true);
+                            }}
+                          >
+                            <Icon
+                              color="#8e8ef3"
+                              name="person-remove"
+                              type="material"
+                              size="30"
+                            ></Icon>
+                          </TouchableOpacity>
+                          <View style={mainStyles.usernameView}>
+                            <Text style={mainStyles.usernameText}>
+                              {info.username}
+                            </Text>
+                          </View>
+                        </View>
+                        <View style={mainStyles.dividerView}></View>
+                      </View>
+                    ))}
+                  </View>
                 </View>
                 <View style={newStyles.settingsSplit3}>
                   <Switch
@@ -444,10 +435,7 @@ export default function Profile({ navigation }) {
                 </View>
               </View>
             </View>
-
-          <TouchableOpacity style={newStyles.updateBtn} onPress={() => handleUpdate()}>
-            <Text style={newStyles.updateText}>Update</Text>
-          </TouchableOpacity>  
+          )}
 
           <View style={newStyles.dividerView2}>
             <Divider borderColor="#a3a3bf" color="#a3a3bf" orientation="center">

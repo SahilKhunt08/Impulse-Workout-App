@@ -21,6 +21,10 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   onAuthStateChanged,
+  updatePassword,
+  updateEmail,
+  reauthenticateWithCredential,
+  EmailAuthProvider,
 } from "firebase/auth";
 import {
   addDoc,
@@ -44,6 +48,10 @@ import { Icon } from "@rneui/themed";
 import { CountdownCircleTimer } from "react-native-countdown-circle-timer";
 import HomeScroll from "./homeScroll";
 import { BlurView } from "expo-blur";
+import FlashMessage, {
+  showMessage,
+  hideMessage,
+} from "react-native-flash-message";
 
 var hasNoWorkouts = true;
 
@@ -577,7 +585,10 @@ export default function Home({ route, navigation }) {
 
             <TouchableOpacity
               style={{ marginLeft: 330, marginTop: 28, position: "absolute" }}
-              onPress={temp}
+              onPress={() => {
+                setOpenProfilePage(true);
+              }}
+
             >
               <Image
                 source={require("../assets/person3.png")}
@@ -745,6 +756,137 @@ export default function Home({ route, navigation }) {
             <RedirectCards></RedirectCards>         
           </View> */}
       </View>
+
+      <Modal
+        animationType="slide"
+        visible={openProfilePage}
+        onRequestClose={() => {
+          Alert.alert("Modal has been closed.");
+          setOpenProfilePage(!openProfilePage);
+          setOpenNewWorkoutPage(!openNewWorkoutPage);
+        }}
+      >
+        <View style={newWorkout.container}>
+          <View
+            style={{
+              marginTop: 80,
+              marginBottom: 15,
+              width: "100%",
+              height: 50,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <View style={newWorkout.headerBackground}>
+              <Text style={newWorkout.mainHeader}>Profile</Text>
+            </View>
+          </View>
+
+          <View style={newStyles.mainContentContainer}>
+            <View style={newStyles.accountInfoView}>
+              <Text style={newStyles.infoText}> Username </Text>
+              <View style={newStyles.inputView}>
+                <TextInput
+                  style={newStyles.inputText}
+                  placeholder="Example"
+                  placeholderTextColor="#cccccc"
+                  onChangeText={(newUsername) => setNewUsername(newUsername)}
+                  value={newUsername}
+                  color={"#cccccc"}
+                  keyboardAppearance="dark"
+                />
+              </View>
+              <Text style={newStyles.infoText}> Email </Text>
+              <View style={newStyles.inputView}>
+                <TextInput
+                  style={newStyles.inputText}
+                  placeholder="someone@example.com"
+                  placeholderTextColor="#cccccc"
+                  onChangeText={(newEmail) => setNewEmail(newEmail)}
+                  value={newEmail}
+                  color={"#cccccc"}
+                  keyboardAppearance="dark"
+                  autoCapitalize="none"
+                />
+              </View>
+              <Text style={newStyles.infoText}> Password </Text>
+              <View style={newStyles.inputView}>
+                <TextInput
+                  style={newStyles.inputText}
+                  // placeholder="Work in Progress"
+                  placeholder="New Password"
+                  placeholderTextColor="#cccccc"
+                  secureTextEntry={true}
+                  onChangeText={(newPassword) => setNewPassword(newPassword)}
+                  value={newPassword}
+                  color={"#cccccc"}
+                  keyboardAppearance="dark"
+                />
+              </View>
+            </View>
+          </View>
+
+          <View style={newStyles.genSettingsContainer}>
+            <View style={newStyles.settingsView}>
+              <View style={newStyles.settingsSplit1}>
+                <Icon name="group" type="material" size={31} color="#8e8efa" />
+              </View>
+              <View style={newStyles.settingsSplit2}>
+                <Text style={newStyles.settingsText}>Receive Requests</Text>
+              </View>
+              <View style={newStyles.settingsSplit3}>
+                <Switch
+                  style={newStyles.switchStyle}
+                  trackColor={{ true: "#8e8efa", false: "#767577" }}
+                  thumbColor={toggle1 ? "#f4f3f4" : "#f4f3f4"}
+                  ios_backgroundColor="#3e3e3e"
+                  onValueChange={toggleSwitch1}
+                  value={toggle1}
+                />
+              </View>
+            </View>
+            <View style={newStyles.settingsView}>
+              <View style={newStyles.settingsSplit1}>
+                <Icon
+                  name="leaderboard"
+                  type="material"
+                  size={31}
+                  color="#8e8efa"
+                />
+              </View>
+              <View style={newStyles.settingsSplit2}>
+                <Text style={newStyles.settingsText}>Receive Invites</Text>
+              </View>
+              <View style={newStyles.settingsSplit3}>
+                <Switch
+                  trackColor={{ true: "#8e8efa", false: "#767577" }}
+                  thumbColor={toggle2 ? "#f4f3f4" : "#f4f3f4"}
+                  ios_backgroundColor="#3e3e3e"
+                  onValueChange={toggleSwitch2}
+                  value={toggle2}
+                />
+              </View>
+            </View>
+          </View>
+
+          <TouchableOpacity
+            style={newStyles.updateBtn}
+            onPress={() => {
+              handleUpdate();
+              setOpenProfilePage(false);
+            }}
+          >
+            <Text style={newStyles.updateText}>Update</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={newStyles.submitButton}
+            onPress={() => setOpenProfilePage(false)}
+          >
+            <Text style={newStyles.submitText}>Return</Text>
+          </TouchableOpacity>
+        </View>
+      </Modal>
 
       <Modal
         animationType="slide"
@@ -2303,5 +2445,225 @@ const homeScrollMain = StyleSheet.create({
     borderColor: "#404057",
     borderBottomWidth: 5,
     borderBottomColor: "#FFA200",
+  },
+});
+
+const newStyles = StyleSheet.create({
+  flashStyle: {
+    justifyContent: "center",
+    alignItems: "center",
+    fontSize: 40,
+    width: 180,
+    height: 50,
+    borderRadius: 100,
+    backgroundColor: "#8e8efa",
+    alignSelf: "center",
+  },
+  flashText: {
+    fontSize: 18,
+    fontWeight: "600",
+    letterSpacing: 1,
+    color: "white",
+  },
+
+  scrollView1: {
+    width: "100%",
+  },
+  scrollView2: {
+    alignItems: "center",
+  },
+  dividerView: {
+    height: 30,
+    width: "100%",
+    backgroundColor: "#181821",
+    justifyContent: "center",
+    marginVertical: 5,
+  },
+  dividerView2: {
+    // backgroundColor: "white",
+    width: "87%",
+    marginVertical: 10,
+  },
+  dividerText: {
+    color: "#b1b1c9",
+    fontSize: 15,
+    marginLeft: 25,
+    fontWeight: "600",
+  },
+
+  accountInfoView: {
+    marginTop: 40,
+  },
+  infoText: {
+    color: "#ffffff",
+    fontWeight: "350",
+    fontSize: 16,
+    marginBottom: 6,
+    alignSelf: "left",
+    letterSpacing: 0.5,
+  },
+  inputView: {
+    borderColor: "#404057",
+    borderWidth: 2,
+    borderRadius: 5,
+    height: 45,
+    width: 340,
+    marginBottom: 20,
+    alignItems: "center",
+  },
+  inputText: {
+    height: 50,
+    width: "100%",
+    flex: 1,
+    paddingHorizontal: 15,
+    color: "#ffffff",
+  },
+
+  genSettingsContainer: {
+    marginTop: 10,
+    marginBottom: 30,
+    width: "100%",
+  },
+  settingsView: {
+    flexDirection: "row",
+    paddingVertical: 8,
+  },
+  settingsSplit1: {
+    width: "20%",
+    // backgroundColor: "red",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  settingsSplit2: {
+    width: "62%",
+    // backgroundColor: "green",
+    justifyContent: "center",
+  },
+  settingsSplit3: {
+    width: "20%",
+  },
+  switchStyle: {
+    transform: [{ scaleX: 1 }, { scaleY: 1 }],
+  },
+  settingsText: {
+    fontSize: 18,
+    color: "#dcdcfc",
+    fontWeight: "600",
+    letterSpacing: 0.5,
+  },
+
+  friendRequestsContainer: {
+    // backgroundColor: "grey",
+    width: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 30,
+    marginBottom: 10,
+  },
+  requestingView: {
+    justifyContent: "center",
+    width: "100%",
+    flexDirection: "row",
+  },
+  requestInput: {
+    borderColor: "#404057",
+    borderWidth: 2,
+    borderRadius: 5,
+    height: 45,
+    alignItems: "center",
+    width: "65%",
+    marginRight: 20,
+  },
+  requestInputText: {
+    height: 50,
+    width: "100%",
+    flex: 1,
+    paddingHorizontal: 15,
+    color: "#ffffff",
+  },
+  sendBtn: {
+    borderRadius: 7,
+    backgroundColor: "#8e8efa",
+    justifyContent: "center",
+    alignItems: "center",
+    shadowColor: "rgba(227, 227, 255, 0.2)",
+    shadowOpacity: 0.8,
+    elevation: 6,
+    shadowRadius: 15,
+    shadowOffset: { width: 1, height: 13 },
+    paddingHorizontal: 10,
+  },
+  sendText: {
+    color: "black",
+    fontSize: 20,
+    fontWeight: "800",
+    letterSpacing: 1.5,
+  },
+
+  updateBtn: {
+    borderRadius: 7,
+    backgroundColor: "#FFFFFF",
+    width: "90%",
+    height: 50,
+    marginBottom: 40,
+    justifyContent: "center",
+    alignItems: "center",
+    shadowColor: "rgba(227, 227, 255, 0.2)",
+    shadowOpacity: 0.8,
+    elevation: 6,
+    shadowRadius: 15,
+    shadowOffset: { width: 1, height: 13 },
+    alignSelf: "center",
+  },
+  updateText: {
+    fontWeight: "800",
+    fontSize: 22,
+    letterSpacing: 1.5,
+  },
+  logoutBtn: {
+    borderColor: "#404057",
+    borderWidth: 2,
+    borderRadius: 5,
+    height: 50,
+    width: 340,
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 10,
+    marginBottom: 40,
+  },
+  logoutText: {
+    color: "#ffffff",
+    fontWeight: "500",
+    fontSize: 16,
+    paddingHorizontal: 115,
+    marginLeft: -20,
+    letterSpacing: 0.9,
+  },
+  mainContentContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  submitButton: {
+    borderRadius: 7,
+    width: "90%",
+    height: 50,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#8e8efa",
+    shadowColor: "rgba(227, 227, 255, 0.2)",
+    shadowOpacity: 0.8,
+    elevation: 6,
+    shadowRadius: 15,
+    shadowOffset: { width: 1, height: 13 },
+    alignSelf: "center",
+  },
+
+  submitText: {
+    fontWeight: "800",
+    fontSize: 22,
+    letterSpacing: 1.5,
+    color: "#ffffff",
   },
 });
