@@ -13,7 +13,6 @@ import {
   Button,
   Modal,
   Settings,
-  Switch,
 } from "react-native";
 import Card1 from "./components/card1";
 import Card2 from "./components/card2";
@@ -22,11 +21,6 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   onAuthStateChanged,
-  updatePassword,
-  updateEmail,
-  reauthenticateWithCredential,
-  EmailAuthProvider,
-
 } from "firebase/auth";
 import {
   addDoc,
@@ -50,11 +44,6 @@ import { Icon } from "@rneui/themed";
 import { CountdownCircleTimer } from "react-native-countdown-circle-timer";
 import HomeScroll from "./homeScroll";
 import { BlurView } from "expo-blur";
-import FlashMessage, {
-  showMessage,
-  hideMessage,
-} from "react-native-flash-message";
-
 
 var hasNoWorkouts = true;
 
@@ -64,7 +53,6 @@ export default function Home({ route, navigation }) {
       loadWorkouts();
       initializeName();
       initializeDailyWorkouts();
-      initializeProfile();
       // console.log(lastSignin)
     });
     return unsubscribe;
@@ -134,160 +122,10 @@ export default function Home({ route, navigation }) {
   const [deleteModalVis, setDeleteModalVis] = useState(false);
   const [deletingWorkoutIndex, setDeletingWorkoutIndex] = useState(-1);
 
-  //Profile Page
-  const [openProfilePage, setOpenProfilePage] = useState(false);
-  const [newUsername, setNewUsername] = useState("");
-  const [newEmail, setNewEmail] = useState("");
-  const [oldPassword, setOldPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [toggle1, setToggle1] = useState(false);
-  const [toggle2, setToggle2] = useState(false);
-  const toggleSwitch1 = () => setToggle1((previousState) => !previousState);
-  const toggleSwitch2 = () => setToggle2((previousState) => !previousState);
-
   async function initializeName() {
     const docSnap = await getDoc(doc(db, "accounts", user.uid));
     const name = docSnap.data().username;
     setUserName(name);
-  }
-
-  async function initializeProfile() {
-    reloadUser();
-
-    const docIdArr = [];
-    const requestInfoArr = [];
-    const querySnapshot = await getDocs(
-      collection(db, "accounts", user.uid, "requests")
-    );
-    querySnapshot.forEach((doc) => {
-      if (doc.id != "temp") {
-        docIdArr.push(doc.id);
-      }
-    });
-
-    const docRef2 = doc(db, "accounts", user.uid);
-    const docSnap2 = await getDoc(docRef2);
-
-    if (docSnap2.exists()) {
-      const auth = getAuth();
-      const user = auth.currentUser;
-      setNewUsername(docSnap2.data().username);
-      setNewEmail(user.email);
-      setToggle1(docSnap2.data().settings1);
-      setToggle2(docSnap2.data().settings2);
-      setOldPassword(docSnap2.data().password);
-    } else {
-      console.log("No such document!");
-    }
-  }
-
-  async function reloadUser() {
-    const auth2 = getAuth();
-    const user2 = auth2.currentUser;
-    const docRef3 = doc(db, "accounts", user2.uid);
-    const docSnap3 = await getDoc(docRef3);
-    var credentialPassword = "";
-    if (docSnap3.exists()) {
-      credentialPassword = docSnap3.data().password;
-    } else {
-      console.log("No such document!");
-    }
-
-    const credential = EmailAuthProvider.credential(
-      user2.email,
-      credentialPassword
-    );
-
-    reauthenticateWithCredential(user2, credential)
-      .then(() => {
-        // User re-authenticated.
-      })
-      .catch((error) => {
-        console.log("Re-auth error");
-        console.log(error.code);
-        console.log(error.message);
-      });
-  }
-
-  async function handleUpdate() {
-    reloadUser();
-    var allValidInputs = true;
-
-    const docRef1 = doc(db, "accounts", user.uid);
-    await updateDoc(docRef1, {
-      settings1: toggle1,
-      settings2: toggle2,
-    });
-    if (newUsername.length > 0) {
-      await updateDoc(docRef1, {
-        username: newUsername,
-      });
-    } else {
-      allValidInputs = false;
-    }
-
-    const auth1 = getAuth();
-    const user1 = auth1.currentUser;
-    if (newEmail != user1.email) {
-      if (newEmail.length > 0) {
-        updateEmail(auth.currentUser, newEmail)
-          .then(() => {})
-          .catch((error) => {
-            console.log("New Email Error");
-            console.log(error.code);
-            console.log(error.message);
-            allValidInputs = false;
-          });
-      } else {
-        allValidInputs = false;
-      }
-    }
-
-    if (newPassword.length > 6 && newPassword != oldPassword) {
-      updatePassword(user, newPassword)
-        .then(() => {
-          updateFirestorePassword();
-          setOldPassword(newPassword);
-          // Update successful.
-        })
-        .catch((error) => {
-          console.log("New Password Error");
-          console.log(error.code);
-          console.log(error.message);
-          allValidInputs = false;
-        });
-    }
-
-    if (allValidInputs) {
-      showMessage({
-        message: "Update Successful",
-        floating: true,
-        textStyle: newStyles.flashText,
-        titleStyle: newStyles.flashText,
-        icon: "success",
-      });
-    } else {
-      showMessage({
-        message: "Some Inputs Invalid",
-        floating: true,
-        textStyle: newStyles.flashText,
-        titleStyle: newStyles.flashText,
-        icon: "danger",
-      });
-    }
-  }
-
-  const handleLogout = () => {
-    console.log("LOGOUT");
-    // navigation.replace('Impulse') //New version
-    navigation.navigate("Login"); //Old version
-  };
-
-  async function updateFirestorePassword() {
-    const docRef1 = doc(db, "accounts", user.uid);
-    await updateDoc(docRef1, {
-      password: newPassword,
-    });
   }
 
   const initializeDailyWorkouts = () => {
@@ -739,10 +577,7 @@ export default function Home({ route, navigation }) {
 
             <TouchableOpacity
               style={{ marginLeft: 330, marginTop: 28, position: "absolute" }}
-              onPress={() => {
-                setOpenProfilePage(true);
-              }}
-
+              onPress={temp}
             >
               <Image
                 source={require("../assets/person3.png")}
@@ -800,7 +635,6 @@ export default function Home({ route, navigation }) {
                     style={{
                       paddingRight: 10,
                       marginLeft: 208,
-
                       marginTop: 98,
                       position: "absolute",
                     }}
@@ -845,7 +679,6 @@ export default function Home({ route, navigation }) {
                     </Text>
 
                     <TouchableOpacity
-
                       style={{ marginLeft: 273, bottom: 17 }}
                       onPress={() => openSpecificWorkout(info)}
                     >
@@ -912,152 +745,6 @@ export default function Home({ route, navigation }) {
             <RedirectCards></RedirectCards>         
           </View> */}
       </View>
-
-      <Modal
-        animationType="slide"
-        visible={openProfilePage}
-        onRequestClose={() => {
-          Alert.alert("Modal has been closed.");
-          setOpenProfilePage(!openProfilePage);
-          setOpenNewWorkoutPage(!openNewWorkoutPage);
-        }}
-      >
-        <View style={newWorkout.container}>
-          <View
-            style={{
-              marginTop: 80,
-              marginBottom: 15,
-              width: "100%",
-              height: 50,
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <View style={newWorkout.headerBackground}>
-              <Text style={newWorkout.mainHeader}>Profile</Text>
-            </View>
-          </View>
-
-          <View style={newStyles.mainContentContainer}>
-            <View style={newStyles.accountInfoView}>
-              <Text style={newStyles.infoText}> Username </Text>
-              <View style={newStyles.inputView}>
-                <TextInput
-                  style={newStyles.inputText}
-                  placeholder="Example"
-                  placeholderTextColor="#cccccc"
-                  onChangeText={(newUsername) => setNewUsername(newUsername)}
-                  value={newUsername}
-                  color={"#cccccc"}
-                  keyboardAppearance="dark"
-                />
-              </View>
-              <Text style={newStyles.infoText}> Email </Text>
-              <View style={newStyles.inputView}>
-                <TextInput
-                  style={newStyles.inputText}
-                  placeholder="someone@example.com"
-                  placeholderTextColor="#cccccc"
-                  onChangeText={(newEmail) => setNewEmail(newEmail)}
-                  value={newEmail}
-                  color={"#cccccc"}
-                  keyboardAppearance="dark"
-                  autoCapitalize="none"
-                />
-              </View>
-              <Text style={newStyles.infoText}> Password </Text>
-              <View style={newStyles.inputView}>
-                <TextInput
-                  style={newStyles.inputText}
-                  // placeholder="Work in Progress"
-                  placeholder="New Password"
-                  placeholderTextColor="#cccccc"
-                  secureTextEntry={true}
-                  onChangeText={(newPassword) => setNewPassword(newPassword)}
-                  value={newPassword}
-                  color={"#cccccc"}
-                  keyboardAppearance="dark"
-                />
-              </View>
-
-            </View>
-          </View>
-
-            <View style={newStyles.genSettingsContainer}>
-              <View style={newStyles.settingsView}>
-                <View style={newStyles.settingsSplit1}>
-                  <Icon
-                    name="group"
-                    type="material"
-                    size={31}
-                    color="#8e8efa"
-                  />
-                </View>
-                <View style={newStyles.settingsSplit2}>
-                  <Text style={newStyles.settingsText}>Receive Requests</Text>
-                </View>
-                <View style={newStyles.settingsSplit3}>
-                  <Switch
-                    style={newStyles.switchStyle}
-                    trackColor={{ true: "#8e8efa", false: "#767577" }}
-                    thumbColor={toggle1 ? "#f4f3f4" : "#f4f3f4"}
-                    ios_backgroundColor="#3e3e3e"
-                    onValueChange={toggleSwitch1}
-                    value={toggle1}
-                  />
-                </View>
-              </View>
-              <View style={newStyles.settingsView}>
-                <View style={newStyles.settingsSplit1}>
-                  <Icon
-                    name="leaderboard"
-                    type="material"
-                    size={31}
-                    color="#8e8efa"
-                  />
-                </View>
-                <View style={newStyles.settingsSplit2}>
-                  <Text style={newStyles.settingsText}>Receive Invites</Text>
-                </View>
-                <View style={newStyles.settingsSplit3}>
-                  <Switch
-                    trackColor={{ true: "#8e8efa", false: "#767577" }}
-                    thumbColor={toggle2 ? "#f4f3f4" : "#f4f3f4"}
-                    ios_backgroundColor="#3e3e3e"
-                    onValueChange={toggleSwitch2}
-                    value={toggle2}
-                  />
-                </View>
-              </View>
-            </View>
-
-            <TouchableOpacity
-              style={newStyles.updateBtn}
-              onPress={() => {
-                handleUpdate();
-                setOpenProfilePage(false);
-              }}
-            >
-              <Text style={newStyles.updateText}>Update</Text>
-            </TouchableOpacity>
-
-            {/* <TouchableOpacity
-              style={newStyles.logoutBtn}
-              // onPress={() => handleLogout()}
-            >
-              <Icon name="logout" type="material" size={31} color="#8e8efa" />
-              <Text style={newStyles.logoutText}>LOGOUT</Text>
-            </TouchableOpacity> */}
-
-            <TouchableOpacity
-              style={newStyles.submitButton}
-              onPress={() => setOpenProfilePage(false)}
-            >
-              <Text style={newStyles.submitText}>Return</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
 
       <Modal
         animationType="slide"
@@ -1311,7 +998,6 @@ export default function Home({ route, navigation }) {
           <ScrollView
             showsHorizontalScrollIndicator={false}
             horizontal={true}
-
             style={{ marginLeft: 7, height: 70 }}
           >
             <TouchableOpacity style={but5} onPress={() => recieveBreakTimes(1)}>
@@ -2129,7 +1815,6 @@ const newWorkout = StyleSheet.create({
   headerBackground: {
     fontWeight: "600",
     backgroundColor: "#404057",
-
     width: "70%",
     flexDirection: "row",
     justifyContent: "center",
@@ -2239,7 +1924,6 @@ const cardStyle = StyleSheet.create({
     color: "#ffffff",
     fontWeight: "500",
     fontSize: 25,
-
     maxWidth: 260,
     alignSelf: "left",
     marginTop: 12,
@@ -2253,7 +1937,6 @@ const cardStyle = StyleSheet.create({
     marginLeft: 12,
     marginRight: 5,
     fontSize: 15,
-
     maxHeight: 110,
     maxWidth: 190,
   },
@@ -2326,7 +2009,6 @@ const editWorkouts = StyleSheet.create({
     color: "#ffffff",
     marginLeft: 46,
     marginBottom: 15,
-
     paddingTop: 15,
     width: 600,
   },
@@ -2344,7 +2026,6 @@ const editWorkouts = StyleSheet.create({
     marginLeft: 10,
     marginTop: 10,
     color: "#404057",
-
     textAlign: "center",
     marginRight: 10,
   },
@@ -2352,7 +2033,6 @@ const editWorkouts = StyleSheet.create({
     fontSize: 25,
     marginLeft: 10,
     color: "#404057",
-
     textAlign: "center",
     marginRight: 10,
   },
@@ -2623,223 +2303,5 @@ const homeScrollMain = StyleSheet.create({
     borderColor: "#404057",
     borderBottomWidth: 5,
     borderBottomColor: "#FFA200",
-  },
-});
-
-const newStyles = StyleSheet.create({
-  flashStyle: {
-    justifyContent: "center",
-    alignItems: "center",
-    fontSize: 40,
-    width: 180,
-    height: 50,
-    borderRadius: 100,
-    backgroundColor: "#8e8efa",
-    alignSelf: "center",
-  },
-  flashText: {
-    fontSize: 18,
-    fontWeight: "600",
-    letterSpacing: 1,
-    color: "white",
-  },
-
-  scrollView1: {
-    width: "100%",
-  },
-  scrollView2: {
-    alignItems: "center",
-  },
-  dividerView: {
-    height: 30,
-    width: "100%",
-    backgroundColor: "#181821",
-    justifyContent: "center",
-    marginVertical: 5,
-  },
-  dividerView2: {
-    // backgroundColor: "white",
-    width: "87%",
-    marginVertical: 10,
-  },
-  dividerText: {
-    color: "#b1b1c9",
-    fontSize: 15,
-    marginLeft: 25,
-    fontWeight: "600",
-  },
-
-  accountInfoView: {
-    marginTop: 40,
-  },
-  infoText: {
-    color: "#ffffff",
-    fontWeight: "350",
-    fontSize: 16,
-    marginBottom: 6,
-    alignSelf: "left",
-    letterSpacing: 0.5,
-  },
-  inputView: {
-    borderColor: "#404057",
-    borderWidth: 2,
-    borderRadius: 5,
-    height: 45,
-    width: 340,
-    marginBottom: 20,
-    alignItems: "center",
-  },
-  inputText: {
-    height: 50,
-    width: "100%",
-    flex: 1,
-    paddingHorizontal: 15,
-    color: "#ffffff",
-  },
-
-  genSettingsContainer: {
-    marginTop: 10,
-    marginBottom: 30,
-    width: "100%",
-  },
-  settingsView: {
-    flexDirection: "row",
-    paddingVertical: 8,
-  },
-  settingsSplit1: {
-    width: "20%",
-    // backgroundColor: "red",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  settingsSplit2: {
-    width: "62%",
-    // backgroundColor: "green",
-    justifyContent: "center",
-  },
-  settingsSplit3: {
-    width: "20%",
-  },
-  switchStyle: {
-    transform: [{ scaleX: 1 }, { scaleY: 1 }],
-  },
-  settingsText: {
-    fontSize: 18,
-    color: "#dcdcfc",
-    fontWeight: "600",
-    letterSpacing: 0.5,
-  },
-
-  friendRequestsContainer: {
-    // backgroundColor: "grey",
-    width: "100%",
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 30,
-    marginBottom: 10,
-  },
-  requestingView: {
-    justifyContent: "center",
-    width: "100%",
-    flexDirection: "row",
-  },
-  requestInput: {
-    borderColor: "#404057",
-    borderWidth: 2,
-    borderRadius: 5,
-    height: 45,
-    alignItems: "center",
-    width: "65%",
-    marginRight: 20,
-  },
-  requestInputText: {
-    height: 50,
-    width: "100%",
-    flex: 1,
-    paddingHorizontal: 15,
-    color: "#ffffff",
-  },
-  sendBtn: {
-    borderRadius: 7,
-    backgroundColor: "#8e8efa",
-    justifyContent: "center",
-    alignItems: "center",
-    shadowColor: "rgba(227, 227, 255, 0.2)",
-    shadowOpacity: 0.8,
-    elevation: 6,
-    shadowRadius: 15,
-    shadowOffset: { width: 1, height: 13 },
-    paddingHorizontal: 10,
-  },
-  sendText: {
-    color: "black",
-    fontSize: 20,
-    fontWeight: "800",
-    letterSpacing: 1.5,
-  },
-
-  updateBtn: {
-    borderRadius: 7,
-    backgroundColor: "#FFFFFF",
-    width: "90%",
-    height: 50,
-    marginBottom: 40,
-    justifyContent: "center",
-    alignItems: "center",
-    shadowColor: "rgba(227, 227, 255, 0.2)",
-    shadowOpacity: 0.8,
-    elevation: 6,
-    shadowRadius: 15,
-    shadowOffset: { width: 1, height: 13 },
-  },
-  updateText: {
-    fontWeight: "800",
-    fontSize: 22,
-    letterSpacing: 1.5,
-  },
-  logoutBtn: {
-    borderColor: "#404057",
-    borderWidth: 2,
-    borderRadius: 5,
-    height: 50,
-    width: 340,
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    marginTop: 10,
-    marginBottom: 40,
-  },
-  logoutText: {
-    color: "#ffffff",
-    fontWeight: "500",
-    fontSize: 16,
-    paddingHorizontal: 115,
-    marginLeft: -20,
-    letterSpacing: 0.9,
-  },
-  mainContentContainer: {
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  submitButton: {
-    borderRadius: 7,
-    width: "90%",
-    height: 50,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#8e8efa",
-    shadowColor: "rgba(227, 227, 255, 0.2)",
-    shadowOpacity: 0.8,
-    elevation: 6,
-    shadowRadius: 15,
-    shadowOffset: { width: 1, height: 13 },
-  },
-
-  submitText: {
-    fontWeight: "800",
-    fontSize: 22,
-    letterSpacing: 1.5,
-    color: "#ffffff",
   },
 });
