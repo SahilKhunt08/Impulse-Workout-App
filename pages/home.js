@@ -26,7 +26,6 @@ import {
   updateEmail,
   reauthenticateWithCredential,
   EmailAuthProvider,
-
 } from "firebase/auth";
 import {
   addDoc,
@@ -54,7 +53,6 @@ import FlashMessage, {
   showMessage,
   hideMessage,
 } from "react-native-flash-message";
-
 
 var hasNoWorkouts = true;
 
@@ -742,7 +740,6 @@ export default function Home({ route, navigation }) {
               onPress={() => {
                 setOpenProfilePage(true);
               }}
-
             >
               <Image
                 source={require("../assets/person3.png")}
@@ -845,7 +842,6 @@ export default function Home({ route, navigation }) {
                     </Text>
 
                     <TouchableOpacity
-
                       style={{ marginLeft: 273, bottom: 17 }}
                       onPress={() => openSpecificWorkout(info)}
                     >
@@ -979,83 +975,68 @@ export default function Home({ route, navigation }) {
                   keyboardAppearance="dark"
                 />
               </View>
-
             </View>
           </View>
 
-            <View style={newStyles.genSettingsContainer}>
-              <View style={newStyles.settingsView}>
-                <View style={newStyles.settingsSplit1}>
-                  <Icon
-                    name="group"
-                    type="material"
-                    size={31}
-                    color="#8e8efa"
-                  />
-                </View>
-                <View style={newStyles.settingsSplit2}>
-                  <Text style={newStyles.settingsText}>Receive Requests</Text>
-                </View>
-                <View style={newStyles.settingsSplit3}>
-                  <Switch
-                    style={newStyles.switchStyle}
-                    trackColor={{ true: "#8e8efa", false: "#767577" }}
-                    thumbColor={toggle1 ? "#f4f3f4" : "#f4f3f4"}
-                    ios_backgroundColor="#3e3e3e"
-                    onValueChange={toggleSwitch1}
-                    value={toggle1}
-                  />
-                </View>
+          <View style={newStyles.genSettingsContainer}>
+            <View style={newStyles.settingsView}>
+              <View style={newStyles.settingsSplit1}>
+                <Icon name="group" type="material" size={31} color="#8e8efa" />
               </View>
-              <View style={newStyles.settingsView}>
-                <View style={newStyles.settingsSplit1}>
-                  <Icon
-                    name="leaderboard"
-                    type="material"
-                    size={31}
-                    color="#8e8efa"
-                  />
-                </View>
-                <View style={newStyles.settingsSplit2}>
-                  <Text style={newStyles.settingsText}>Receive Invites</Text>
-                </View>
-                <View style={newStyles.settingsSplit3}>
-                  <Switch
-                    trackColor={{ true: "#8e8efa", false: "#767577" }}
-                    thumbColor={toggle2 ? "#f4f3f4" : "#f4f3f4"}
-                    ios_backgroundColor="#3e3e3e"
-                    onValueChange={toggleSwitch2}
-                    value={toggle2}
-                  />
-                </View>
+              <View style={newStyles.settingsSplit2}>
+                <Text style={newStyles.settingsText}>Receive Requests</Text>
+              </View>
+              <View style={newStyles.settingsSplit3}>
+                <Switch
+                  style={newStyles.switchStyle}
+                  trackColor={{ true: "#8e8efa", false: "#767577" }}
+                  thumbColor={toggle1 ? "#f4f3f4" : "#f4f3f4"}
+                  ios_backgroundColor="#3e3e3e"
+                  onValueChange={toggleSwitch1}
+                  value={toggle1}
+                />
               </View>
             </View>
-
-            <TouchableOpacity
-              style={newStyles.updateBtn}
-              onPress={() => {
-                handleUpdate();
-                setOpenProfilePage(false);
-              }}
-            >
-              <Text style={newStyles.updateText}>Update</Text>
-            </TouchableOpacity>
-
-            {/* <TouchableOpacity
-              style={newStyles.logoutBtn}
-              // onPress={() => handleLogout()}
-            >
-              <Icon name="logout" type="material" size={31} color="#8e8efa" />
-              <Text style={newStyles.logoutText}>LOGOUT</Text>
-            </TouchableOpacity> */}
-
-            <TouchableOpacity
-              style={newStyles.submitButton}
-              onPress={() => setOpenProfilePage(false)}
-            >
-              <Text style={newStyles.submitText}>Return</Text>
-            </TouchableOpacity>
+            <View style={newStyles.settingsView}>
+              <View style={newStyles.settingsSplit1}>
+                <Icon
+                  name="leaderboard"
+                  type="material"
+                  size={31}
+                  color="#8e8efa"
+                />
+              </View>
+              <View style={newStyles.settingsSplit2}>
+                <Text style={newStyles.settingsText}>Receive Invites</Text>
+              </View>
+              <View style={newStyles.settingsSplit3}>
+                <Switch
+                  trackColor={{ true: "#8e8efa", false: "#767577" }}
+                  thumbColor={toggle2 ? "#f4f3f4" : "#f4f3f4"}
+                  ios_backgroundColor="#3e3e3e"
+                  onValueChange={toggleSwitch2}
+                  value={toggle2}
+                />
+              </View>
+            </View>
           </View>
+
+          <TouchableOpacity
+            style={newStyles.updateBtn}
+            onPress={() => {
+              handleUpdate();
+              setOpenProfilePage(false);
+            }}
+          >
+            <Text style={newStyles.updateText}>Update</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={newStyles.submitButton}
+            onPress={() => setOpenProfilePage(false)}
+          >
+            <Text style={newStyles.submitText}>Return</Text>
+          </TouchableOpacity>
         </View>
       </Modal>
 
@@ -1311,7 +1292,6 @@ export default function Home({ route, navigation }) {
           <ScrollView
             showsHorizontalScrollIndicator={false}
             horizontal={true}
-
             style={{ marginLeft: 7, height: 70 }}
           >
             <TouchableOpacity style={but5} onPress={() => recieveBreakTimes(1)}>
