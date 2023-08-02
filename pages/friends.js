@@ -437,6 +437,81 @@ export default function AddFriends({ navigation }) {
 
   return (
     <View style={mainStyles.container}>
+      {hasNoFriends ? (
+        <View style={mainStyles.friendsContainer}>
+          <Text style={mainStyles.goAddFriendsText}>
+            Add friends in profile page
+          </Text>
+        </View>
+      ) : (
+        <View style={mainStyles.friendsContainer}>
+          <ScrollView
+            style={mainStyles.scrollContainer1}
+            showsVerticalScrollIndicator={false}
+          >
+            <View style={mainStyles.scrollContainer2}>
+              <View style={mainStyles.scrollContainer3}>
+                {allFriendsArr1.map((info, index) => (
+                  <View style={mainStyles.friendCard} key={index}>
+                    <View style={mainStyles.mainContent}>
+                      <TouchableOpacity
+                        onPress={() => {
+                          setChosenRemoveName(info.username);
+                          setChosenRemoveID(info.id);
+                          setRemoveFriendModalVis(true);
+                        }}
+                      >
+                        <Icon
+                          color="#8e8ef3"
+                          name="person-remove"
+                          type="material"
+                          size="30"
+                        ></Icon>
+                      </TouchableOpacity>
+                      <View style={mainStyles.usernameView}>
+                        <Text style={mainStyles.usernameText}>
+                          {info.username}
+                        </Text>
+                      </View>
+                    </View>
+                    <View style={mainStyles.dividerView}></View>
+                  </View>
+                ))}
+              </View>
+
+              <View style={mainStyles.scrollContainer3}>
+                {allFriendsArr2.map((info, index) => (
+                  <View style={mainStyles.friendCard} key={index}>
+                    <View style={mainStyles.mainContent}>
+                      <TouchableOpacity
+                        onPress={() => {
+                          setChosenRemoveName(info.username);
+                          setChosenRemoveID(info.id);
+                          setRemoveFriendModalVis(true);
+                        }}
+                      >
+                        <Icon
+                          color="#8e8ef3"
+                          name="person-remove"
+                          type="material"
+                          size="30"
+                        ></Icon>
+                      </TouchableOpacity>
+                      <View style={mainStyles.usernameView}>
+                        <Text style={mainStyles.usernameText}>
+                          {info.username}
+                        </Text>
+                      </View>
+                    </View>
+                    <View style={mainStyles.dividerView}></View>
+                  </View>
+                ))}
+              </View>
+            </View>
+          </ScrollView>
+        </View>
+      )}
+
       {hasNoLeaderboards ? (
         <View style={cardStyles.container1}>
           <ScrollView style={cardStyles.container2}>
@@ -985,7 +1060,7 @@ const cardStyles = StyleSheet.create({
   container1: {
     alignItems: "center",
     justifyContent: "center",
-    height: "96%",
+    height: "65%",
     width: "100%",
     marginBottom: 10,
     marginTop: 10,
