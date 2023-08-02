@@ -13,7 +13,6 @@ import {
   Button,
   Modal,
   Settings,
-  Switch,
 } from "react-native";
 import Card1 from "./components/card1";
 import Card2 from "./components/card2";
@@ -62,7 +61,6 @@ export default function Home({ route, navigation }) {
       loadWorkouts();
       initializeName();
       initializeDailyWorkouts();
-      initializeProfile();
       // console.log(lastSignin)
     });
     return unsubscribe;
@@ -132,160 +130,10 @@ export default function Home({ route, navigation }) {
   const [deleteModalVis, setDeleteModalVis] = useState(false);
   const [deletingWorkoutIndex, setDeletingWorkoutIndex] = useState(-1);
 
-  //Profile Page
-  const [openProfilePage, setOpenProfilePage] = useState(false);
-  const [newUsername, setNewUsername] = useState("");
-  const [newEmail, setNewEmail] = useState("");
-  const [oldPassword, setOldPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [toggle1, setToggle1] = useState(false);
-  const [toggle2, setToggle2] = useState(false);
-  const toggleSwitch1 = () => setToggle1((previousState) => !previousState);
-  const toggleSwitch2 = () => setToggle2((previousState) => !previousState);
-
   async function initializeName() {
     const docSnap = await getDoc(doc(db, "accounts", user.uid));
     const name = docSnap.data().username;
     setUserName(name);
-  }
-
-  async function initializeProfile() {
-    reloadUser();
-
-    const docIdArr = [];
-    const requestInfoArr = [];
-    const querySnapshot = await getDocs(
-      collection(db, "accounts", user.uid, "requests")
-    );
-    querySnapshot.forEach((doc) => {
-      if (doc.id != "temp") {
-        docIdArr.push(doc.id);
-      }
-    });
-
-    const docRef2 = doc(db, "accounts", user.uid);
-    const docSnap2 = await getDoc(docRef2);
-
-    if (docSnap2.exists()) {
-      const auth = getAuth();
-      const user = auth.currentUser;
-      setNewUsername(docSnap2.data().username);
-      setNewEmail(user.email);
-      setToggle1(docSnap2.data().settings1);
-      setToggle2(docSnap2.data().settings2);
-      setOldPassword(docSnap2.data().password);
-    } else {
-      console.log("No such document!");
-    }
-  }
-
-  async function reloadUser() {
-    const auth2 = getAuth();
-    const user2 = auth2.currentUser;
-    const docRef3 = doc(db, "accounts", user2.uid);
-    const docSnap3 = await getDoc(docRef3);
-    var credentialPassword = "";
-    if (docSnap3.exists()) {
-      credentialPassword = docSnap3.data().password;
-    } else {
-      console.log("No such document!");
-    }
-
-    const credential = EmailAuthProvider.credential(
-      user2.email,
-      credentialPassword
-    );
-
-    reauthenticateWithCredential(user2, credential)
-      .then(() => {
-        // User re-authenticated.
-      })
-      .catch((error) => {
-        console.log("Re-auth error");
-        console.log(error.code);
-        console.log(error.message);
-      });
-  }
-
-  async function handleUpdate() {
-    reloadUser();
-    var allValidInputs = true;
-
-    const docRef1 = doc(db, "accounts", user.uid);
-    await updateDoc(docRef1, {
-      settings1: toggle1,
-      settings2: toggle2,
-    });
-    if (newUsername.length > 0) {
-      await updateDoc(docRef1, {
-        username: newUsername,
-      });
-    } else {
-      allValidInputs = false;
-    }
-
-    const auth1 = getAuth();
-    const user1 = auth1.currentUser;
-    if (newEmail != user1.email) {
-      if (newEmail.length > 0) {
-        updateEmail(auth.currentUser, newEmail)
-          .then(() => {})
-          .catch((error) => {
-            console.log("New Email Error");
-            console.log(error.code);
-            console.log(error.message);
-            allValidInputs = false;
-          });
-      } else {
-        allValidInputs = false;
-      }
-    }
-
-    if (newPassword.length > 6 && newPassword != oldPassword) {
-      updatePassword(user, newPassword)
-        .then(() => {
-          updateFirestorePassword();
-          setOldPassword(newPassword);
-          // Update successful.
-        })
-        .catch((error) => {
-          console.log("New Password Error");
-          console.log(error.code);
-          console.log(error.message);
-          allValidInputs = false;
-        });
-    }
-
-    if (allValidInputs) {
-      showMessage({
-        message: "Update Successful",
-        floating: true,
-        textStyle: newStyles.flashText,
-        titleStyle: newStyles.flashText,
-        icon: "success",
-      });
-    } else {
-      showMessage({
-        message: "Some Inputs Invalid",
-        floating: true,
-        textStyle: newStyles.flashText,
-        titleStyle: newStyles.flashText,
-        icon: "danger",
-      });
-    }
-  }
-
-  const handleLogout = () => {
-    console.log("LOGOUT");
-    // navigation.replace('Impulse') //New version
-    navigation.navigate("Login"); //Old version
-  };
-
-  async function updateFirestorePassword() {
-    const docRef1 = doc(db, "accounts", user.uid);
-    await updateDoc(docRef1, {
-      password: newPassword,
-    });
   }
 
   const initializeDailyWorkouts = () => {
@@ -740,6 +588,7 @@ export default function Home({ route, navigation }) {
               onPress={() => {
                 setOpenProfilePage(true);
               }}
+
             >
               <Image
                 source={require("../assets/person3.png")}
@@ -797,7 +646,6 @@ export default function Home({ route, navigation }) {
                     style={{
                       paddingRight: 10,
                       marginLeft: 208,
-
                       marginTop: 98,
                       position: "absolute",
                     }}
@@ -2109,7 +1957,6 @@ const newWorkout = StyleSheet.create({
   headerBackground: {
     fontWeight: "600",
     backgroundColor: "#404057",
-
     width: "70%",
     flexDirection: "row",
     justifyContent: "center",
@@ -2219,7 +2066,6 @@ const cardStyle = StyleSheet.create({
     color: "#ffffff",
     fontWeight: "500",
     fontSize: 25,
-
     maxWidth: 260,
     alignSelf: "left",
     marginTop: 12,
@@ -2233,7 +2079,6 @@ const cardStyle = StyleSheet.create({
     marginLeft: 12,
     marginRight: 5,
     fontSize: 15,
-
     maxHeight: 110,
     maxWidth: 190,
   },
@@ -2306,7 +2151,6 @@ const editWorkouts = StyleSheet.create({
     color: "#ffffff",
     marginLeft: 46,
     marginBottom: 15,
-
     paddingTop: 15,
     width: 600,
   },
@@ -2324,7 +2168,6 @@ const editWorkouts = StyleSheet.create({
     marginLeft: 10,
     marginTop: 10,
     color: "#404057",
-
     textAlign: "center",
     marginRight: 10,
   },
@@ -2332,7 +2175,6 @@ const editWorkouts = StyleSheet.create({
     fontSize: 25,
     marginLeft: 10,
     color: "#404057",
-
     textAlign: "center",
     marginRight: 10,
   },

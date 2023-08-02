@@ -1,41 +1,18 @@
-import React, { useState } from "react";
-import {
-  TouchableOpacity,
-  Text,
-  View,
-  StyleSheet,
-  TextInput,
-  ScrollView,
-  Switch,
-} from "react-native";
-import { db } from "./firebase";
-import {
-  getAuth,
-  updatePassword,
-  updateEmail,
-  reauthenticateWithCredential,
-  EmailAuthProvider,
-} from "firebase/auth";
-import {
-  getDoc,
-  doc,
-  setDoc,
-  collection,
-  getDocs,
-  deleteDoc,
-  updateDoc,
-} from "firebase/firestore";
-import { Icon } from "@rneui/themed";
-import Divider from "react-native-divider";
-import FlashMessage, {
-  showMessage,
-  hideMessage,
-} from "react-native-flash-message";
+import React, { useState } from 'react'
+import { TouchableOpacity, Text, View, StyleSheet, Image, TextInput, ScrollView, Switch} from 'react-native';
+import { Card } from 'react-native-paper';
+import { auth } from './firebase';
+import {db} from './firebase';
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, updatePassword, updateEmail, reauthenticateWithCredential, EmailAuthProvider } from 'firebase/auth';
+import { addDoc, getDoc, doc, enableNetwork, setDoc, getCountFromServer, collection, getDocs, namedQuery, query, deleteDoc, updateDoc} from "firebase/firestore"; 
+import { Icon } from '@rneui/themed';
+import Divider from 'react-native-divider';
+import FlashMessage, {showMessage, hideMessage } from "react-native-flash-message"; 
 
 var noPendingRequests = false;
-var hasNoFriends = true;
 
 export default function Profile({ navigation }) {
+
   const [requestName, setRequestName] = useState("");
   const [requestArr, setRequestArr] = useState([]);
   const [count, setCount] = useState(0);
@@ -46,19 +23,17 @@ export default function Profile({ navigation }) {
   const [newUsername, setNewUsername] = useState("");
   const [newEmail, setNewEmail] = useState("");
   const [oldPassword, setOldPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("")  
   const [sendingName, setSendingName] = useState("");
 
   const [toggle1, setToggle1] = useState(false);
   const [toggle2, setToggle2] = useState(false);
-  const toggleSwitch1 = () => setToggle1((previousState) => !previousState);
-  const toggleSwitch2 = () => setToggle2((previousState) => !previousState);
+  const toggleSwitch1 = () => setToggle1(previousState => !previousState)
+  const toggleSwitch2 = () => setToggle2(previousState => !previousState)
 
-  const [allFriendsArr1, setAllFriendsArr1] = useState([]);
-  const [allFriendsArr2, setAllFriendsArr2] = useState([]);
 
   React.useEffect(() => {
-    const unsubscribe = navigation.addListener("focus", () => {
+    const unsubscribe = navigation.addListener('focus', () => {
       initialize();
     });
     return unsubscribe;
@@ -69,26 +44,24 @@ export default function Profile({ navigation }) {
 
     const docIdArr = [];
     const requestInfoArr = [];
-    const querySnapshot = await getDocs(
-      collection(db, "accounts", user.uid, "requests")
-    );
+    const querySnapshot = await getDocs(collection(db, "accounts", user.uid, "requests"));
     querySnapshot.forEach((doc) => {
-      if (doc.id != "temp") {
+      if(doc.id != "temp"){
         docIdArr.push(doc.id);
       }
     });
 
     let currentNum = count;
-    for (var i = 0; i < docIdArr.length; i++) {
+    for(var i = 0; i < docIdArr.length; i++){
       const docRef1 = doc(db, "accounts", docIdArr[i]);
       const docSnap1 = await getDoc(docRef1);
-      requestInfoArr.push({ name: docSnap1.data().username, id: currentNum });
+      requestInfoArr.push({name: docSnap1.data().username, id:currentNum});
       currentNum++;
     }
 
     setCount(currentNum);
     setRequestArr(requestInfoArr);
-    if (requestInfoArr.length == 0) {
+    if(requestInfoArr.length == 0){
       noPendingRequests = true;
     } else {
       noPendingRequests = false;
@@ -109,54 +82,17 @@ export default function Profile({ navigation }) {
     } else {
       console.log("No such document!");
     }
-
-    const querySnapshotFriends1 = await getDocs(
-      collection(db, "accounts", user.uid, "friends")
-    );
-    var tempFriendIDs = [];
-    querySnapshotFriends1.forEach((doc) => {
-      if (doc.id != "temp") {
-        tempFriendIDs.push(doc.id);
-        hasNoFriends = false;
-      }
-    });
-
-    var tempCombinedData1 = [];
-    var tempCombinedData2 = [];
-    var tempBoolean = true;
-    for (var i = 0; i < tempFriendIDs.length; i++) {
-      const docSnapFriends = await getDoc(
-        doc(db, "accounts", tempFriendIDs[i])
-      );
-      if (docSnapFriends.exists()) {
-        if (tempBoolean) {
-          tempBoolean = false;
-          tempCombinedData1.push({
-            username: docSnapFriends.data().username,
-            id: tempFriendIDs[i],
-          });
-        } else {
-          tempBoolean = true;
-          tempCombinedData2.push({
-            username: docSnapFriends.data().username,
-            id: tempFriendIDs[i],
-          });
-        }
-      }
-    }
-    setAllFriendsArr1(tempCombinedData1);
-    setAllFriendsArr2(tempCombinedData2);
   }
 
   async function saveProfile() {
     const docRef = doc(db, "accounts", user.uid);
     await updateDoc(docRef, {
-      username: username,
+      username: username
     });
   }
 
   async function sendFriendRequest() {
-    if (sendingName.length > 0) {
+    if(sendingName.length > 0){
       const auth2 = getAuth();
       const user2 = auth2.currentUser;
       const docRef = doc(db, "accounts", user2.uid);
@@ -168,24 +104,24 @@ export default function Profile({ navigation }) {
         console.log("No such document!");
       }
 
-      const accountsColRef = collection(db, "accounts");
+      const accountsColRef = collection(db, "accounts"); 
       const querySnapshot = await getDocs(accountsColRef);
       var canSendRequest = false;
-      if (sendingName !== accountUsername && sendingName !== "temp") {
-        querySnapshot.forEach((doc) => {
-          if (sendingName === doc.data().username) {
-            if (doc.data().settings1 == true) {
-              addFriendToUserDoc(doc.id);
+      if(sendingName !== accountUsername && sendingName !== "temp"){
+        querySnapshot.forEach(doc => {
+          if (sendingName === doc.data().username){
+            if(doc.data().settings1 == true){
+              addFriendToUserDoc(doc.id)
               setRequestName("");
               canSendRequest = true;
             } else {
-              console.log("Other user doesn't accept requests");
+              console.log("Other user doesn't accept requests")
             }
           }
         });
       }
 
-      if (canSendRequest) {
+      if(canSendRequest){
         showMessage({
           message: "Request Sent",
           floating: true,
@@ -206,38 +142,37 @@ export default function Profile({ navigation }) {
   }
 
   async function pushWorkout(arr, reciever) {
-    const workouts = arr;
-    for (let i = 0; i < arr.length; i++) {
-      await setDoc(
-        doc(db, "accounts", reciever, "workouts", workouts[i].name),
-        {
-          breakTime: workouts[i].breakTime,
-          description: workouts[i].description,
-          name: workouts[i].name,
-          workoutID: workouts[i].workoutID,
-          type: "Friend",
-          creator: workouts[i].creator,
-          creatorID: workouts[i].creatorID,
-        }
-      );
+
+    const workouts = arr
+    for (let i = 0; i< arr.length; i++) {
+      await setDoc(doc(db, "accounts", reciever, "workouts", workouts[i].name), {
+        breakTime: workouts[i].breakTime,
+        description: workouts[i].description,
+        name: workouts[i].name,
+        workoutID: workouts[i].workoutID,
+        type: "Friend",
+        creator: workouts[i].creator,
+        creatorID: workouts[i].creatorID
+    })
     }
-  }
+    
+  }    
 
   async function addFriendToUserDoc(friendID) {
-    const auth = getAuth();
-    const user = auth.currentUser;
+    const auth = getAuth()
+    const user = auth.currentUser
 
     await setDoc(doc(db, "accounts", friendID, "requests", user.uid), {
-      id: user.uid,
-    });
+      id: user.uid
+    })
   }
 
-  async function addButton(index) {
-    const addedFriend = requestArr.filter((a) => a.id === index);
-    const newRequestArray = requestArr.filter((a) => a.id !== index);
+  async function addButton(index) { 
+    const addedFriend = requestArr.filter(a => a.id === index);
+    const newRequestArray = requestArr.filter(a => a.id !== index);
     setRequestArr(newRequestArray);
-    console.log("Added Friend");
-    if (newRequestArray.length == 0) {
+    console.log("Added Friend")
+    if(newRequestArray.length == 0){
       noPendingRequests = true;
     }
     let acceptedName = addedFriend[0].name;
@@ -245,7 +180,7 @@ export default function Profile({ navigation }) {
     //Removed friend request
     const querySnapshot = await getDocs(collection(db, "accounts"));
     querySnapshot.forEach((doc) => {
-      if (doc.data().username == acceptedName) {
+      if(doc.data().username == acceptedName){
         acceptedName = doc.id;
       }
     });
@@ -256,32 +191,31 @@ export default function Profile({ navigation }) {
       username: acceptedName,
     });
 
-    let tempArr1 = [];
-    const friendWorkoutRef = collection(
-      db,
-      "accounts",
-      acceptedName,
-      "workouts"
-    );
+  
+
+    let tempArr1 = []
+    const friendWorkoutRef = collection(db, "accounts", acceptedName, "workouts");
     const friendWorkoutDocs = await getDocs(friendWorkoutRef);
-    friendWorkoutDocs.forEach((doc) => {
-      if (doc.id != "temp" && doc.data().type == "Self") {
-        tempArr1.push(doc.data());
-      }
-    });
+      friendWorkoutDocs.forEach(doc => {
+        if (doc.id != "temp" && doc.data().type == 'Self') {
+          tempArr1.push(doc.data())
+        }
+    }) 
 
-    pushWorkout(tempArr1, user.uid);
+    pushWorkout(tempArr1, user.uid)
 
-    //Reference user workouts(send from user to friend)
-    let tempArr = [];
-    const selfWorkoutRef = collection(db, "accounts", user.uid, "workouts");
-    const selfWorkoutDocs = await getDocs(selfWorkoutRef);
-    selfWorkoutDocs.forEach((doc) => {
-      if (doc.id != "temp" && doc.data().type == "Self") {
-        tempArr.push(doc.data());
-      }
-    });
-    pushWorkout(tempArr, acceptedName);
+           
+     //Reference user workouts(send from user to friend)
+     let tempArr = []
+     const selfWorkoutRef = collection(db, "accounts", user.uid, "workouts");
+     const selfWorkoutDocs = await getDocs(selfWorkoutRef);
+       selfWorkoutDocs.forEach(doc => {
+        if (doc.id != "temp" && doc.data().type == 'Self') {
+          tempArr.push(doc.data())
+        }
+         
+     }) 
+     pushWorkout(tempArr, acceptedName)
 
     //Adds your account to the friend
     await setDoc(doc(db, "accounts", acceptedName, "friends", user.uid), {
@@ -290,20 +224,20 @@ export default function Profile({ navigation }) {
   }
 
   async function denyButton(index) {
-    const deniedArr = requestArr.filter((a) => a.id === index);
+    const deniedArr = requestArr.filter(a => a.id === index);
     let deniedName = deniedArr[0].name;
-
+    
     const querySnapshot = await getDocs(collection(db, "accounts"));
     querySnapshot.forEach((doc) => {
-      if (doc.data().username == deniedName) {
+      if(doc.data().username == deniedName){
         deniedName = doc.id;
       }
     });
     await deleteDoc(doc(db, "accounts", user.uid, "requests", deniedName));
 
-    const tempArr = requestArr.filter((a) => a.id !== index);
+    const tempArr = requestArr.filter(a => a.id !== index);
     setRequestArr(tempArr);
-    if (tempArr.length == 0) {
+    if(tempArr.length == 0){
       noPendingRequests = true;
     }
   }
@@ -317,7 +251,7 @@ export default function Profile({ navigation }) {
       settings1: toggle1,
       settings2: toggle2,
     });
-    if (newUsername.length > 0) {
+    if(newUsername.length > 0){
       await updateDoc(docRef1, {
         username: newUsername,
       });
@@ -327,37 +261,34 @@ export default function Profile({ navigation }) {
 
     const auth1 = getAuth();
     const user1 = auth1.currentUser;
-    if (newEmail != user1.email) {
-      if (newEmail.length > 0) {
-        updateEmail(auth.currentUser, newEmail)
-          .then(() => {})
-          .catch((error) => {
-            console.log("New Email Error");
-            console.log(error.code);
-            console.log(error.message);
-            allValidInputs = false;
-          });
+    if(newEmail != user1.email){
+      if(newEmail.length > 0){
+        updateEmail(auth.currentUser, newEmail).then(() => {
+        }).catch((error) => {
+          console.log("New Email Error")
+          console.log(error.code);
+          console.log(error.message)
+          allValidInputs = false;
+        });
       } else {
         allValidInputs = false;
       }
     }
 
-    if (newPassword.length > 6 && newPassword != oldPassword) {
-      updatePassword(user, newPassword)
-        .then(() => {
-          updateFirestorePassword();
-          setOldPassword(newPassword);
-          // Update successful.
-        })
-        .catch((error) => {
-          console.log("New Password Error");
-          console.log(error.code);
-          console.log(error.message);
-          allValidInputs = false;
-        });
+    if(newPassword.length > 6 && newPassword != oldPassword){
+      updatePassword(user, newPassword).then(() => {
+        updateFirestorePassword();
+        setOldPassword(newPassword);
+        // Update successful.
+      }).catch((error) => {
+        console.log("New Password Error")
+        console.log(error.code);
+        console.log(error.message);
+        allValidInputs = false;
+      });
     }
-
-    if (allValidInputs) {
+    
+    if(allValidInputs){
       showMessage({
         message: "Update Successful",
         floating: true,
@@ -374,15 +305,17 @@ export default function Profile({ navigation }) {
         icon: "danger",
       });
     }
+
+
   }
 
   const handleLogout = () => {
     console.log("LOGOUT");
     // navigation.replace('Impulse') //New version
-    navigation.navigate("Login"); //Old version
-  };
+    navigation.navigate('Login') //Old version
+  }
 
-  async function reloadUser() {
+  async function reloadUser(){
     const auth2 = getAuth();
     const user2 = auth2.currentUser;
     const docRef3 = doc(db, "accounts", user2.uid);
@@ -396,21 +329,19 @@ export default function Profile({ navigation }) {
 
     const credential = EmailAuthProvider.credential(
       user2.email,
-      credentialPassword
+      credentialPassword,
     );
 
-    reauthenticateWithCredential(user2, credential)
-      .then(() => {
-        // User re-authenticated.
-      })
-      .catch((error) => {
+    reauthenticateWithCredential(user2, credential).then(() => {
+      // User re-authenticated.
+    }).catch((error) => {
         console.log("Re-auth error");
         console.log(error.code);
         console.log(error.message);
-      });
+    });
   }
 
-  async function updateFirestorePassword() {
+  async function updateFirestorePassword(){
     const docRef1 = doc(db, "accounts", user.uid);
     await updateDoc(docRef1, {
       password: newPassword,
@@ -419,7 +350,9 @@ export default function Profile({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <View style={newStyles.scrollView1} showsVerticalScrollIndicator={false}>
+
+      <ScrollView style={newStyles.scrollView1} showsVerticalScrollIndicator={false}>
+        
         <View style={newStyles.scrollView2}>
           {hasNoFriends ? (
             <View style={mainStyles.friendsContainer}>
@@ -491,9 +424,19 @@ export default function Profile({ navigation }) {
                     ))}
                   </View>
                 </View>
-              </ScrollView>
+                <View style={newStyles.settingsSplit3}>
+                  <Switch
+                    trackColor={{true: '#8e8efa', false: '#767577'}}
+                    thumbColor={toggle2 ? '#f4f3f4' : '#f4f3f4'}
+                    ios_backgroundColor="#3e3e3e"
+                    onValueChange={toggleSwitch2}
+                    value={toggle2}
+                  />   
+                </View>
+              </View>
             </View>
           )}
+
           <View style={newStyles.dividerView2}>
             <Divider borderColor="#a3a3bf" color="#a3a3bf" orientation="center">
               Friend Requests
@@ -514,78 +457,73 @@ export default function Profile({ navigation }) {
                   keyboardAppearance="dark"
                 />
               </View>
-              <TouchableOpacity
-                style={newStyles.sendBtn}
-                onPress={sendFriendRequest}
-              >
+              <TouchableOpacity style={newStyles.sendBtn} onPress={sendFriendRequest}>
                 <Text style={newStyles.sendText}>Send</Text>
               </TouchableOpacity>
             </View>
-
-            {noPendingRequests ? (
+            
+            {noPendingRequests ? 
               <View style={styles.requestContainer}>
                 <View style={styles.workoutCard}>
-                  <Text style={styles.noRequestsText}>
-                    No Requests Received
-                  </Text>
+                  <Text style={styles.noRequestsText}>No Requests Received</Text>
                 </View>
-              </View>
-            ) : (
+              </View> 
+              : 
               <View style={styles.requestContainer}>
-                <ScrollView
-                  style={styles.scrollStyle}
-                  showsVerticalScrollIndicator={false}
-                >
+                <ScrollView style={styles.scrollStyle} showsVerticalScrollIndicator={false}>
                   <View style={styles.container2}>
-                    {requestArr.map((info, index) => (
-                      <View key={index} style={styles.workoutCard}>
-                        <View style={styles.friendNameView}>
-                          <Text style={styles.friendNameText}>
-                            {" "}
-                            {info.name}{" "}
-                          </Text>
-                        </View>
-                        <View style={styles.twoButtonView}>
-                          <TouchableOpacity
-                            style={styles.requestButton1}
-                            onPress={() => addButton(info.id)}
-                          >
-                            <Icon
-                              name="person-add"
-                              type="material"
-                              size={31}
-                              color="#8e8efa"
-                            />
-                          </TouchableOpacity>
-                          <TouchableOpacity
-                            style={styles.requestButton2}
-                            onPress={() => denyButton(info.id)}
-                          >
-                            <Icon
-                              name="person-remove"
-                              type="material"
-                              size={31}
-                              color="#8e8efa"
-                            />
-                          </TouchableOpacity>
-                          {/* <TouchableOpacity style={styles.requestButton1} onPress={() => addButton(info.id)}>
+                  {requestArr.map((info, index) => (
+                  <View key={index} style={styles.workoutCard}>
+                    <View style={styles.friendNameView}>
+                      <Text style={styles.friendNameText}> {info.name} </Text>
+                    </View>
+                    <View style={styles.twoButtonView}>
+                      <TouchableOpacity style={styles.requestButton1} onPress={() => addButton(info.id)}>
+                        <Icon 
+                          name="person-add"
+                          type="material"
+                          size={31}
+                          color="#8e8efa"
+                        />
+                      </TouchableOpacity>
+                      <TouchableOpacity style={styles.requestButton2} onPress={() => denyButton(info.id)}>
+                        <Icon 
+                          name="person-remove"
+                          type="material"
+                          size={31}
+                          color="#8e8efa"
+                        />
+                      </TouchableOpacity>
+                      {/* <TouchableOpacity style={styles.requestButton1} onPress={() => addButton(info.id)}>
                         <Text style={styles.requestText}>Add</Text>
                       </TouchableOpacity>
                       <TouchableOpacity style={styles.requestButton2} onPress={() => denyButton(info.id)}>
                         <Text style={styles.requestText}>Deny</Text>
                       </TouchableOpacity> */}
-                        </View>
-                      </View>
-                    ))}
+                    </View>
+                  </View>
+                  ))}
                   </View>
                 </ScrollView>
               </View>
-            )}
+            }
           </View>
+
+          <TouchableOpacity style={newStyles.logoutBtn} onPress={() => handleLogout()}>
+            <Icon 
+              name="logout"
+              type="material"
+              size={31}
+              color="#8e8efa"
+            />
+            <Text style={newStyles.logoutText}>LOGOUT</Text> 
+          </TouchableOpacity> 
+
         </View>
-      </View>
+      </ScrollView>
     </View>
-  );
+
+  )
 }
 
 const newStyles = StyleSheet.create({
@@ -610,7 +548,7 @@ const newStyles = StyleSheet.create({
     width: "100%",
   },
   scrollView2: {
-    alignItems: "center",
+    alignItems: "center",  
   },
   dividerView: {
     height: 30,
@@ -619,10 +557,10 @@ const newStyles = StyleSheet.create({
     justifyContent: "center",
     marginVertical: 5,
   },
-  dividerView2: {
+    dividerView2: {
     // backgroundColor: "white",
     width: "87%",
-    marginVertical: 25,
+    marginVertical: 10,
   },
   dividerText: {
     color: "#b1b1c9",
@@ -689,7 +627,7 @@ const newStyles = StyleSheet.create({
     fontSize: 18,
     color: "#dcdcfc",
     fontWeight: "600",
-    letterSpacing: 0.5,
+    letterSpacing: 0.5
   },
 
   friendRequestsContainer: {
@@ -697,6 +635,8 @@ const newStyles = StyleSheet.create({
     width: "100%",
     justifyContent: "center",
     alignItems: "center",
+    marginTop: 30,
+    marginBottom: 10,
   },
   requestingView: {
     justifyContent: "center",
@@ -721,14 +661,14 @@ const newStyles = StyleSheet.create({
   },
   sendBtn: {
     borderRadius: 7,
-    backgroundColor: "#8e8efa",
+    backgroundColor: '#8e8efa',
     justifyContent: "center",
     alignItems: "center",
-    shadowColor: "rgba(227, 227, 255, 0.2)",
+    shadowColor: 'rgba(227, 227, 255, 0.2)',
     shadowOpacity: 0.8,
     elevation: 6,
     shadowRadius: 15,
-    shadowOffset: { width: 1, height: 13 },
+    shadowOffset : { width: 1, height: 13},
     paddingHorizontal: 10,
   },
   sendText: {
@@ -738,19 +678,20 @@ const newStyles = StyleSheet.create({
     letterSpacing: 1.5,
   },
 
+
   updateBtn: {
     borderRadius: 7,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: '#FFFFFF',
     width: "90%",
     height: 50,
     marginBottom: 40,
     justifyContent: "center",
     alignItems: "center",
-    shadowColor: "rgba(227, 227, 255, 0.2)",
+    shadowColor: 'rgba(227, 227, 255, 0.2)',
     shadowOpacity: 0.8,
     elevation: 6,
     shadowRadius: 15,
-    shadowOffset: { width: 1, height: 13 },
+    shadowOffset : { width: 1, height: 13},
   },
   updateText: {
     fontWeight: "800",
@@ -783,7 +724,7 @@ const newStyles = StyleSheet.create({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#0d0d12",
+    backgroundColor: '#0d0d12',
     alignContent: "center",
     alignItems: "center",
   },
@@ -809,7 +750,8 @@ const styles = StyleSheet.create({
   },
   requestTitle: {
     fontSize: 20,
-    color: "#ffffff",
+    color: "#ffffff"
+
   },
   profilePicture: {
     marginBottom: 15,
@@ -819,23 +761,25 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: "#404057",
     fontSize: 15,
-    fontWeight: "bold",
-    textAlign: "center",
-    backgroundColor: "#0d0d12",
+    fontWeight: 'bold',
+    textAlign: 'center',
+    backgroundColor: '#0d0d12',
     padding: 10,
     marginTop: 5,
     marginHorizontal: 5,
     color: "#fff",
+   
+
   },
   button1: {
-    alignItems: "center",
-    backgroundColor: "#DDDDDD",
+    alignItems: 'center',
+    backgroundColor: '#DDDDDD',
     padding: 10,
     marginTop: 5,
   },
   button2: {
-    alignItems: "center",
-    backgroundColor: "white",
+    alignItems: 'center',
+    backgroundColor: 'white',
     padding: 10,
     marginTop: 5,
     marginHorizontal: 5,
@@ -845,7 +789,7 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     maxHeight: 495,
-    alignContent: "center",
+    alignContent: "center"
   },
   requestButton1: {
     borderRadius: 8,
@@ -880,7 +824,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     flexDirection: "row",
-  },
+  }, 
 
   usernameView: {
     flexDirection: "row",
@@ -894,9 +838,9 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: "#404057",
     fontSize: 15,
-    fontWeight: "bold",
+    fontWeight: 'bold',
     textAlign: "center",
-    backgroundColor: "#0d0d12",
+    backgroundColor: '#0d0d12',
     padding: 10,
     marginLeft: 50,
     marginRight: 10,
@@ -920,7 +864,7 @@ const styles = StyleSheet.create({
   requestText: {
     fontSize: 18,
     fontWeight: "800",
-    letterSpacing: 0.5,
+    letterSpacing: 0.5
   },
 
   sendRequestView: {
@@ -963,89 +907,5 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     fontWeight: "500",
     letterSpacing: 1.2,
-  },
-});
-
-const mainStyles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    backgroundColor: "#0d0d12",
-  },
-  addButtonContainer: {
-    position: "absolute",
-    right: 10,
-    bottom: 10,
-    backgroundColor: "#0d0d12",
-    borderRadius: 100,
-  },
-  addButtonView: {
-    borderRadius: 100,
-    backgroundColor: "#0d0d12",
-    width: 60,
-    height: 60,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-
-  friendsContainer: {
-    marginTop: 25,
-    borderRadius: 8,
-    width: "90%",
-    height: "40%",
-    alignItems: "center",
-    backgroundColor: "#24243b",
-    paddingVertical: 8,
-  },
-  scrollContainer1: {
-    width: "100%",
-  },
-  scrollContainer2: {
-    justifyContent: "center",
-    alignItems: "flex-start",
-    width: "100%",
-    flexDirection: "row",
-  },
-  scrollContainer3: {
-    justifyContent: "center",
-    alignItems: "center",
-    width: "50%",
-    // backgroundColor: "red",
-  },
-
-  friendCard: {
-    width: "90%",
-    marginVertical: 5,
-    // backgroundColor: "green",
-  },
-  mainContent: {
-    flexDirection: "row",
-    justifyContent: "flex-start",
-    alignItems: "center",
-  },
-  usernameView: {
-    marginLeft: 15,
-  },
-  usernameText: {
-    fontSize: 20,
-    fontWeight: "500",
-    color: "#babade",
-  },
-  dividerView: {
-    marginTop: 5,
-    borderBottomWidth: 1,
-    hieght: 1,
-    width: "100%",
-    borderBottomColor: "#babade",
-  },
-
-  goAddFriendsText: {
-    color: "rgba(220, 220, 252, 0.8)",
-    fontSize: 23,
-    marginBottom: 8,
-    fontWeight: "500",
-    letterSpacing: 1.2,
-    alignSelf: "center",
-    marginTop: 10,
   },
 });
