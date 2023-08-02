@@ -2771,6 +2771,7 @@ const newStyles = StyleSheet.create({
     elevation: 6,
     shadowRadius: 15,
     shadowOffset: { width: 1, height: 13 },
+    alignSelf: "center",
   },
   updateText: {
     fontWeight: "800",
@@ -2814,6 +2815,7 @@ const newStyles = StyleSheet.create({
     elevation: 6,
     shadowRadius: 15,
     shadowOffset: { width: 1, height: 13 },
+    alignSelf: "center",
   },
 
   submitText: {
