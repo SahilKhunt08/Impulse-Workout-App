@@ -355,7 +355,7 @@ async function setLoginTime() {
       </Modal>
     </View> 
   );
-    }
+}
 
 
 const newStyles = StyleSheet.create({
