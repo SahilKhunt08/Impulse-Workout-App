@@ -1388,7 +1388,7 @@ export default function Home({ route, navigation }) {
                   <View style={mainScrollView.cardTextView}>
                     <Text style={mainScrollView.cardText1}> {info.name} </Text>
                   </View>
-                  <View style={styles.buttonView}>
+                  <View style={mainScrollView.buttonView}>
                     <TouchableOpacity
                       style={[mainScrollView.cardInfoBtn]}
                       onPress={() => deleteExercise(info.name)}
@@ -1624,7 +1624,7 @@ const deleteModalStyles = StyleSheet.create({
     backgroundColor: "#bac1d2",
     alignItems: "center",
     height: "21%",
-    width: "80%",
+    width: "75%",
     borderRadius: 12,
   },
   titleView: {
@@ -1647,11 +1647,11 @@ const deleteModalStyles = StyleSheet.create({
     color: "#5f5fb3",
     fontSize: 23,
     fontWeight: "500",
-    marginTop: 15,
+    marginTop: "5%",
   },
   titleText2: {
     fontSize: 18,
-    marginTop: 15,
+    marginTop: "4%",
     textAlign: "center",
   },
   buttonText1: {
@@ -1661,173 +1661,6 @@ const deleteModalStyles = StyleSheet.create({
   buttonText2: {
     fontSize: 18,
     fontWeight: "500",
-  },
-});
-
-const styles = StyleSheet.create({
-  mainContainer: {
-    flex: 1,
-    alignItems: "center",
-    backgroundColor: "#0d0d12",
-  },
-
-  playlist: {
-    backgroundColor: "#7ab3d6",
-    borderRadius: 5,
-    borderWidth: 3,
-    alignItems: "center",
-    width: "90%",
-    height: "30%",
-  },
-  playlistText: {
-    fontSize: 17,
-    marginTop: 10,
-    marginHorizontal: 10,
-  },
-
-  //————————————————————————————————————————————————————————————————
-  container: {
-    flex: 1,
-    alignItems: "center",
-    backgroundColor: "#adc9db",
-  },
-
-  button1: {
-    alignItems: "center",
-    backgroundColor: "#DDDDDD",
-    padding: 10,
-    marginTop: 5,
-  },
-  button2: {
-    alignItems: "center",
-    backgroundColor: "white",
-    padding: 10,
-    marginTop: 5,
-    marginHorizontal: 5,
-    borderRadius: 5,
-  },
-  //————————————————————————————————————————————————————————————————
-  searchView: {
-    // width: "100%",
-    height: 45,
-    marginBottom: 20,
-    alignItems: "center",
-    flexDirection: "row",
-    marginTop: 20,
-  },
-  searchInput: {
-    backgroundColor: "#578bab",
-    borderRadius: 20,
-    maxWidth: "50%",
-    marginRight: 5,
-    height: 50,
-    flex: 1,
-    padding: 10,
-    marginLeft: 5,
-    bordercolor: "black",
-    borderWidth: 3,
-  },
-  searchButton: {
-    backgroundColor: "white",
-    padding: 10,
-    bordercolor: "black",
-    borderRadius: 5,
-    bordercolor: "black",
-    borderWidth: 3,
-    marginRight: 5,
-  },
-  //————————————————————————————————————————————————————————————————
-  workoutCard: {
-    marginTop: 10,
-    width: "90%",
-    backgroundColor: "white",
-    bordercolor: "black",
-    borderWidth: 2,
-    borderRadius: 5,
-    justifyContent: "center",
-    alignContent: "center",
-  },
-  buttonView: {
-    flexDirection: "row",
-    marginRight: 300,
-    marginTop: 10,
-  },
-  cardButton: {
-    backgroundColor: "lightblue",
-    padding: 5,
-    width: "30%",
-    borderRadius: 5,
-    margin: 10,
-    height: 35,
-    alignContent: "center",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  modalButton: {
-    borderRadius: 20,
-    padding: 10,
-    elevation: 2,
-  },
-  buttonOpen: {
-    backgroundColor: "#F194FF",
-  },
-  buttonClose: {
-    backgroundColor: "#2196F3",
-  },
-  //————————————————————————————————————————————————————————————————
-
-  playingSpace: {
-    backgroundColor: "white",
-    borderColor: "blue",
-    borderWidth: 3,
-  },
-  paragraph: {
-    fontSize: 18,
-    fontWeight: "bold",
-    textAlign: "center",
-    padding: 20,
-  },
-
-  centeredView: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 22,
-  },
-  modalView: {
-    margin: 20,
-    backgroundColor: "white",
-    borderRadius: 20,
-    padding: 35,
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-  },
-  button: {
-    borderRadius: 20,
-    padding: 10,
-    elevation: 2,
-  },
-  textStyle: {
-    color: "white",
-    fontWeight: "bold",
-    textAlign: "center",
-  },
-  modalText: {
-    marginBottom: 15,
-    textAlign: "center",
-  },
-  scrollStyle: {
-    marginTop: 10,
-    flex: 1,
-    // backgroundColor: "cyan",
-    maxHeight: 495,
   },
 });
 
@@ -1845,6 +1678,11 @@ const mainScrollView = StyleSheet.create({
     width: "100%",
     // backgroundColor: "red",
     paddingBottom: 10,
+  },
+  buttonView: {
+    flexDirection: "row",
+    marginRight: 300,
+    marginTop: 10,
   },
   cardComp: {
     flexDirection: "row",
