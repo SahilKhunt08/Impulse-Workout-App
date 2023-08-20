@@ -757,7 +757,7 @@ export default function Home({ route, navigation }) {
         ) : (
           <ScrollView
             horizontal={true}
-            alignSelf={"left"}
+            // alignSelf={"left"}
             showsHorizontalScrollIndicator={false}
           >
             {totalWorkoutsArr.map((info, index) => (
@@ -1753,7 +1753,7 @@ const backgroundStyle = StyleSheet.create({
     color: "#8e8efa",
     fontWeight: "500",
     fontSize: 27,
-    alignSelf: "left",
+    // alignSelf: "left",
     marginTop: 28,
     marginBottom: 5,
     marginLeft: 10,
@@ -1765,7 +1765,7 @@ const backgroundStyle = StyleSheet.create({
     fontSize: 17,
     marginBottom: 25,
 
-    alignSelf: "left",
+    // alignSelf: "left",
     marginLeft: 15,
   },
 
@@ -1867,7 +1867,7 @@ const newWorkout = StyleSheet.create({
     fontWeight: "600",
     fontSize: 35,
     color: "#FF0101",
-    alignSelf: "left",
+    // alignSelf: "left",
     marginLeft: 15,
     marginRight: 5,
   },
@@ -1876,7 +1876,7 @@ const newWorkout = StyleSheet.create({
     fontWeight: "500",
     fontSize: 30,
     color: "#ffffff",
-    alignSelf: "left",
+    // alignSelf: "left",
     marginLeft: 20,
   },
 
@@ -1970,12 +1970,12 @@ const newWorkout = StyleSheet.create({
     fontWeight: "600",
     fontSize: 28,
     color: "#ffffff",
-    alignSelf: "left",
+    // alignSelf: "left",
   },
 
   subHeaderBackground: {
     fontWeight: "600",
-    alignSelf: "left",
+    // alignSelf: "left",
     marginTop: 20,
     width: "100%",
   },
@@ -2068,7 +2068,7 @@ const cardStyle = StyleSheet.create({
     fontWeight: "500",
     fontSize: 25,
     maxWidth: 170,
-    alignSelf: "left",
+    // alignSelf: "left",
     marginTop: 12,
     marginLeft: 12,
     marginRight: 5,
@@ -2157,7 +2157,7 @@ const editWorkouts = StyleSheet.create({
     fontWeight: "600",
     fontSize: 38,
     color: "#ffffff",
-    alignSelf: "left",
+    // alignSelf: "left",
     marginLeft: 22,
     marginTop: 47,
   },
@@ -2388,7 +2388,7 @@ const homeScrollMain = StyleSheet.create({
     backgroundColor: " rgba(0, 0, 0, 0.5)",
     fontWeight: "700",
     fontSize: 24,
-    alignSelf: "left",
+    // alignSelf: "left",
     left: 0,
     marginTop: 111,
   },
@@ -2399,7 +2399,7 @@ const homeScrollMain = StyleSheet.create({
     fontSize: 24,
     paddingLeft: 5,
     paddingRight: 5,
-    alignSelf: "left",
+    // alignSelf: "left",
     backgroundColor: " rgba(0, 0, 0, 0.5)",
     left: 0,
     marginTop: 111,
@@ -2410,7 +2410,7 @@ const homeScrollMain = StyleSheet.create({
     color: "#ACA975",
     fontWeight: "700",
     fontSize: 20,
-    alignSelf: "left",
+    // alignSelf: "left",
     left: 10,
     marginTop: 100,
   },
@@ -2493,7 +2493,7 @@ const newStyles = StyleSheet.create({
     fontWeight: "350",
     fontSize: 16,
     marginBottom: 6,
-    alignSelf: "left",
+    // alignSelf: "left",
     letterSpacing: 0.5,
   },
   inputView: {

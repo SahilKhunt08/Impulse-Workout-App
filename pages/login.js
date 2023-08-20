@@ -439,7 +439,7 @@ const newStyles = StyleSheet.create({
     color: "#ffffff",
     fontWeight: "500",
     fontSize: 30,
-    alignSelf: "left",
+    // alignSelf: "left",
     marginBottom: 50,
     marginTop: 50,
   },
@@ -448,7 +448,7 @@ const newStyles = StyleSheet.create({
     fontWeight: "350",
     fontSize: 16,
     marginBottom: 9,
-    alignSelf: "left",
+    // alignSelf: "left",
   },
   inputView: {
     borderColor: "#404057",
@@ -467,7 +467,7 @@ const newStyles = StyleSheet.create({
     color: "#ffffff",
   },
   forgotView: {
-    alignSelf: "left",
+    // alignSelf: "left",
     marginTop: 5,
     marginBottom: 35,
   },

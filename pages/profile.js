@@ -639,7 +639,7 @@ const newStyles = StyleSheet.create({
     fontWeight: "350",
     fontSize: 16,
     marginBottom: 6,
-    alignSelf: "left",
+    // alignSelf: "left",
     letterSpacing: 0.5,
   },
   inputView: {
@@ -1045,7 +1045,7 @@ const mainStyles = StyleSheet.create({
     marginBottom: 8,
     fontWeight: "500",
     letterSpacing: 1.2,
-    alignSelf: "center",
+    // alignSelf: "center",
     marginTop: 10,
   },
 });
