@@ -1547,7 +1547,7 @@ const vedantStyles = StyleSheet.create({
     color: "#8e8efa",
     fontWeight: "500",
     fontSize: 35,
-    alignSelf: "left",
+    // alignSelf: "left",
     marginBottom: 25,
   },
   filterHeader: {
@@ -1597,7 +1597,7 @@ const vedantStyles = StyleSheet.create({
     fontWeight: "600",
     fontSize: 35,
     color: "#FF0101",
-    alignSelf: "left",
+    // alignSelf: "left",
   },
 
   inputView: {

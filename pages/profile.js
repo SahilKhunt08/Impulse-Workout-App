@@ -577,7 +577,7 @@ const newStyles = StyleSheet.create({
     fontWeight: "350",
     fontSize: 16,
     marginBottom: 6,
-    alignSelf: "left",
+    // alignSelf: "left",
     letterSpacing: 0.5,
   },
   inputView: {
@@ -907,5 +907,89 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     fontWeight: "500",
     letterSpacing: 1.2,
+  },
+});
+
+const mainStyles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: "center",
+    backgroundColor: "#0d0d12",
+  },
+  addButtonContainer: {
+    position: "absolute",
+    right: 10,
+    bottom: 10,
+    backgroundColor: "#0d0d12",
+    borderRadius: 100,
+  },
+  addButtonView: {
+    borderRadius: 100,
+    backgroundColor: "#0d0d12",
+    width: 60,
+    height: 60,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  friendsContainer: {
+    marginTop: 25,
+    borderRadius: 8,
+    width: "90%",
+    height: "40%",
+    alignItems: "center",
+    backgroundColor: "#24243b",
+    paddingVertical: 8,
+  },
+  scrollContainer1: {
+    width: "100%",
+  },
+  scrollContainer2: {
+    justifyContent: "center",
+    alignItems: "flex-start",
+    width: "100%",
+    flexDirection: "row",
+  },
+  scrollContainer3: {
+    justifyContent: "center",
+    alignItems: "center",
+    width: "50%",
+    // backgroundColor: "red",
+  },
+
+  friendCard: {
+    width: "90%",
+    marginVertical: 5,
+    // backgroundColor: "green",
+  },
+  mainContent: {
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    alignItems: "center",
+  },
+  usernameView: {
+    marginLeft: 15,
+  },
+  usernameText: {
+    fontSize: 20,
+    fontWeight: "500",
+    color: "#babade",
+  },
+  dividerView: {
+    marginTop: 5,
+    borderBottomWidth: 1,
+    hieght: 1,
+    width: "100%",
+    borderBottomColor: "#babade",
+  },
+
+  goAddFriendsText: {
+    color: "rgba(220, 220, 252, 0.8)",
+    fontSize: 23,
+    marginBottom: 8,
+    fontWeight: "500",
+    letterSpacing: 1.2,
+    // alignSelf: "center",
+    marginTop: 10,
   },
 });
