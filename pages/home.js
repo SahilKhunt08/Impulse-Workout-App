@@ -47,7 +47,6 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Divider from "react-native-divider";
 import { Icon } from "@rneui/themed";
 import { CountdownCircleTimer } from "react-native-countdown-circle-timer";
-import HomeScroll from "./homeScroll";
 import { BlurView } from "expo-blur";
 import FlashMessage, {
   showMessage,
@@ -359,20 +358,6 @@ export default function Home({ route, navigation }) {
 
     setTotalImpulseWorkoutsArr(allImpulseWorkoutArr);
     console.log("||||||||||" + hasNoWorkouts);
-  }
-
-  async function temp() {
-    //   console.log("fdfd")
-    //   const workoutsDeleteArr = []
-    //   const deleteWorkoutRef = collection(db, "accounts", user.uid, "workouts");
-    //   const deleteWorkoutDocs = await getDocs(deleteWorkoutRef);
-    //   deleteWorkoutDocs.forEach(doc => {
-    //     if (doc.id != "temp" && doc.data().type == "Friend") {
-    //       workoutsDeleteArr.push(doc.data())
-    //     }
-    //   })
-    //   console.log(workoutsDeleteArr.length)
-    //   deleteSelected(workoutsDeleteArr)
   }
 
   async function loadDailyWorkout(name) {
@@ -736,7 +721,7 @@ export default function Home({ route, navigation }) {
             <Text style={backgroundStyle.titleText}> Welcome, {userName} </Text>
 
             <TouchableOpacity
-              style={{ marginLeft: 330, marginTop: 28, position: "absolute" }}
+              style={{ marginLeft: "85%", marginTop: 28, position: "absolute" }}
               onPress={() => {
                 setOpenProfilePage(true);
               }}
@@ -1723,9 +1708,9 @@ const backgroundStyle = StyleSheet.create({
   },
 
   plusButton: {
-    position: "absolute",
-    right: 10,
-    bottom: 10,
+    position: "relative",
+    left: "82%",
+    bottom: "1%",
     // marginTop: 585,
     // marginLeft: 287,
     borderRadius: 7,
@@ -1744,9 +1729,11 @@ const backgroundStyle = StyleSheet.create({
 
   plusText: {
     fontWeight: "900",
-    fontSize: 40,
-    fontStyle: "italic",
+    left: "5%",
+    bottom: "10%",
+    fontSize: 45,
     color: "#ffffff",
+    fontStyle: "italic",
   },
 
   titleText: {
@@ -1754,7 +1741,7 @@ const backgroundStyle = StyleSheet.create({
     fontWeight: "500",
     fontSize: 27,
     // alignSelf: "left",
-    marginTop: 28,
+    marginTop: "5%",
     marginBottom: 5,
     marginLeft: 10,
   },
@@ -2027,9 +2014,10 @@ const cardStyle = StyleSheet.create({
     backgroundColor: "#0d0d12",
     // marginTop: 50,
     height: 160,
-    width: 365,
+    width: "100%",
+    maxWidth: "100%",
     marginLeft: 10,
-    borderRadius: 10,
+    borderRadius: 5,
     borderWidth: 2,
     borderColor: "#404057",
     borderBottomWidth: 5,
@@ -2041,7 +2029,9 @@ const cardStyle = StyleSheet.create({
   },
   tempText: {
     fontSize: 25,
+    paddingHorizontal: "21%",
     fontWeight: "500",
+
     color: "white",
   },
 
