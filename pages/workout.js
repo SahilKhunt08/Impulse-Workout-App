@@ -1040,7 +1040,7 @@ export default function Workout({ navigation }) {
         }}
       >
         <View style={vedantStyles.container}>
-          <View style={{ marginTop: 75 }}>
+          <View style={{ marginTop: "15%" }}>
             <View style={{ marginRight: 210, flexDirection: "row" }}>
               <Text style={vedantStyles.titleText}>Filters</Text>
               <Image
@@ -1056,7 +1056,7 @@ export default function Workout({ navigation }) {
           </View>
           <View style={vedantStyles.filterContainer}>
             <Text style={vedantStyles.filterHeader}>Difficulty</Text>
-            <View style={{ flexDirection: "row", marginBottom: 5 }}>
+            <View style={{ flexDirection: "row", marginBottom: "1%" }}>
               <View>
                 <TouchableOpacity
                   style={styleBeginner}
@@ -1789,7 +1789,7 @@ const vedantStyles = StyleSheet.create({
     fontWeight: "500",
     fontSize: 35,
     // alignSelf: "left",
-    marginBottom: 25,
+    marginBottom: "10%",
   },
   filterHeader: {
     fontSize: 20,
@@ -1901,7 +1901,7 @@ const vedantStyles = StyleSheet.create({
 
   filterButtonsView: {
     flexDirection: "row",
-    marginTop: 45,
+    marginTop: "4%",
     // marginRight: 265,
     justifyContent: "center",
     alignItems: "center",

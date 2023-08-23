@@ -998,6 +998,7 @@ export default function Home({ route, navigation }) {
                 </View>
                 <View style={newStyles.settingsSplit3}>
                   <Switch
+                    style={newStyles.switchStyle}
                     trackColor={{ true: "#8e8efa", false: "#767577" }}
                     thumbColor={toggle2 ? "#f4f3f4" : "#f4f3f4"}
                     ios_backgroundColor="#3e3e3e"
@@ -2346,7 +2347,9 @@ const homeScrollMain = StyleSheet.create({
   },
 
   scrollContainer1: {
-    height: 205,
+    height: "100%",
+    maxHeight: "100%",
+    marginTop: 10,
     // backgroundColor: "red",
   },
   scrollContainer2: {
@@ -2527,6 +2530,7 @@ const newStyles = StyleSheet.create({
     width: "20%",
   },
   switchStyle: {
+    right: "20%",
     transform: [{ scaleX: 1 }, { scaleY: 1 }],
   },
   settingsText: {
