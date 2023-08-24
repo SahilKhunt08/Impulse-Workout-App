@@ -1447,13 +1447,13 @@ const modalStyles = StyleSheet.create({
     borderBottomWidth: 0,
   },
   infoText1: {
-    fontSize: 25, //25
+    fontSize: "23%", //25
     fontWeight: "400",
     color: "#fff",
     letterSpacing: 1.5,
   },
   infoText2: {
-    fontSize: 19, //18
+    fontSize: "20%", //18
     marginBottom: 5,
     color: "#d0d1d6",
     maxWidth: 160,

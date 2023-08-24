@@ -782,8 +782,8 @@ export default function Home({ route, navigation }) {
                     style={{
                       paddingRight: 10,
                       marginLeft: 208,
-                      marginTop: 108,
-                      position: "absolute",
+                      marginTop: "32%",
+                      position: "relative",
                     }}
                     onPress={() => openSpecificWorkout(info)}
                   >
