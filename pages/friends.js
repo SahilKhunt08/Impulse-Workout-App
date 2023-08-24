@@ -1,26 +1,57 @@
 //setMyArray(oldArray => [...oldArray, newElement]);
 
 import React, { useState } from "react";
-import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity, ScrollView, Modal, Pressable, MaskedViewComponent, KeyboardAvoidingView} from "react-native";
-import { auth } from './firebase';
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
-import { addDoc, doc, enableNetwork, setDoc, getCountFromServer, collection, getDocs, namedQuery, updateDoc, getDoc, deleteDoc} from "firebase/firestore"; 
-import {db} from './firebase';
-import { Button } from 'react-native-paper';
-import { BlurView } from 'expo-blur';
-import { Icon } from '@rneui/themed';
-import Divider from 'react-native-divider';
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  TextInput,
+  TouchableOpacity,
+  ScrollView,
+  Modal,
+  Pressable,
+  MaskedViewComponent,
+  KeyboardAvoidingView,
+} from "react-native";
+import { auth } from "./firebase";
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  onAuthStateChanged,
+} from "firebase/auth";
+import {
+  addDoc,
+  doc,
+  enableNetwork,
+  setDoc,
+  getCountFromServer,
+  collection,
+  getDocs,
+  namedQuery,
+  updateDoc,
+  getDoc,
+  deleteDoc,
+} from "firebase/firestore";
+import { db } from "./firebase";
+import { Button } from "react-native-paper";
+import { BlurView } from "expo-blur";
+import { Icon } from "@rneui/themed";
+import Divider from "react-native-divider";
 import { TokenTypeHint } from "expo-auth-session";
 import { useScrollToTop } from "@react-navigation/native";
-import FlashMessage, {showMessage, hideMessage } from "react-native-flash-message"; 
+import FlashMessage, {
+  showMessage,
+  hideMessage,
+} from "react-native-flash-message";
 // import { Overlay } from 'react-native-elements';
 
 var hasNoFriends = true;
 var hasNoLeaderboards = true;
- 
-export default function AddFriends({ navigation }) {
 
-  const [friendID, setFriendID] = useState("")
+export default function AddFriends({ navigation }) {
+  const [friendID, setFriendID] = useState("");
   const [friendsArr, setFriendsArr] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalUser, setModalUser] = useState("");
@@ -28,21 +59,21 @@ export default function AddFriends({ navigation }) {
   const [exerciseInput1, setExerciseInput1] = useState("");
   const [exerciseInput2, setExerciseInput2] = useState("");
 
-//————————————————————————————————————————————————————————————————————————————————————————————————————
+  //————————————————————————————————————————————————————————————————————————————————————————————————————
 
   const [makeModalVisible, setMakeModalVisible] = useState(false);
   const [chosenFriendsArr, setChosenFriendsArr] = useState([]);
   const [selectableFriendsArr, setSelectableFriendsArr] = useState([]);
   const [inputTitle, setInputTitle] = useState("");
   const [inputCategory, setInputCategory] = useState("");
-  
-  const [myLeaderboardsArr, setMyLeaderboardsArr] = useState([]); 
+
+  const [myLeaderboardsArr, setMyLeaderboardsArr] = useState([]);
   const [sortedLeaderboardsArr, setSortedLeaderboardsArr] = useState({});
   const [deleteModalVis, setDeleteModalVis] = useState(false);
-  const [chosenleaderboard ,setChosenLeaderboard] = useState("");
+  const [chosenleaderboard, setChosenLeaderboard] = useState("");
   const [leaderboardModalVisible, setLeaderboardModalVisible] = useState(false);
   const [modalInfo, setModalInfo] = useState([]);
-  
+
   const [statInput, setStatInput] = useState();
   const [displayingArr, setDisplayingArr] = useState([]);
   const [leaderboardClicked, setLeaderboardClicked] = useState("");
@@ -51,39 +82,39 @@ export default function AddFriends({ navigation }) {
   const [allFriendsArr2, setAllFriendsArr2] = useState([]);
   const [removeFriendModalVis, setRemoveFriendModalVis] = useState(false);
   const [chosenRemoveName, setChosenRemoveName] = useState("");
-  const [chosenRemoveID, setChosenRemoveID] = useState(""); 
+  const [chosenRemoveID, setChosenRemoveID] = useState("");
 
   const auth = getAuth();
   const user = auth.currentUser;
 
-//————————————————————————————————————————————————————————————————————————————————————————————————————
+  //————————————————————————————————————————————————————————————————————————————————————————————————————
 
   let shouldLoad = true;
   React.useEffect(() => {
-    const listener = navigation.addListener('focus', () => {
+    const listener = navigation.addListener("focus", () => {
       // if(shouldLoad){
-        // shouldLoad = false;
-        loadFriends();  
-        initialize();     
+      // shouldLoad = false;
+      loadFriends();
+      initialize();
       // }
     });
     return listener;
   }, []);
 
-  async function initialize(){
-    setChosenFriendsArr([]);  
+  async function initialize() {
+    setChosenFriendsArr([]);
 
     const querySnapshot = await getDocs(collection(db, "leaderboards"));
     var deleteDocArr = [];
     querySnapshot.forEach((doc) => {
-      if(doc.id != "temp"){
+      if (doc.id != "temp") {
         const currMemebersArr = doc.data().membersArr;
-        if(currMemebersArr.length == 0){
+        if (currMemebersArr.length == 0) {
           deleteDocArr.push(doc.id);
         }
       }
     });
-    for(var i = 0; i < deleteDocArr.length; i++){
+    for (var i = 0; i < deleteDocArr.length; i++) {
       await deleteDoc(doc(db, "leaderboards", deleteDocArr[i]));
     }
 
@@ -91,38 +122,39 @@ export default function AddFriends({ navigation }) {
     const docSnap1 = await getDoc(docRef1);
     var joinedLeaderboardsArr = [];
     var tempMyArr = [];
-    if(docSnap1.exists()){
+    if (docSnap1.exists()) {
       joinedLeaderboardsArr = docSnap1.data().leaderboardsArr;
-      for(var i = 0; i < joinedLeaderboardsArr.length; i++){
-        if(joinedLeaderboardsArr[i] != "temp"){
+      for (var i = 0; i < joinedLeaderboardsArr.length; i++) {
+        if (joinedLeaderboardsArr[i] != "temp") {
           const docRef2 = doc(db, "leaderboards", joinedLeaderboardsArr[i]);
           const docSnap2 = await getDoc(docRef2);
-          tempMyArr.push(docSnap2.data())
+          tempMyArr.push(docSnap2.data());
         }
       }
     }
-  
+
     var tempArr = tempMyArr;
     var settingFinalArr = [];
 
-    for(var x = 0; x < tempArr.length; x++){
-    
+    for (var x = 0; x < tempArr.length; x++) {
       var testingArr = [];
-      for(var i = 0; i < tempArr[x].membersArr.length; i++){
+      for (var i = 0; i < tempArr[x].membersArr.length; i++) {
         testingArr.push({
           member: tempArr[x].membersArr[i],
           score: tempArr[x].scoresArr[i],
-        })
+        });
       }
-      testingArr.sort((p1, p2) => (p1.score < p2.score) ? 1 : (p1.score > p2.score) ? -1 : 0);
+      testingArr.sort((p1, p2) =>
+        p1.score < p2.score ? 1 : p1.score > p2.score ? -1 : 0
+      );
 
       var newSort1 = [];
       var newSort2 = [];
       var placeIndex = -1;
-      for(var i = 0; i < testingArr.length; i++){
+      for (var i = 0; i < testingArr.length; i++) {
         newSort1.push(testingArr[i].member);
         newSort2.push(testingArr[i].score);
-        if(testingArr[i].member == user.uid){
+        if (testingArr[i].member == user.uid) {
           placeIndex = i;
         }
       }
@@ -132,21 +164,22 @@ export default function AddFriends({ navigation }) {
         membersArr: tempMyArr[x].membersArr,
         name: tempMyArr[x].name,
         scoresArr: tempMyArr[x].scoresArr,
-        place: (placeIndex + 1), 
-        sortedMembersArr: newSort1, 
+        place: placeIndex + 1,
+        sortedMembersArr: newSort1,
         sortedScoresArr: newSort2,
       });
     }
-    if(settingFinalArr.length > 0){
+    if (settingFinalArr.length > 0) {
       hasNoLeaderboards = false;
     }
     setMyLeaderboardsArr(settingFinalArr);
 
-    
-    const querySnapshotFriends1 = await getDocs(collection(db, "accounts", user.uid, "friends"));
+    const querySnapshotFriends1 = await getDocs(
+      collection(db, "accounts", user.uid, "friends")
+    );
     var tempFriendIDs = [];
     querySnapshotFriends1.forEach((doc) => {
-      if(doc.id != "temp"){
+      if (doc.id != "temp") {
         tempFriendIDs.push(doc.id);
         hasNoFriends = false;
       }
@@ -155,10 +188,12 @@ export default function AddFriends({ navigation }) {
     var tempCombinedData1 = [];
     var tempCombinedData2 = [];
     var tempBoolean = true;
-    for(var i = 0; i < tempFriendIDs.length; i++){
-      const docSnapFriends = await getDoc(doc(db, "accounts", tempFriendIDs[i]));
-      if(docSnapFriends.exists()){
-        if(tempBoolean){
+    for (var i = 0; i < tempFriendIDs.length; i++) {
+      const docSnapFriends = await getDoc(
+        doc(db, "accounts", tempFriendIDs[i])
+      );
+      if (docSnapFriends.exists()) {
+        if (tempBoolean) {
           tempBoolean = false;
           tempCombinedData1.push({
             username: docSnapFriends.data().username,
@@ -166,7 +201,7 @@ export default function AddFriends({ navigation }) {
           });
         } else {
           tempBoolean = true;
-            tempCombinedData2.push({
+          tempCombinedData2.push({
             username: docSnapFriends.data().username,
             id: tempFriendIDs[i],
           });
@@ -177,54 +212,57 @@ export default function AddFriends({ navigation }) {
     setAllFriendsArr2(tempCombinedData2);
   }
 
-  async function loadFriends(){
+  async function loadFriends() {
     const auth = getAuth();
     const user = auth.currentUser;
-    const querySnapshot1 = await getDocs(collection(db, "accounts", user.uid, "friends"));
+    const querySnapshot1 = await getDocs(
+      collection(db, "accounts", user.uid, "friends")
+    );
     let docIdArr = [];
     querySnapshot1.forEach((doc) => {
-      if(doc.id != "temp"){
+      if (doc.id != "temp") {
         docIdArr.push(doc.id);
       }
     });
 
     const querySnapshot2 = await getDocs(collection(db, "accounts"));
-    let namesArr= [];
+    let namesArr = [];
     let IDArr = [];
     querySnapshot2.forEach((doc) => {
-      if(docIdArr.includes(doc.id)){
+      if (docIdArr.includes(doc.id)) {
         namesArr.push(doc.data().username);
         IDArr.push(doc.id);
       }
     });
     let combinedArr = [];
     let tempArr = [];
-    for(var i = 0; i < namesArr.length; i++){
-      combinedArr[i] = {name: namesArr[i], id: IDArr[i]}
+    for (var i = 0; i < namesArr.length; i++) {
+      combinedArr[i] = { name: namesArr[i], id: IDArr[i] };
       tempArr[i] = false;
     }
     setFriendsArr(combinedArr);
   }
   async function loadFriendWorkout(num) {
-  
     let pos = 0;
-    for(var i = 0; i < friendsArr.length; i++){
-      if(modalUser == friendsArr[i].name){
+    for (var i = 0; i < friendsArr.length; i++) {
+      if (modalUser == friendsArr[i].name) {
         pos = i;
       }
     }
 
     let workoutString = "";
     const collectionName = "workout" + num;
-    const querySnapshot = await getDocs(collection(db, "accounts", friendsArr[pos].id, collectionName));
+    const querySnapshot = await getDocs(
+      collection(db, "accounts", friendsArr[pos].id, collectionName)
+    );
     querySnapshot.forEach((doc) => {
-      if(doc.id != "temp"){
+      if (doc.id != "temp") {
         workoutString += "• " + doc.id + "\n";
       }
     });
-    if(workoutString == ""){
+    if (workoutString == "") {
       workoutString = "Exercises Here";
-    } else{
+    } else {
       workoutString = workoutString.substring(0, workoutString.length - 1);
     }
     setModalBody(workoutString);
@@ -235,16 +273,18 @@ export default function AddFriends({ navigation }) {
 
     const querySnapshot1 = await getDocs(collection(db, "exercises"));
     querySnapshot1.forEach((doc) => {
-      if(doc.id == exerciseInput1){
+      if (doc.id == exerciseInput1) {
         canAdd = true;
       }
     });
 
-    if(canAdd){
-      await setDoc(doc(db, "accounts", user.uid, workoutPath, exerciseInput1), {
-      })
+    if (canAdd) {
+      await setDoc(
+        doc(db, "accounts", user.uid, workoutPath, exerciseInput1),
+        {}
+      );
     } else {
-      console.log("Exercise doesn't exist")
+      console.log("Exercise doesn't exist");
     }
   }
 
@@ -254,44 +294,44 @@ export default function AddFriends({ navigation }) {
     setSelectableFriendsArr(friendsArr);
     setInputTitle("");
     setInputCategory("");
-  }
+  };
 
   const selectFriend = (input) => {
     chosenFriendsArr.push(input);
-    const tempArr = selectableFriendsArr.filter(a => a.id !== input);
+    const tempArr = selectableFriendsArr.filter((a) => a.id !== input);
     setSelectableFriendsArr(tempArr);
-  }
+  };
 
-  async function createLeaderboard(){
+  async function createLeaderboard() {
     // if(inputTitle.length > 5 && inputCategory.length > 5){
-      setMakeModalVisible(false);
-      var participantsArr = [user.uid];
-      var defaultScoresArr = [0];
-      for(var i = 0; i < chosenFriendsArr.length; i++){
-        participantsArr.push(chosenFriendsArr[i])    
-        defaultScoresArr.push(i + 1);
+    setMakeModalVisible(false);
+    var participantsArr = [user.uid];
+    var defaultScoresArr = [0];
+    for (var i = 0; i < chosenFriendsArr.length; i++) {
+      participantsArr.push(chosenFriendsArr[i]);
+      defaultScoresArr.push(i + 1);
+    }
+    await setDoc(doc(db, "leaderboards", inputTitle), {
+      name: inputTitle,
+      category: inputCategory,
+      membersArr: participantsArr,
+      scoresArr: defaultScoresArr,
+    });
+    for (var i = 0; i < participantsArr.length; i++) {
+      // await setDoc(doc(db, "leaderboards", inputTitle, "members", participantsArr[i]), {
+      //   score: 0,
+      // });
+      const docRef = doc(db, "accounts", participantsArr[i]);
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        var profileArr = docSnap.data().leaderboardsArr;
+        profileArr.push(inputTitle);
+        await updateDoc(doc(db, "accounts", participantsArr[i]), {
+          leaderboardsArr: profileArr,
+        });
       }
-      await setDoc(doc(db, "leaderboards", inputTitle), {
-        name: inputTitle,
-        category: inputCategory,
-        membersArr: participantsArr,
-        scoresArr: defaultScoresArr,
-      });
-      for(var i = 0; i < participantsArr.length; i++){
-        // await setDoc(doc(db, "leaderboards", inputTitle, "members", participantsArr[i]), {
-        //   score: 0,
-        // });
-        const docRef = doc(db, "accounts", participantsArr[i]);
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-          var profileArr = docSnap.data().leaderboardsArr;
-          profileArr.push(inputTitle);
-          await updateDoc(doc(db, "accounts", participantsArr[i]), {
-            leaderboardsArr: profileArr,
-          });
-        }
-      }
-      initialize();
+    }
+    initialize();
     // } else {
     //   showMessage({
     //     message: "Longer Inputs Required",
@@ -303,22 +343,26 @@ export default function AddFriends({ navigation }) {
     // }
   }
 
-  async function openMainModal(input){
+  async function openMainModal(input) {
     var index = -1;
-    for(var i = 0; i < myLeaderboardsArr.length; i++){
-      if(input == myLeaderboardsArr[i].name){
-        setModalInfo(myLeaderboardsArr[i])
+    for (var i = 0; i < myLeaderboardsArr.length; i++) {
+      if (input == myLeaderboardsArr[i].name) {
+        setModalInfo(myLeaderboardsArr[i]);
         index = i;
         setLeaderboardClicked(myLeaderboardsArr[i].name);
         i = myLeaderboardsArr.length + 1;
       }
     }
     var tempArr = [];
-    for(var j = 0; j < myLeaderboardsArr[index].membersArr.length; j++){
-      const docRef1 = doc(db, "accounts", myLeaderboardsArr[index].sortedMembersArr[j]);
+    for (var j = 0; j < myLeaderboardsArr[index].membersArr.length; j++) {
+      const docRef1 = doc(
+        db,
+        "accounts",
+        myLeaderboardsArr[index].sortedMembersArr[j]
+      );
       const docSnap1 = await getDoc(docRef1);
       var tempName = "TEMP";
-      if(docSnap1.exists()){
+      if (docSnap1.exists()) {
         tempName = docSnap1.data().username;
       }
       tempArr.push({
@@ -333,29 +377,29 @@ export default function AddFriends({ navigation }) {
 
   async function updateScore() {
     var addInfo = true;
-    if(statInput.length == 0){
+    if (statInput.length == 0) {
       addInfo = false;
     } else {
       var decimalCounter = 0;
-      for(var i = 0; i < statInput.length; i++){
-        if(statInput.substring(i, i+1) == "."){
+      for (var i = 0; i < statInput.length; i++) {
+        if (statInput.substring(i, i + 1) == ".") {
           decimalCounter++;
         }
       }
-      if(decimalCounter > 0){
+      if (decimalCounter > 0) {
         addInfo = false;
       }
     }
 
-    if(addInfo == true){
+    if (addInfo == true) {
       //statInput
       const docRef1 = doc(db, "leaderboards", leaderboardClicked);
       const docSnap1 = await getDoc(docRef1);
       var tempArr = docSnap1.data().scoresArr;
       var index = -1;
       var IDArr = docSnap1.data().membersArr;
-      for(var i = 0; i < IDArr.length; i++){
-        if(user.uid == IDArr[i]){
+      for (var i = 0; i < IDArr.length; i++) {
+        if (user.uid == IDArr[i]) {
           index = i;
           i = IDArr.length;
         }
@@ -364,19 +408,20 @@ export default function AddFriends({ navigation }) {
 
       const docRef2 = doc(db, "leaderboards", leaderboardClicked);
       await updateDoc(docRef2, {
-        scoresArr: tempArr
+        scoresArr: tempArr,
       });
 
-
       var newArr = displayingArr;
-      for(var i = 0; i < displayingArr.length; i++){
-        if(newArr[i].member == user.uid){
+      for (var i = 0; i < displayingArr.length; i++) {
+        if (newArr[i].member == user.uid) {
           newArr[i].score = statInput;
           i = displayingArr.length;
         }
       }
 
-      newArr.sort((p1, p2) => (p1.score < p2.score) ? 1 : (p1.score > p2.score) ? -1 : 0);
+      newArr.sort((p1, p2) =>
+        p1.score < p2.score ? 1 : p1.score > p2.score ? -1 : 0
+      );
       setDisplayingArr(newArr);
       setStatInput("");
       // openMainModal(leaderboardClicked);
@@ -384,71 +429,79 @@ export default function AddFriends({ navigation }) {
   }
 
   async function leaveQuestion(answer) {
-    if(answer == true){
+    if (answer == true) {
       const docRef1 = doc(db, "leaderboards", chosenleaderboard);
       const docSnap1 = await getDoc(docRef1);
       const oldArr1 = docSnap1.data().membersArr;
-      const newArr1 = oldArr1.filter(a => a !== user.uid);
+      const newArr1 = oldArr1.filter((a) => a !== user.uid);
       await updateDoc(docRef1, {
-        membersArr:newArr1
+        membersArr: newArr1,
       });
       const docRef2 = doc(db, "accounts", user.uid);
       const docSnap2 = await getDoc(docRef2);
       const oldArr2 = docSnap2.data().leaderboardsArr;
-      const newArr2 = oldArr2.filter(a => a !== chosenleaderboard);
+      const newArr2 = oldArr2.filter((a) => a !== chosenleaderboard);
       await updateDoc(docRef2, {
-        leaderboardsArr:newArr2
+        leaderboardsArr: newArr2,
       });
       initialize();
       const oldArr3 = myLeaderboardsArr;
-      const newArr3 = oldArr3.filter(a => a.name !== chosenleaderboard);
+      const newArr3 = oldArr3.filter((a) => a.name !== chosenleaderboard);
       setMyLeaderboardsArr(newArr3);
     }
     setDeleteModalVis(false);
   }
 
   async function removeFriend(answer) {
-    if(answer == true){
+    if (answer == true) {
       await deleteDoc(doc(db, "accounts", chosenRemoveID, "friends", user.uid));
       await deleteDoc(doc(db, "accounts", user.uid, "friends", chosenRemoveID));
-    initialize();
+      initialize();
     }
     setRemoveFriendModalVis(false);
   }
 
   return (
     <View style={mainStyles.container}>
-
       {/* <TouchableOpacity style={makeStyles.makeLeaderboardBtn} onPress={() => {console.log("YUH")}}>
         <Text style={makeStyles.makeLeaderboardText}>View Your Friends</Text>
       </TouchableOpacity> */}
 
-      {hasNoFriends ? 
+      {hasNoFriends ? (
         <View style={mainStyles.friendsContainer}>
-          <Text style={mainStyles.goAddFriendsText}>Add friends in profile page</Text>
-        </View> 
-       : 
+          <Text style={mainStyles.goAddFriendsText}>
+            Add friends in profile page
+          </Text>
+        </View>
+      ) : (
         <View style={mainStyles.friendsContainer}>
-          <ScrollView style={mainStyles.scrollContainer1} showsVerticalScrollIndicator={false}>
+          <ScrollView
+            style={mainStyles.scrollContainer1}
+            showsVerticalScrollIndicator={false}
+          >
             <View style={mainStyles.scrollContainer2}>
               <View style={mainStyles.scrollContainer3}>
                 {allFriendsArr1.map((info, index) => (
-                  <View style={mainStyles.friendCard}key={index}>
+                  <View style={mainStyles.friendCard} key={index}>
                     <View style={mainStyles.mainContent}>
-                      <TouchableOpacity onPress={() => {
-                        setChosenRemoveName(info.username);
-                        setChosenRemoveID(info.id);
-                        setRemoveFriendModalVis(true); 
-                        }}>
+                      <TouchableOpacity
+                        onPress={() => {
+                          setChosenRemoveName(info.username);
+                          setChosenRemoveID(info.id);
+                          setRemoveFriendModalVis(true);
+                        }}
+                      >
                         <Icon
                           color="#8e8ef3"
                           name="person-remove"
                           type="material"
-                          size="30">
-                        </Icon>
+                          size="30"
+                        ></Icon>
                       </TouchableOpacity>
                       <View style={mainStyles.usernameView}>
-                        <Text style={mainStyles.usernameText}>{info.username}</Text>
+                        <Text style={mainStyles.usernameText}>
+                          {info.username}
+                        </Text>
                       </View>
                     </View>
                     <View style={mainStyles.dividerView}></View>
@@ -458,81 +511,103 @@ export default function AddFriends({ navigation }) {
 
               <View style={mainStyles.scrollContainer3}>
                 {allFriendsArr2.map((info, index) => (
-                  <View style={mainStyles.friendCard}key={index}>
+                  <View style={mainStyles.friendCard} key={index}>
                     <View style={mainStyles.mainContent}>
-                      <TouchableOpacity onPress={() => {
-                        setChosenRemoveName(info.username);
-                        setChosenRemoveID(info.id);
-                        setRemoveFriendModalVis(true); 
-                        }}>
+                      <TouchableOpacity
+                        onPress={() => {
+                          setChosenRemoveName(info.username);
+                          setChosenRemoveID(info.id);
+                          setRemoveFriendModalVis(true);
+                        }}
+                      >
                         <Icon
                           color="#8e8ef3"
                           name="person-remove"
                           type="material"
-                          size="30">
-                        </Icon>
+                          size="30"
+                        ></Icon>
                       </TouchableOpacity>
                       <View style={mainStyles.usernameView}>
-                        <Text style={mainStyles.usernameText}>{info.username}</Text>
+                        <Text style={mainStyles.usernameText}>
+                          {info.username}
+                        </Text>
                       </View>
                     </View>
                     <View style={mainStyles.dividerView}></View>
                   </View>
                 ))}
               </View>
-            </View>          
+            </View>
           </ScrollView>
         </View>
-      }
+      )}
 
-      {hasNoLeaderboards ? 
+      {hasNoLeaderboards ? (
         <View style={cardStyles.container1}>
           <ScrollView style={cardStyles.container2}>
             <View style={cardStyles.container3}>
               <View style={cardStyles.cardView}>
-                <Text style={mainStyles.goAddFriendsText}>Make a Leaderboard</Text>
-              </View> 
+                <Text style={mainStyles.goAddFriendsText}>
+                  Make a Leaderboard
+                </Text>
+              </View>
             </View>
           </ScrollView>
         </View>
-       : 
+      ) : (
         <View style={cardStyles.container1}>
-          <ScrollView style={cardStyles.container2} showsVerticalScrollIndicator={false}>
+          <ScrollView
+            style={cardStyles.container2}
+            showsVerticalScrollIndicator={false}
+          >
             <View style={cardStyles.container3}>
               {myLeaderboardsArr.map((info, index) => (
-                <TouchableOpacity key={index} style={cardStyles.cardView} onPress={() => openMainModal(info.name)}>
+                <TouchableOpacity
+                  key={index}
+                  style={cardStyles.cardView}
+                  onPress={() => openMainModal(info.name)}
+                >
                   <View style={cardStyles.headerView}>
                     <View style={cardStyles.nameTextView}>
                       <Text style={cardStyles.nameText}>{info.name}</Text>
                     </View>
                     <TouchableOpacity style={cardStyles.removeBtn}>
                       <Icon
-                        name='close-box'
-                        type='material-community'
-                        color='#8e8ef3'
+                        name="close-box"
+                        type="material-community"
+                        color="#8e8ef3"
                         size={30}
-                        onPress={() => {setDeleteModalVis(true); setChosenLeaderboard(info.name)}} >
-                      </Icon>
+                        onPress={() => {
+                          setDeleteModalVis(true);
+                          setChosenLeaderboard(info.name);
+                        }}
+                      ></Icon>
                     </TouchableOpacity>
                   </View>
                   <View style={cardStyles.categoryTextView}>
                     <Text style={cardStyles.categoryText}>{info.category}</Text>
                   </View>
                   <View style={cardStyles.placeTextView}>
-                    <Text style={cardStyles.placeText}>Place: {info.place}/{info.membersArr.length}</Text>
+                    <Text style={cardStyles.placeText}>
+                      Place: {info.place}/{info.membersArr.length}
+                    </Text>
                   </View>
                 </TouchableOpacity>
               ))}
             </View>
           </ScrollView>
         </View>
-      }
+      )}
 
-      <Modal  
+      <Modal
         animationType="fade"
         transparent={true}
         visible={makeModalVisible}
-        onRequestClose={() => {Alert.alert('Modal has been closed.'); setMakeModalVisible(!makeModalVisible); }}>
+        onRequestClose={() => {
+          Alert.alert("Modal has been closed.");
+          setMakeModalVisible(!makeModalVisible);
+        }}
+      >
         <BlurView intensity={65} tint="dark" style={makeStyles.modalContainer}>
           <View style={makeStyles.modalView}>
             <View style={makeStyles.titleView1}>
@@ -545,8 +620,8 @@ export default function AddFriends({ navigation }) {
                 color="#9191ba"
                 name="close-box-outline"
                 type="material-community"
-                size="40">
-              </Icon>
+                size="40"
+              ></Icon>
             </View>
             <View style={makeStyles.bothInputView}>
               <View style={makeStyles.inputView}>
@@ -558,32 +633,44 @@ export default function AddFriends({ navigation }) {
                   onChangeText={(inputTitle) => setInputTitle(inputTitle)}
                   keyboardAppearance="dark"
                   maxLength={30}
-                /> 
-              </View> 
+                />
+              </View>
               <View style={makeStyles.inputView}>
                 <TextInput
                   style={makeStyles.inputText}
                   placeholder="Category"
                   placeholderTextColor="#d9d9d9"
                   fontSize={16}
-                  onChangeText={(inputCategory) => setInputCategory(inputCategory)}
+                  onChangeText={(inputCategory) =>
+                    setInputCategory(inputCategory)
+                  }
                   keyboardAppearance="dark"
                   maxLength={40}
-                /> 
-              </View> 
+                />
+              </View>
             </View>
 
-            <View style={{width: "92%"}}>
-              <Divider borderColor="#a3a3bf" color="#a3a3bf" orientation="center">
+            <View style={{ width: "92%" }}>
+              <Divider
+                borderColor="#a3a3bf"
+                color="#a3a3bf"
+                orientation="center"
+              >
                 Select Friends
               </Divider>
             </View>
-            <ScrollView style={makeStyles.scrollContainer1} showsVerticalScrollIndicator={false}>
+            <ScrollView
+              style={makeStyles.scrollContainer1}
+              showsVerticalScrollIndicator={false}
+            >
               <View style={makeStyles.scrollContainer2}>
                 {selectableFriendsArr.map((info, index) => (
                   <View style={makeStyles.mapView} key={index}>
                     <Text style={makeStyles.mapText}>{info.name}</Text>
-                    <TouchableOpacity style={makeStyles.mapButton} onPress={() => selectFriend(info.id)}>
+                    <TouchableOpacity
+                      style={makeStyles.mapButton}
+                      onPress={() => selectFriend(info.id)}
+                    >
                       <Text style={makeStyles.mapButtonText}>ADD</Text>
                     </TouchableOpacity>
                   </View>
@@ -591,49 +678,73 @@ export default function AddFriends({ navigation }) {
               </View>
             </ScrollView>
 
-            <TouchableOpacity style={makeStyles.createButton} onPress={createLeaderboard}>
+            <TouchableOpacity
+              style={makeStyles.createButton}
+              onPress={createLeaderboard}
+            >
               <Text style={makeStyles.createText}>Create</Text>
             </TouchableOpacity>
-
           </View>
         </BlurView>
       </Modal>
 
-      <Modal  
+      <Modal
         animationType="fade"
         transparent={true}
         visible={deleteModalVis}
-        onRequestClose={() => {Alert.alert('Modal has been closed.'); setDeleteModalVis(!deleteModalVis); }}>
-        <BlurView intensity={35} tint="dark" style={deleteModalStyles.modalContainer}>
+        onRequestClose={() => {
+          Alert.alert("Modal has been closed.");
+          setDeleteModalVis(!deleteModalVis);
+        }}
+      >
+        <BlurView
+          intensity={35}
+          tint="dark"
+          style={deleteModalStyles.modalContainer}
+        >
           <View style={deleteModalStyles.modalView}>
             <View style={deleteModalStyles.titleView}>
-              <Text style={deleteModalStyles.titleText1}>Leave Leaderboard</Text>
-              <Text style={deleteModalStyles.titleText2}>Are you sure you want to leave?</Text>
+              <Text style={deleteModalStyles.titleText1}>
+                Leave Leaderboard
+              </Text>
+              <Text style={deleteModalStyles.titleText2}>
+                Are you sure you want to leave?
+              </Text>
             </View>
             <View style={deleteModalStyles.answerView}>
-              <TouchableOpacity style={deleteModalStyles.button} onPress={() => leaveQuestion(true)}>
+              <TouchableOpacity
+                style={deleteModalStyles.button}
+                onPress={() => leaveQuestion(true)}
+              >
                 <Text style={deleteModalStyles.buttonText1}>YES</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={deleteModalStyles.button} onPress={() => leaveQuestion(false)}>
+              <TouchableOpacity
+                style={deleteModalStyles.button}
+                onPress={() => leaveQuestion(false)}
+              >
                 <Text style={deleteModalStyles.buttonText2}>NO</Text>
               </TouchableOpacity>
             </View>
-
           </View>
         </BlurView>
       </Modal>
 
-      <Modal  
+      <Modal
         animationType="slide"
         transparent={true}
         visible={leaderboardModalVisible}
-        onRequestClose={() => {Alert.alert('Modal has been closed.'); setLeaderboardModalVisible(!leaderboardModalVisible); }}>
+        onRequestClose={() => {
+          Alert.alert("Modal has been closed.");
+          setLeaderboardModalVisible(!leaderboardModalVisible);
+        }}
+      >
         <View style={mainModalStyles.modalContainer}>
           <View style={mainModalStyles.modalView}>
-
             <Text style={mainModalStyles.nameText}>{modalInfo.name}</Text>
-            <Text style={mainModalStyles.categoryText}>{modalInfo.category}</Text>
-            
+            <Text style={mainModalStyles.categoryText}>
+              {modalInfo.category}
+            </Text>
+
             <View style={mainModalStyles.inputView}>
               <TextInput
                 style={mainModalStyles.inputText}
@@ -645,25 +756,39 @@ export default function AddFriends({ navigation }) {
                 keyboardAppearance="dark"
                 keyboardType="numeric"
                 maxLength={5}
-              /> 
-              <TouchableOpacity style={mainModalStyles.enterButton} onPress={() => {updateScore()}}>
+              />
+              <TouchableOpacity
+                style={mainModalStyles.enterButton}
+                onPress={() => {
+                  updateScore();
+                }}
+              >
                 <Text style={mainModalStyles.enterText}>Enter</Text>
               </TouchableOpacity>
-            </View>  
+            </View>
 
             <View style={mainModalStyles.mainLeaderboardView}>
-              <ScrollView style={mainScrollViewStyles.scrollContainer1} showsVerticalScrollIndicator={false}>
+              <ScrollView
+                style={mainScrollViewStyles.scrollContainer1}
+                showsVerticalScrollIndicator={false}
+              >
                 <View style={mainScrollViewStyles.scrollContainer2}>
                   {displayingArr.map((info, index) => (
                     <View style={mainScrollViewStyles.placeCard} key={index}>
                       <View style={mainScrollViewStyles.placementView}>
-                        <Text style={mainScrollViewStyles.placementText}>{index + 1}</Text>
+                        <Text style={mainScrollViewStyles.placementText}>
+                          {index + 1}
+                        </Text>
                       </View>
                       <View style={mainScrollViewStyles.nameView}>
-                        <Text style={mainScrollViewStyles.nameText}>{info.name}</Text>
+                        <Text style={mainScrollViewStyles.nameText}>
+                          {info.name}
+                        </Text>
                       </View>
-                      <View style={mainScrollViewStyles.scoreView}>                    
-                        <Text style={mainScrollViewStyles.scoreText}>{info.score}</Text>
+                      <View style={mainScrollViewStyles.scoreView}>
+                        <Text style={mainScrollViewStyles.scoreText}>
+                          {info.score}
+                        </Text>
                       </View>
                     </View>
                   ))}
@@ -671,78 +796,100 @@ export default function AddFriends({ navigation }) {
               </ScrollView>
             </View>
 
-            <TouchableOpacity style={mainModalStyles.returnButton} onPress={() => {setLeaderboardModalVisible(false); initialize()}}>
+            <TouchableOpacity
+              style={mainModalStyles.returnButton}
+              onPress={() => {
+                setLeaderboardModalVisible(false);
+                initialize();
+              }}
+            >
               <Text style={mainModalStyles.returnText}>Return</Text>
-            </TouchableOpacity>          
+            </TouchableOpacity>
           </View>
         </View>
       </Modal>
 
-      <Modal  
+      <Modal
         animationType="fade"
         transparent={true}
         visible={removeFriendModalVis}
-        onRequestClose={() => {Alert.alert('Modal has been closed.'); setRemoveFriendModalVis(!removeFriendModalVis); }}>
-        <BlurView intensity={35} tint="dark" style={deleteModalStyles.modalContainer}>
+        onRequestClose={() => {
+          Alert.alert("Modal has been closed.");
+          setRemoveFriendModalVis(!removeFriendModalVis);
+        }}
+      >
+        <BlurView
+          intensity={35}
+          tint="dark"
+          style={deleteModalStyles.modalContainer}
+        >
           <View style={deleteModalStyles.modalView}>
             <View style={deleteModalStyles.titleView}>
               <Text style={deleteModalStyles.titleText1}>Remove Friend</Text>
-              <Text style={deleteModalStyles.titleText2}>Are you sure you want to remove {chosenRemoveName}?</Text>
+              <Text style={deleteModalStyles.titleText2}>
+                Are you sure you want to remove {chosenRemoveName}?
+              </Text>
             </View>
             <View style={deleteModalStyles.answerView}>
-              <TouchableOpacity style={deleteModalStyles.button} onPress={() => removeFriend(true)}>
+              <TouchableOpacity
+                style={deleteModalStyles.button}
+                onPress={() => removeFriend(true)}
+              >
                 <Text style={deleteModalStyles.buttonText1}>YES</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={deleteModalStyles.button} onPress={() => removeFriend(false)}>
+              <TouchableOpacity
+                style={deleteModalStyles.button}
+                onPress={() => removeFriend(false)}
+              >
                 <Text style={deleteModalStyles.buttonText2}>NO</Text>
               </TouchableOpacity>
             </View>
-
           </View>
         </BlurView>
       </Modal>
 
       <View style={mainStyles.addButtonContainer}>
-        <TouchableOpacity style={mainStyles.addButtonView} onPress={() => openSettigsModal()}>
-          <Icon 
-            name='add-circle'
-            type='material'
-            color='#8e8ef3'
-            size={60}>
-          </Icon>
+        <TouchableOpacity
+          style={mainStyles.addButtonView}
+          onPress={() => openSettigsModal()}
+        >
+          <Icon
+            name="add-circle"
+            type="material"
+            color="#8e8ef3"
+            size={60}
+          ></Icon>
         </TouchableOpacity>
       </View>
-
-     </View>
-  )
+    </View>
+  );
 }
 
 const friendStyles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   mainView: {
     backgroundColor: "maroon",
-    
   },
-})
+});
 
 const deleteModalStyles = StyleSheet.create({
-    modalContainer: {
+  modalContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   modalView: {
-    shadowColor: 'white',
-    shadowOffset: {width: 0, height: 0},
+    shadowColor: "white",
+    shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.2,
     shadowRadius: 10,
     // backgroundColor: "#1a1a29", //'#404057', //0d0d12
     backgroundColor: "#bac1d2",
-    alignItems: 'center',
+    alignItems: "center",
     height: "21%",
     width: "80%",
     borderRadius: 12,
@@ -781,7 +928,7 @@ const deleteModalStyles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "500",
   },
-})
+});
 
 const mainScrollViewStyles = StyleSheet.create({
   scrollContainer1: {
@@ -840,21 +987,21 @@ const mainScrollViewStyles = StyleSheet.create({
     color: "white",
     fontWeight: "600",
   },
-})
+});
 
 const mainModalStyles = StyleSheet.create({
-        // borderTopColor: "#898e9c",    
-      // backgroundColor: "#bac1d2",
+  // borderTopColor: "#898e9c",
+  // backgroundColor: "#bac1d2",
   modalContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   modalView: {
     marginTop: 5,
     // backgroundColor: "#1a1a29", //'#404057', //0d0d12
     backgroundColor: "#181a25", //border: 262832
-    alignItems: 'center',
+    alignItems: "center",
     height: "80.5%",
     width: "100%",
   },
@@ -864,10 +1011,10 @@ const mainModalStyles = StyleSheet.create({
     color: "#8e8ef3",
     fontWeight: "500",
     marginTop: 20,
-    shadowColor: '#8e8ef3',
+    shadowColor: "#8e8ef3",
     shadowOpacity: 0.5,
     shadowRadius: 5,
-    shadowOffset : { width: 0, height: 0},
+    shadowOffset: { width: 0, height: 0 },
   },
   categoryText: {
     fontSize: 20,
@@ -919,30 +1066,30 @@ const mainModalStyles = StyleSheet.create({
   },
   returnButton: {
     borderRadius: 7,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: "#FFFFFF",
     width: "90%",
     height: 50,
     justifyContent: "center",
     alignItems: "center",
     marginTop: 8,
 
-    shadowColor: 'rgba(227, 227, 255, 0.2)',
+    shadowColor: "rgba(227, 227, 255, 0.2)",
     shadowOpacity: 0.8,
     elevation: 6,
     shadowRadius: 15,
-    shadowOffset : { width: 1, height: 13},
+    shadowOffset: { width: 1, height: 13 },
   },
   returnText: {
     fontWeight: "600",
     fontSize: 20,
-    letterSpacing: 0.7
+    letterSpacing: 0.7,
   },
-})
+});
 
 const cardStyles = StyleSheet.create({
   container1: {
     alignItems: "center",
-    justifyContent: 'center',
+    justifyContent: "center",
     height: "65%",
     width: "100%",
     marginBottom: 10,
@@ -953,9 +1100,9 @@ const cardStyles = StyleSheet.create({
   container2: {
     width: "100%",
   },
-   container3: {
+  container3: {
     alignItems: "center",
-    justifyContent: 'center',
+    justifyContent: "center",
   },
   cardView: {
     height: 150,
@@ -1004,23 +1151,23 @@ const cardStyles = StyleSheet.create({
     color: "white",
     marginLeft: 10,
   },
-})
+});
 
 const makeStyles = StyleSheet.create({
   makeLeaderboardBtn: {
     borderRadius: 7,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: "#FFFFFF",
     width: "90%",
     height: 50,
     marginTop: 20,
     justifyContent: "center",
     alignItems: "center",
 
-    shadowColor: 'rgba(227, 227, 255, 0.2)',
+    shadowColor: "rgba(227, 227, 255, 0.2)",
     shadowOpacity: 0.8,
     elevation: 6,
     shadowRadius: 15,
-    shadowOffset : { width: 1, height: 13},
+    shadowOffset: { width: 1, height: 13 },
   },
   makeLeaderboardText: {
     fontWeight: "600",
@@ -1029,14 +1176,14 @@ const makeStyles = StyleSheet.create({
 
   modalContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   modalView: {
-    alignItems: 'center',
+    alignItems: "center",
     height: "65%",
     width: "80%",
-    backgroundColor: "#1d1d29",//16161f
+    backgroundColor: "#1d1d29", //16161f
     borderRadius: 15,
     borderWidth: 3,
     borderColor: "black",
@@ -1145,17 +1292,17 @@ const makeStyles = StyleSheet.create({
   createButton: {
     marginTop: 30,
     borderRadius: 7,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: "#FFFFFF",
     width: "90%",
     height: 50,
     marginBottom: 40,
     justifyContent: "center",
     alignItems: "center",
-    shadowColor: 'rgba(227, 227, 255, 0.2)',
+    shadowColor: "rgba(227, 227, 255, 0.2)",
     shadowOpacity: 0.8,
     elevation: 6,
     shadowRadius: 15,
-    shadowOffset : { width: 1, height: 13},
+    shadowOffset: { width: 1, height: 13 },
   },
 
   createText: {
@@ -1163,31 +1310,31 @@ const makeStyles = StyleSheet.create({
     fontWeight: "800",
     letterSpacing: 1.5,
   },
-    
+
   flashText: {
     fontSize: 18,
     fontWeight: "600",
     letterSpacing: 1,
     color: "white",
   },
-})
+});
 
 const mainStyles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    backgroundColor: '#0d0d12',
+    backgroundColor: "#0d0d12",
   },
   addButtonContainer: {
-    position: 'absolute',
+    position: "absolute",
     right: 10,
     bottom: 10,
-    backgroundColor: '#0d0d12',
+    backgroundColor: "#0d0d12",
     borderRadius: 100,
   },
   addButtonView: {
     borderRadius: 100,
-    backgroundColor: '#0d0d12',
+    backgroundColor: "#0d0d12",
     width: 60,
     height: 60,
     justifyContent: "center",
@@ -1212,7 +1359,7 @@ const mainStyles = StyleSheet.create({
     width: "100%",
     flexDirection: "row",
   },
-    scrollContainer3: {
+  scrollContainer3: {
     justifyContent: "center",
     alignItems: "center",
     width: "50%",
@@ -1254,4 +1401,4 @@ const mainStyles = StyleSheet.create({
     alignSelf: "center",
     marginTop: 10,
   },
-})
+});
