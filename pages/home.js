@@ -447,6 +447,7 @@ export default function Home({ route, navigation }) {
   };
 
   async function editWorkout(index) {
+    console.log("fdfdfd");
     //Workout Editing
     setOpenEditWorkoutPage(true);
     let selectedName = "";
@@ -1206,7 +1207,7 @@ export default function Home({ route, navigation }) {
         }}
       >
         <View style={specWorkout.container}>
-          <View style={{ flexDirection: "row", marginTop: 50 }}>
+          <View style={{ flexDirection: "row", marginTop: "10%" }}>
             <Text style={specWorkout.title}>Impulse</Text>
           </View>
 
@@ -1214,7 +1215,7 @@ export default function Home({ route, navigation }) {
             Workout
           </Divider>
 
-          <View marginTop={50}>
+          <View marginTop={"5%"}>
             <Text style={specWorkout.header}>
               Current Exercise: {nameConfigs[currStep]}
             </Text>
@@ -2118,7 +2119,7 @@ const specWorkout = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginHorizontal: 17,
-    marginTop: 150,
+    marginTop: "30%",
   },
 
   returnText: {

@@ -1049,7 +1049,7 @@ export default function Workout({ navigation }) {
                   width: 35,
                   height: 35,
                   paddingRight: 10,
-                  marginTop: 5,
+                  marginTop: "23%",
                 }}
               />
             </View>
@@ -1789,7 +1789,8 @@ const vedantStyles = StyleSheet.create({
     fontWeight: "500",
     fontSize: 35,
     // alignSelf: "left",
-    marginBottom: "10%",
+    marginBottom: "5%",
+    marginTop: "20%",
   },
   filterHeader: {
     fontSize: 20,
@@ -1815,6 +1816,7 @@ const vedantStyles = StyleSheet.create({
     elevation: 6,
     shadowRadius: 15,
     margin: 5,
+
     shadowOffset: { width: 1, height: 13 },
   },
 
@@ -1838,6 +1840,7 @@ const vedantStyles = StyleSheet.create({
     fontWeight: "600",
     fontSize: 35,
     color: "#FF0101",
+    marginTop: "0",
     // alignSelf: "left",
   },
 
@@ -1911,6 +1914,7 @@ const vedantStyles = StyleSheet.create({
     fontSize: 35,
     color: "#FF0101",
     marginLeft: 20,
+    marginTop: "10%",
   },
   searchText: {
     fontWeight: "600",
@@ -1918,6 +1922,7 @@ const vedantStyles = StyleSheet.create({
     color: "#1ad983",
     alignSelf: "flex-end",
     marginRight: 20,
+    marginTop: "10%",
   },
   backBtnView: {
     width: "50%",
