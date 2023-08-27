@@ -360,6 +360,20 @@ export default function Home({ route, navigation }) {
     console.log("||||||||||" + hasNoWorkouts);
   }
 
+  async function temp() {
+    //   console.log("fdfd")
+    //   const workoutsDeleteArr = []
+    //   const deleteWorkoutRef = collection(db, "accounts", user.uid, "workouts");
+    //   const deleteWorkoutDocs = await getDocs(deleteWorkoutRef);
+    //   deleteWorkoutDocs.forEach(doc => {
+    //     if (doc.id != "temp" && doc.data().type == "Friend") {
+    //       workoutsDeleteArr.push(doc.data())
+    //     }
+    //   })
+    //   console.log(workoutsDeleteArr.length)
+    //   deleteSelected(workoutsDeleteArr)
+  }
+
   async function loadDailyWorkout(name) {
     const allWorkoutsArr1 = [];
     const workoutRef = collection(db, "challenges");
@@ -447,7 +461,6 @@ export default function Home({ route, navigation }) {
   };
 
   async function editWorkout(index) {
-    console.log("fdfdfd");
     //Workout Editing
     setOpenEditWorkoutPage(true);
     let selectedName = "";
@@ -722,7 +735,7 @@ export default function Home({ route, navigation }) {
             <Text style={backgroundStyle.titleText}> Welcome, {userName} </Text>
 
             <TouchableOpacity
-              style={{ marginLeft: "85%", marginTop: 28, position: "absolute" }}
+              style={{ marginLeft: 330, marginTop: 28, position: "absolute" }}
               onPress={() => {
                 setOpenProfilePage(true);
               }}
@@ -783,8 +796,8 @@ export default function Home({ route, navigation }) {
                     style={{
                       paddingRight: 10,
                       marginLeft: 208,
-                      marginTop: "32%",
-                      position: "relative",
+                      marginTop: 108,
+                      position: "absolute",
                     }}
                     onPress={() => openSpecificWorkout(info)}
                   >
@@ -999,7 +1012,6 @@ export default function Home({ route, navigation }) {
                 </View>
                 <View style={newStyles.settingsSplit3}>
                   <Switch
-                    style={newStyles.switchStyle}
                     trackColor={{ true: "#8e8efa", false: "#767577" }}
                     thumbColor={toggle2 ? "#f4f3f4" : "#f4f3f4"}
                     ios_backgroundColor="#3e3e3e"
@@ -1207,7 +1219,7 @@ export default function Home({ route, navigation }) {
         }}
       >
         <View style={specWorkout.container}>
-          <View style={{ flexDirection: "row", marginTop: "10%" }}>
+          <View style={{ flexDirection: "row", marginTop: 50 }}>
             <Text style={specWorkout.title}>Impulse</Text>
           </View>
 
@@ -1215,7 +1227,7 @@ export default function Home({ route, navigation }) {
             Workout
           </Divider>
 
-          <View marginTop={"5%"}>
+          <View marginTop={50}>
             <Text style={specWorkout.header}>
               Current Exercise: {nameConfigs[currStep]}
             </Text>
@@ -1710,9 +1722,9 @@ const backgroundStyle = StyleSheet.create({
   },
 
   plusButton: {
-    position: "relative",
-    left: "82%",
-    bottom: "1%",
+    position: "absolute",
+    right: 10,
+    bottom: 10,
     // marginTop: 585,
     // marginLeft: 287,
     borderRadius: 7,
@@ -1731,11 +1743,9 @@ const backgroundStyle = StyleSheet.create({
 
   plusText: {
     fontWeight: "900",
-    left: "5%",
-    bottom: "10%",
-    fontSize: 45,
-    color: "#ffffff",
+    fontSize: 40,
     fontStyle: "italic",
+    color: "#ffffff",
   },
 
   titleText: {
@@ -1743,7 +1753,7 @@ const backgroundStyle = StyleSheet.create({
     fontWeight: "500",
     fontSize: 27,
     // alignSelf: "left",
-    marginTop: "5%",
+    marginTop: 28,
     marginBottom: 5,
     marginLeft: 10,
   },
@@ -2016,10 +2026,9 @@ const cardStyle = StyleSheet.create({
     backgroundColor: "#0d0d12",
     // marginTop: 50,
     height: 160,
-    width: "100%",
-    maxWidth: "100%",
+    width: 365,
     marginLeft: 10,
-    borderRadius: 5,
+    borderRadius: 10,
     borderWidth: 2,
     borderColor: "#404057",
     borderBottomWidth: 5,
@@ -2031,9 +2040,7 @@ const cardStyle = StyleSheet.create({
   },
   tempText: {
     fontSize: 25,
-    paddingHorizontal: "21%",
     fontWeight: "500",
-
     color: "white",
   },
 
@@ -2119,7 +2126,7 @@ const specWorkout = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginHorizontal: 17,
-    marginTop: "30%",
+    marginTop: 150,
   },
 
   returnText: {
@@ -2348,9 +2355,7 @@ const homeScrollMain = StyleSheet.create({
   },
 
   scrollContainer1: {
-    height: "100%",
-    maxHeight: "100%",
-    marginTop: 10,
+    height: 205,
     // backgroundColor: "red",
   },
   scrollContainer2: {
@@ -2531,7 +2536,6 @@ const newStyles = StyleSheet.create({
     width: "20%",
   },
   switchStyle: {
-    right: "20%",
     transform: [{ scaleX: 1 }, { scaleY: 1 }],
   },
   settingsText: {
