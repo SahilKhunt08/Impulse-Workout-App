@@ -46,7 +46,6 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Divider from "react-native-divider";
 import { Icon } from "@rneui/themed";
 import { CountdownCircleTimer } from "react-native-countdown-circle-timer";
-import HomeScroll from "./homeScroll";
 import { BlurView } from "expo-blur";
 import FlashMessage, {
   showMessage,

@@ -894,31 +894,93 @@ export default function Workout({ navigation }) {
         onRequestClose={() => {
           Alert.alert('Modal has been closed.');
           setModalVisible(!modalVisible);
+
+          
+        }}
+      >
+        
+        
+        
+        
+     
+        <View style={vedantStyles.container}>
+          <View style={{ marginTop: "15%" }}>
+            <View style={{ marginRight: 210, flexDirection: "row" }}>
+              <Text style={vedantStyles.titleText}>Filters</Text>
+              <Image
+                source={require("../assets/filter1.png")}
+                style={{
+                  width: 35,
+                  height: 35,
+                  paddingRight: 10,
+                  marginTop: "23%",
+                }}
+              />
+            </View>
+          </View>
+          <View style={vedantStyles.filterContainer}>
+            <Text style={vedantStyles.filterHeader}>Difficulty</Text>
+            <View style={{ flexDirection: "row", marginBottom: "1%" }}>
+              <View>
+                <TouchableOpacity
+                  style={styleBeginner}
+                  onPress={() => recieveButtonClicks(1)}
+                >
+                  <Text style={vedantStyles.loginText}>Beginner</Text>
+                </TouchableOpacity>
+              </View>
+              <TouchableOpacity
+                style={styleIntermediate}
+                onPress={() => recieveButtonClicks(2)}
+              >
+                <Text style={vedantStyles.loginText}>Intermediate</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styleExpert}
+                onPress={() => recieveButtonClicks(3)}
+              >
+                <Text style={vedantStyles.loginText}>Expert</Text>
+              </TouchableOpacity>
+            </View>
+
         }}>
 
-    <View style={vedantStyles.container}>
-     <View style={{marginTop:75}}>
-      <View style={{marginRight:210, flexDirection: 'row'}}>
-        <Text style={vedantStyles.titleText}>Filters</Text>
-            <Image source={ require('../assets/filter1.png') } style={ { width: 35, height: 35, paddingRight:10, marginTop:5 } } />
-      </View>
-    </View>
-      <View style={vedantStyles.filterContainer}>
+
+
+
+
+
+
+//     <View style={vedantStyles.container}>
+//      <View style={{marginTop:75}}>
+//       <View style={{marginRight:210, flexDirection: 'row'}}>
+//         <Text style={vedantStyles.titleText}>Filters</Text>
+//             <Image source={ require('../assets/filter1.png') } style={ { width: 35, height: 35, paddingRight:10, marginTop:5 } } />
+//       </View>
+//     </View>
+//       <View style={vedantStyles.filterContainer}>
       
-        <Text style={vedantStyles.filterHeader}>Difficulty</Text>
-        <View style={{flexDirection: 'row', marginBottom: 5}}>
-          <View> 
-          <TouchableOpacity style={styleBeginner} onPress={() => recieveButtonClicks(1)} >
-              <Text style={vedantStyles.loginText}>Beginner</Text> 
-          </TouchableOpacity>
-          </View> 
-          <TouchableOpacity style={styleIntermediate} onPress={() => recieveButtonClicks(2)}>
-              <Text style={vedantStyles.loginText}>Intermediate</Text> 
-          </TouchableOpacity> 
-          <TouchableOpacity style={styleExpert} onPress={() => recieveButtonClicks(3)}>
-              <Text style={vedantStyles.loginText}>Expert</Text> 
-          </TouchableOpacity> 
-        </View>
+//         <Text style={vedantStyles.filterHeader}>Difficulty</Text>
+//         <View style={{flexDirection: 'row', marginBottom: 5}}>
+//           <View> 
+//           <TouchableOpacity style={styleBeginner} onPress={() => recieveButtonClicks(1)} >
+//               <Text style={vedantStyles.loginText}>Beginner</Text> 
+//           </TouchableOpacity>
+//           </View> 
+//           <TouchableOpacity style={styleIntermediate} onPress={() => recieveButtonClicks(2)}>
+//               <Text style={vedantStyles.loginText}>Intermediate</Text> 
+//           </TouchableOpacity> 
+//           <TouchableOpacity style={styleExpert} onPress={() => recieveButtonClicks(3)}>
+//               <Text style={vedantStyles.loginText}>Expert</Text> 
+//           </TouchableOpacity> 
+//         </View>
+
+
+
+
+
+
+
 
         <Text style={vedantStyles.filterHeader}>Muscle Group</Text>
         <View style={{flexDirection: 'row'}}>
@@ -1208,13 +1270,13 @@ const modalStyles = StyleSheet.create({
     borderBottomWidth: 0,
   },
   infoText1: {
-    fontSize: 25, //25
+    fontSize: "23%", //25
     fontWeight: "400",
     color: "#fff",
     letterSpacing: 1.5,
   },
   infoText2: {
-    fontSize: 19, //18
+    fontSize: "20%", //18
     marginBottom: 5,
     color: "#d0d1d6",
     maxWidth: 160,
@@ -1548,7 +1610,8 @@ const vedantStyles = StyleSheet.create({
     fontWeight: "500",
     fontSize: 35,
     // alignSelf: "left",
-    marginBottom: 25,
+    marginBottom: "5%",
+    marginTop: "20%",
   },
   filterHeader: {
     fontSize: 20,
@@ -1575,6 +1638,7 @@ const vedantStyles = StyleSheet.create({
     shadowRadius: 15,
     margin: 5,
     shadowOffset : { width: 1, height: 13},
+
   },
 
   loginBtnClicked: {
@@ -1597,6 +1661,7 @@ const vedantStyles = StyleSheet.create({
     fontWeight: "600",
     fontSize: 35,
     color: "#FF0101",
+    marginTop: "0",
     // alignSelf: "left",
   },
 
@@ -1660,7 +1725,7 @@ const vedantStyles = StyleSheet.create({
 
   filterButtonsView: {
     flexDirection: "row",
-    marginTop: 45,
+    marginTop: "4%",
     // marginRight: 265,
     justifyContent: "center",
     alignItems: "center",
@@ -1670,6 +1735,7 @@ const vedantStyles = StyleSheet.create({
     fontSize: 35,
     color: "#FF0101",
     marginLeft: 20,
+    marginTop: "10%",
   },
   searchText: {
     fontWeight: "600",
@@ -1677,6 +1743,7 @@ const vedantStyles = StyleSheet.create({
     color: "#1ad983",
     alignSelf: "flex-end",
     marginRight: 20,
+    marginTop: "10%",
   },
   backBtnView: {
     width: "50%",
