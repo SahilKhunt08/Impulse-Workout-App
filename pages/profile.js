@@ -492,7 +492,7 @@ export default function Profile({ navigation }) {
                 <TextInput
                   style={newStyles.requestInputText}
                   placeholder="Friend's Name"
-                  fontSize="16"
+                  fontSize={16}
                   placeholderTextColor="#cccccc"
                   onChangeText={(sendingName) => setSendingName(sendingName)}
                   valie={sendingName}
