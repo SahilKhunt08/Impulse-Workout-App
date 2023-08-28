@@ -61,7 +61,6 @@ export default function Home({ route, navigation }) {
       loadWorkouts();
       initializeName();
       initializeDailyWorkouts();
-      initializeProfile();
       // console.log(lastSignin)
     });
     return unsubscribe;
@@ -131,12 +130,13 @@ export default function Home({ route, navigation }) {
   const [deleteModalVis, setDeleteModalVis] = useState(false);
   const [deletingWorkoutIndex, setDeletingWorkoutIndex] = useState(-1);
 
-  //Profile Page
   const [openProfilePage, setOpenProfilePage] = useState(false);
   const [newUsername, setNewUsername] = useState("");
   const [newEmail, setNewEmail] = useState("");
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
+  const [sendingName, setSendingName] = useState("");
+
   const [toggle1, setToggle1] = useState(false);
   const [toggle2, setToggle2] = useState(false);
   const toggleSwitch1 = () => setToggle1((previousState) => !previousState);
@@ -146,145 +146,6 @@ export default function Home({ route, navigation }) {
     const docSnap = await getDoc(doc(db, "accounts", user.uid));
     const name = docSnap.data().username;
     setUserName(name);
-  }
-
-  async function initializeProfile() {
-    reloadUser();
-
-    const docIdArr = [];
-    const requestInfoArr = [];
-    const querySnapshot = await getDocs(
-      collection(db, "accounts", user.uid, "requests")
-    );
-    querySnapshot.forEach((doc) => {
-      if (doc.id != "temp") {
-        docIdArr.push(doc.id);
-      }
-    });
-
-    const docRef2 = doc(db, "accounts", user.uid);
-    const docSnap2 = await getDoc(docRef2);
-
-    if (docSnap2.exists()) {
-      const auth = getAuth();
-      const user = auth.currentUser;
-      setNewUsername(docSnap2.data().username);
-      setNewEmail(user.email);
-      setToggle1(docSnap2.data().settings1);
-      setToggle2(docSnap2.data().settings2);
-      setOldPassword(docSnap2.data().password);
-    } else {
-      console.log("No such document!");
-    }
-  }
-
-  async function reloadUser() {
-    const auth2 = getAuth();
-    const user2 = auth2.currentUser;
-    const docRef3 = doc(db, "accounts", user2.uid);
-    const docSnap3 = await getDoc(docRef3);
-    var credentialPassword = "";
-    if (docSnap3.exists()) {
-      credentialPassword = docSnap3.data().password;
-    } else {
-      console.log("No such document!");
-    }
-
-    const credential = EmailAuthProvider.credential(
-      user2.email,
-      credentialPassword
-    );
-
-    reauthenticateWithCredential(user2, credential)
-      .then(() => {
-        // User re-authenticated.
-      })
-      .catch((error) => {
-        console.log("Re-auth error");
-        console.log(error.code);
-        console.log(error.message);
-      });
-  }
-
-  async function handleUpdate() {
-    reloadUser();
-    var allValidInputs = true;
-
-    const docRef1 = doc(db, "accounts", user.uid);
-    await updateDoc(docRef1, {
-      settings1: toggle1,
-      settings2: toggle2,
-    });
-    if (newUsername.length > 0) {
-      await updateDoc(docRef1, {
-        username: newUsername,
-      });
-    } else {
-      allValidInputs = false;
-    }
-
-    const auth1 = getAuth();
-    const user1 = auth1.currentUser;
-    if (newEmail != user1.email) {
-      if (newEmail.length > 0) {
-        updateEmail(auth.currentUser, newEmail)
-          .then(() => {})
-          .catch((error) => {
-            console.log("New Email Error");
-            console.log(error.code);
-            console.log(error.message);
-            allValidInputs = false;
-          });
-      } else {
-        allValidInputs = false;
-      }
-    }
-
-    if (newPassword.length > 6 && newPassword != oldPassword) {
-      updatePassword(user, newPassword)
-        .then(() => {
-          updateFirestorePassword();
-          setOldPassword(newPassword);
-          // Update successful.
-        })
-        .catch((error) => {
-          console.log("New Password Error");
-          console.log(error.code);
-          console.log(error.message);
-          allValidInputs = false;
-        });
-    }
-
-    if (allValidInputs) {
-      showMessage({
-        message: "Update Successful",
-        floating: true,
-        textStyle: newStyles.flashText,
-        titleStyle: newStyles.flashText,
-        icon: "success",
-      });
-    } else {
-      showMessage({
-        message: "Some Inputs Invalid",
-        floating: true,
-        textStyle: newStyles.flashText,
-        titleStyle: newStyles.flashText,
-        icon: "danger",
-      });
-    }
-  }
-
-  const handleLogout = () => {
-    console.log("LOGOUT");
-    // navigation.replace('Impulse') //New version
-    navigation.navigate("Login"); //Old version
-  };
-
-  async function updateFirestorePassword() {
-    const docRef1 = doc(db, "accounts", user.uid);
-    await updateDoc(docRef1, {
-      password: newPassword,
-    });
   }
 
   const initializeDailyWorkouts = () => {
@@ -796,7 +657,7 @@ export default function Home({ route, navigation }) {
                     style={{
                       paddingRight: 10,
                       marginLeft: 208,
-                      marginTop: 108,
+                      marginTop: 98,
                       position: "absolute",
                     }}
                     onPress={() => openSpecificWorkout(info)}
@@ -840,11 +701,11 @@ export default function Home({ route, navigation }) {
                     </Text>
 
                     <TouchableOpacity
-                      style={{ marginLeft: 260 }}
+                      style={{ marginLeft: 273, bottom: 17 }}
                       onPress={() => openSpecificWorkout(info)}
                     >
                       <Image
-                        source={require("../assets/arrow5a.png")}
+                        source={require("../assets/arrow5.png")}
                         style={{ width: 20, height: 20 }}
                       />
                     </TouchableOpacity>
@@ -913,6 +774,7 @@ export default function Home({ route, navigation }) {
         onRequestClose={() => {
           Alert.alert("Modal has been closed.");
           setOpenProfilePage(!openProfilePage);
+          setOpenNewWorkoutPage(!openNewWorkoutPage);
         }}
       >
         <View style={newWorkout.container}>
@@ -973,80 +835,67 @@ export default function Home({ route, navigation }) {
                 />
               </View>
             </View>
+          </View>
 
-            <View style={newStyles.genSettingsContainer}>
-              <View style={newStyles.settingsView}>
-                <View style={newStyles.settingsSplit1}>
-                  <Icon
-                    name="group"
-                    type="material"
-                    size={31}
-                    color="#8e8efa"
-                  />
-                </View>
-                <View style={newStyles.settingsSplit2}>
-                  <Text style={newStyles.settingsText}>Receive Requests</Text>
-                </View>
-                <View style={newStyles.settingsSplit3}>
-                  <Switch
-                    style={newStyles.switchStyle}
-                    trackColor={{ true: "#8e8efa", false: "#767577" }}
-                    thumbColor={toggle1 ? "#f4f3f4" : "#f4f3f4"}
-                    ios_backgroundColor="#3e3e3e"
-                    onValueChange={toggleSwitch1}
-                    value={toggle1}
-                  />
-                </View>
+          <View style={newStyles.genSettingsContainer}>
+            <View style={newStyles.settingsView}>
+              <View style={newStyles.settingsSplit1}>
+                <Icon name="group" type="material" size={31} color="#8e8efa" />
               </View>
-              <View style={newStyles.settingsView}>
-                <View style={newStyles.settingsSplit1}>
-                  <Icon
-                    name="leaderboard"
-                    type="material"
-                    size={31}
-                    color="#8e8efa"
-                  />
-                </View>
-                <View style={newStyles.settingsSplit2}>
-                  <Text style={newStyles.settingsText}>Receive Invites</Text>
-                </View>
-                <View style={newStyles.settingsSplit3}>
-                  <Switch
-                    trackColor={{ true: "#8e8efa", false: "#767577" }}
-                    thumbColor={toggle2 ? "#f4f3f4" : "#f4f3f4"}
-                    ios_backgroundColor="#3e3e3e"
-                    onValueChange={toggleSwitch2}
-                    value={toggle2}
-                  />
-                </View>
+              <View style={newStyles.settingsSplit2}>
+                <Text style={newStyles.settingsText}>Receive Requests</Text>
+              </View>
+              <View style={newStyles.settingsSplit3}>
+                <Switch
+                  style={newStyles.switchStyle}
+                  trackColor={{ true: "#8e8efa", false: "#767577" }}
+                  thumbColor={toggle1 ? "#f4f3f4" : "#f4f3f4"}
+                  ios_backgroundColor="#3e3e3e"
+                  onValueChange={toggleSwitch1}
+                  value={toggle1}
+                />
               </View>
             </View>
-
-            <TouchableOpacity
-              style={newStyles.updateBtn}
-              onPress={() => {
-                handleUpdate();
-                setOpenProfilePage(false);
-              }}
-            >
-              <Text style={newStyles.updateText}>Update</Text>
-            </TouchableOpacity>
-
-            {/* <TouchableOpacity
-              style={newStyles.logoutBtn}
-              // onPress={() => handleLogout()}
-            >
-              <Icon name="logout" type="material" size={31} color="#8e8efa" />
-              <Text style={newStyles.logoutText}>LOGOUT</Text>
-            </TouchableOpacity> */}
-
-            <TouchableOpacity
-              style={newStyles.submitButton}
-              onPress={() => setOpenProfilePage(false)}
-            >
-              <Text style={newStyles.submitText}>Return</Text>
-            </TouchableOpacity>
+            <View style={newStyles.settingsView}>
+              <View style={newStyles.settingsSplit1}>
+                <Icon
+                  name="leaderboard"
+                  type="material"
+                  size={31}
+                  color="#8e8efa"
+                />
+              </View>
+              <View style={newStyles.settingsSplit2}>
+                <Text style={newStyles.settingsText}>Receive Invites</Text>
+              </View>
+              <View style={newStyles.settingsSplit3}>
+                <Switch
+                  trackColor={{ true: "#8e8efa", false: "#767577" }}
+                  thumbColor={toggle2 ? "#f4f3f4" : "#f4f3f4"}
+                  ios_backgroundColor="#3e3e3e"
+                  onValueChange={toggleSwitch2}
+                  value={toggle2}
+                />
+              </View>
+            </View>
           </View>
+
+          <TouchableOpacity
+            style={newStyles.updateBtn}
+            onPress={() => {
+              handleUpdate();
+              setOpenProfilePage(false);
+            }}
+          >
+            <Text style={newStyles.updateText}>Update</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={newStyles.submitButton}
+            onPress={() => setOpenProfilePage(false)}
+          >
+            <Text style={newStyles.submitText}>Return</Text>
+          </TouchableOpacity>
         </View>
       </Modal>
 
@@ -1302,7 +1151,7 @@ export default function Home({ route, navigation }) {
           <ScrollView
             showsHorizontalScrollIndicator={false}
             horizontal={true}
-            style={{ marginLeft: 7 }}
+            style={{ marginLeft: 7, height: 70 }}
           >
             <TouchableOpacity style={but5} onPress={() => recieveBreakTimes(1)}>
               <Text style={newWorkout.breakText}>5</Text>
@@ -1452,7 +1301,7 @@ export default function Home({ route, navigation }) {
                 <Icon
                   onPress={() => setModalAddVisible(!modalAddVisible)}
                   style={modalAddStyles.closeButton}
-                  color="#8a7ed9"
+                  color="#FF0055"
                   name="close-box-outline"
                   type="material-community"
                   size="40"
@@ -1957,7 +1806,7 @@ const newWorkout = StyleSheet.create({
   headerBackground: {
     fontWeight: "600",
     backgroundColor: "#404057",
-    width: "60%",
+    width: "70%",
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
@@ -2066,7 +1915,9 @@ const cardStyle = StyleSheet.create({
     color: "#ffffff",
     fontWeight: "500",
     fontSize: 25,
+
     maxWidth: 170,
+    // maxWidth: 260
     // alignSelf: "left",
     marginTop: 12,
     marginLeft: 12,
@@ -2079,6 +1930,8 @@ const cardStyle = StyleSheet.create({
     marginLeft: 12,
     marginRight: 5,
     fontSize: 15,
+    maxHeight: 110,
+    maxWidth: 190,
   },
 
   arrowText: {
@@ -2149,6 +2002,7 @@ const editWorkouts = StyleSheet.create({
     color: "#ffffff",
     marginLeft: 46,
     marginBottom: 15,
+    paddingTop: 15,
     width: 600,
   },
 
@@ -2165,11 +2019,15 @@ const editWorkouts = StyleSheet.create({
     marginLeft: 10,
     marginTop: 10,
     color: "#404057",
+    textAlign: "center",
+    marginRight: 10,
   },
   desc: {
     fontSize: 25,
     marginLeft: 10,
     color: "#404057",
+    textAlign: "center",
+    marginRight: 10,
   },
   submitText: {
     fontWeight: "700",
@@ -2237,8 +2095,8 @@ const modalAddStyles = StyleSheet.create({
     width: "70%",
     backgroundColor: "#404057", //'#404057', //0d0d12 //26, 26, 41
     borderRadius: 15,
-    borderWidth: 2,
-    borderColor: "#8a7ed9",
+    borderWidth: 1,
+    borderColor: "#000000",
   },
   titleView1: {
     width: "100%",
@@ -2314,10 +2172,10 @@ const modalAddStyles = StyleSheet.create({
   },
 
   saveButton: {
-    borderRadius: 5,
-    borderWidth: 3,
-    borderColor: "#8a7ed9",
-    backgroundColor: "#67678f",
+    borderRadius: 10,
+    // borderWidth: 2,
+    // borderColor: "#FFFFFF",
+    backgroundColor: "#8e8efa",
     marginTop: 22,
     paddingHorizontal: 20,
     paddingVertical: 8,
@@ -2325,7 +2183,7 @@ const modalAddStyles = StyleSheet.create({
   saveText: {
     letterSpacing: 2,
     fontSize: 23,
-    fontWeight: "300",
+    fontWeight: "600",
     color: "#f1f0fc",
   },
 });
@@ -2606,6 +2464,7 @@ const newStyles = StyleSheet.create({
     elevation: 6,
     shadowRadius: 15,
     shadowOffset: { width: 1, height: 13 },
+    alignSelf: "center",
   },
   updateText: {
     fontWeight: "800",
@@ -2649,6 +2508,7 @@ const newStyles = StyleSheet.create({
     elevation: 6,
     shadowRadius: 15,
     shadowOffset: { width: 1, height: 13 },
+    alignSelf: "center",
   },
 
   submitText: {
