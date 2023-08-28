@@ -12,6 +12,7 @@ import {
   ScrollView,
   Button,
   Modal,
+  Switch,
   Settings,
 } from "react-native";
 import Card1 from "./components/card1";
@@ -128,6 +129,19 @@ export default function Home({ route, navigation }) {
   const [welcomeMessage, setWelcomeMessage] = useState("Good Morning");
   const [deleteModalVis, setDeleteModalVis] = useState(false);
   const [deletingWorkoutIndex, setDeletingWorkoutIndex] = useState(-1);
+
+  const [newUsername, setNewUsername] = useState("");
+  const [newEmail, setNewEmail] = useState("");
+  const [oldPassword, setOldPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [sendingName, setSendingName] = useState("");
+
+  const [toggle1, setToggle1] = useState(false);
+  const [toggle2, setToggle2] = useState(false);
+  const toggleSwitch1 = () => setToggle1((previousState) => !previousState);
+  const toggleSwitch2 = () => setToggle2((previousState) => !previousState);
+
+  const [openProfilePage, setOpenProfilePage] = useState(false);
 
   async function initializeName() {
     const docSnap = await getDoc(doc(db, "accounts", user.uid));
@@ -587,7 +601,6 @@ export default function Home({ route, navigation }) {
               onPress={() => {
                 setOpenProfilePage(true);
               }}
-
             >
               <Image
                 source={require("../assets/person3.png")}
