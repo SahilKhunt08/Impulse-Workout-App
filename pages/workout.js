@@ -1311,7 +1311,7 @@ export default function Workout({ navigation }) {
                   }}
                 >
                   <Icon
-                    style={{ alignContent: "end" }}
+                    style={mainScrollView.alignIcon}
                     color="#c8c5db"
                     // name="menu"
                     // type="material"
@@ -1745,6 +1745,9 @@ const mainScrollView = StyleSheet.create({
     // backgroundColor: "darkblue",
     justifyContent: "flex-end",
     alignSelf: "flex-end",
+  },
+  alignIcon: {
+    // alignContent: "end",
   },
 });
 
