@@ -1073,14 +1073,14 @@ export default function Workout({ navigation }) {
                   width: 35,
                   height: 35,
                   paddingRight: 10,
-                  marginTop: "23%",
+                  marginTop: "10%",
                 }}
               />
             </View>
           </View>
           <View style={vedantStyles.filterContainer}>
             <Text style={vedantStyles.filterHeader}>Difficulty</Text>
-            <View style={{ flexDirection: "row", marginBottom: "1%" }}>
+            <View style={{ flexDirection: "row" }}>
               <View>
                 <TouchableOpacity
                   style={styleBeginner}
@@ -1317,7 +1317,7 @@ export default function Workout({ navigation }) {
                     // type="material"
                     name="more-horiz"
                     type="material"
-                    size="30"
+                    size={30}
                   />
                 </TouchableOpacity>
               </View>
@@ -1461,13 +1461,13 @@ const modalStyles = StyleSheet.create({
     borderBottomWidth: 0,
   },
   infoText1: {
-    fontSize: "23%", //25
+    fontSize: 25, //25
     fontWeight: "400",
     color: "#fff",
     letterSpacing: 1.5,
   },
   infoText2: {
-    fontSize: "20%", //18
+    fontSize: 118, //18
     marginBottom: 5,
     color: "#d0d1d6",
     maxWidth: 160,
@@ -1804,14 +1804,14 @@ const vedantStyles = StyleSheet.create({
     fontSize: 35,
     // alignSelf: "left",
     marginBottom: "5%",
-    marginTop: "20%",
+    marginTop: "5%",
   },
   filterHeader: {
     fontSize: 20,
     fontWeight: "600",
     color: "#ffffff",
     margin: 5,
-    marginTop: 15,
+    marginTop: 5,
   },
   modalText: {
     marginBottom: 15,
@@ -1927,7 +1927,6 @@ const vedantStyles = StyleSheet.create({
     fontSize: 35,
     color: "#FF0101",
     marginLeft: 20,
-    marginTop: "10%",
   },
   searchText: {
     fontWeight: "600",
@@ -1935,7 +1934,6 @@ const vedantStyles = StyleSheet.create({
     color: "#1ad983",
     alignSelf: "flex-end",
     marginRight: 20,
-    marginTop: "10%",
   },
   backBtnView: {
     width: "50%",
