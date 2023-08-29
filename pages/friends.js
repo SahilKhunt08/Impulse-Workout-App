@@ -629,7 +629,7 @@ export default function AddFriends({ navigation }) {
                   style={makeStyles.inputText}
                   placeholder="Leaderboard Name"
                   placeholderTextColor="#d9d9d9"
-                  // fontSize={16}
+                  fontSize={16}
                   onChangeText={(inputTitle) => setInputTitle(inputTitle)}
                   keyboardAppearance="dark"
                   maxLength={30}
@@ -640,7 +640,7 @@ export default function AddFriends({ navigation }) {
                   style={makeStyles.inputText}
                   placeholder="Category"
                   placeholderTextColor="#d9d9d9"
-                  // fontSize={16}
+                  fontSize={16}
                   onChangeText={(inputCategory) =>
                     setInputCategory(inputCategory)
                   }
@@ -750,7 +750,7 @@ export default function AddFriends({ navigation }) {
                 style={mainModalStyles.inputText}
                 placeholder="Update Stat"
                 placeholderTextColor="#cccccc"
-                // fontSize={20}
+                fontSize={20}
                 fontWeight={"300"}
                 onChangeText={(statInput) => setStatInput(statInput)}
                 keyboardAppearance="dark"
@@ -912,20 +912,20 @@ const deleteModalStyles = StyleSheet.create({
   },
   titleText1: {
     color: "#5f5fb3",
-    // fontSize: 23,
+    fontSize: 23,
     fontWeight: "500",
     marginTop: 15,
   },
   titleText2: {
-    // fontSize: 18,
+    fontSize: 18,
     marginTop: 15,
   },
   buttonText1: {
-    // fontSize: 18,
+    fontSize: 18,
     fontWeight: "500",
   },
   buttonText2: {
-    // fontSize: 18,
+    fontSize: 18,
     fontWeight: "500",
   },
 });
@@ -971,19 +971,19 @@ const mainScrollViewStyles = StyleSheet.create({
     backgroundColor: "#534f8c",
   },
   placementText: {
-    // fontSize: 30,
+    fontSize: 30,
     color: "white",
     fontWeight: "900",
   },
   nameText: {
-    // fontSize: 20,
+    fontSize: 20,
     color: "white",
     marginHorizontal: 10,
     letterSpacing: 1.5,
     fontWeight: "500",
   },
   scoreText: {
-    // fontSize: 20,
+    fontSize: 20,
     color: "white",
     fontWeight: "600",
   },
@@ -1007,7 +1007,7 @@ const mainModalStyles = StyleSheet.create({
   },
 
   nameText: {
-    // fontSize: 30,
+    fontSize: 30,
     color: "#8e8ef3",
     fontWeight: "500",
     marginTop: 20,
@@ -1017,7 +1017,7 @@ const mainModalStyles = StyleSheet.create({
     shadowOffset: { width: 0, height: 0 },
   },
   categoryText: {
-    // fontSize: 20,
+    fontSize: 20,
     color: "#c9c9ff",
     fontWeight: "500",
     marginTop: 25,
@@ -1061,7 +1061,7 @@ const mainModalStyles = StyleSheet.create({
   },
   enterText: {
     color: "white",
-    // fontSize: 20,
+    fontSize: 20,
     fontWeight: "300",
   },
   returnButton: {
@@ -1081,7 +1081,7 @@ const mainModalStyles = StyleSheet.create({
   },
   returnText: {
     fontWeight: "600",
-    // fontSize: 20,
+    fontSize: 20,
     letterSpacing: 0.7,
   },
 });
@@ -1135,19 +1135,19 @@ const cardStyles = StyleSheet.create({
     height: "20%",
   },
   nameText: {
-    // fontSize: 30,
+    fontSize: 30,
     color: "#8e8ef3",
     fontWeight: "500",
     marginTop: 10,
     marginHorizontal: 10,
   },
   categoryText: {
-    // fontSize: 20,
+    fontSize: 20,
     color: "white",
     marginLeft: 10,
   },
   placeText: {
-    // fontSize: 20,
+    fontSize: 20,
     color: "white",
     marginLeft: 10,
   },
@@ -1171,7 +1171,7 @@ const makeStyles = StyleSheet.create({
   },
   makeLeaderboardText: {
     fontWeight: "600",
-    // fontSize: 20,
+    fontSize: 20,
   },
 
   modalContainer: {
@@ -1205,7 +1205,7 @@ const makeStyles = StyleSheet.create({
   },
   titleText: {
     color: "#dcdcfc",
-    // fontSize: 28,
+    fontSize: 28,
     fontWeight: "300",
     letterSpacing: 1.7,
     marginLeft: 10,
@@ -1216,7 +1216,7 @@ const makeStyles = StyleSheet.create({
 
   scrollViewTitle: {
     color: "#dcdcfc",
-    // fontSize: 23,
+    fontSize: 23,
     fontWeight: "500",
     letterSpacing: 0.5,
     marginTop: 15,
@@ -1245,7 +1245,7 @@ const makeStyles = StyleSheet.create({
   mapText: {
     letterSpacing: 1,
     fontWeight: "400",
-    // fontSize: 23,
+    fontSize: 23,
     color: "#d7d1ff",
     // backgroundColor: "grey",
     width: "80%",
@@ -1262,7 +1262,7 @@ const makeStyles = StyleSheet.create({
   },
   mapButtonText: {
     color: "#e2deff",
-    // fontSize: 18,
+    fontSize: 18,
     fontWeight: "500",
   },
 
@@ -1306,13 +1306,13 @@ const makeStyles = StyleSheet.create({
   },
 
   createText: {
-    // fontSize: 22,
+    fontSize: 22,
     fontWeight: "800",
     letterSpacing: 1.5,
   },
 
   flashText: {
-    // fontSize: 18,
+    fontSize: 18,
     fontWeight: "600",
     letterSpacing: 1,
     color: "white",
@@ -1380,7 +1380,7 @@ const mainStyles = StyleSheet.create({
     marginLeft: 15,
   },
   usernameText: {
-    // fontSize: 20,
+    fontSize: 20,
     fontWeight: "500",
     color: "#babade",
   },
@@ -1394,7 +1394,7 @@ const mainStyles = StyleSheet.create({
 
   goAddFriendsText: {
     color: "rgba(220, 220, 252, 0.8)",
-    // fontSize: 23,
+    fontSize: 23,
     marginBottom: 8,
     fontWeight: "500",
     letterSpacing: 1.2,
