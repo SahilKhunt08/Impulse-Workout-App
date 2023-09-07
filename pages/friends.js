@@ -495,7 +495,7 @@ export default function AddFriends({ navigation }) {
                           color="#8e8ef3"
                           name="person-remove"
                           type="material"
-                          size="30"
+                          // size={30}
                         ></Icon>
                       </TouchableOpacity>
                       <View style={mainStyles.usernameView}>
@@ -524,7 +524,7 @@ export default function AddFriends({ navigation }) {
                           color="#8e8ef3"
                           name="person-remove"
                           type="material"
-                          size="30"
+                          size={30}
                         ></Icon>
                       </TouchableOpacity>
                       <View style={mainStyles.usernameView}>
@@ -620,7 +620,7 @@ export default function AddFriends({ navigation }) {
                 color="#9191ba"
                 name="close-box-outline"
                 type="material-community"
-                size="40"
+                size={40}
               ></Icon>
             </View>
             <View style={makeStyles.bothInputView}>
