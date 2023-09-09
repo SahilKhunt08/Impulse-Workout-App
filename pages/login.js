@@ -59,8 +59,8 @@ import FlashMessage, {
 //   )}
 
 export default function Login({ navigation }) {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("khunt9858@students.d211.org");
+  const [password, setPassword] = useState("password");
   const [newUsername, setNewUsername] = useState("");
   const [newEmail, setNewEmail] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -432,10 +432,11 @@ const newStyles = StyleSheet.create({
     backgroundColor: "#0d0d12",
   },
   loginContainer: {
-    alignItems: "center",
+    alignItems: "flex-start",
     marginTop: 50,
   },
   titleText: {
+    alignSelf: "center",
     color: "#ffffff",
     fontWeight: "500",
     fontSize: 30,
@@ -448,7 +449,6 @@ const newStyles = StyleSheet.create({
     fontWeight: "350",
     fontSize: 16,
     marginBottom: 9,
-    // alignSelf: "left",
   },
   inputView: {
     borderColor: "#404057",

@@ -589,6 +589,117 @@ export default function Home({ route, navigation }) {
     setDeleteModalVis(false);
   }
 
+  async function handleUpdate() {
+    reloadUser();
+    var allValidInputs = true;
+
+    const docRef1 = doc(db, "accounts", user.uid);
+    await updateDoc(docRef1, {
+      settings1: toggle1,
+      settings2: toggle2,
+    });
+    if (newUsername.length > 0) {
+      await updateDoc(docRef1, {
+        username: newUsername,
+      });
+    } else {
+      allValidInputs = false;
+    }
+
+    const auth1 = getAuth();
+    const user1 = auth1.currentUser;
+    if (newEmail != user1.email) {
+      if (newEmail.length > 0) {
+        updateEmail(auth.currentUser, newEmail)
+          .then(() => {})
+          .catch((error) => {
+            console.log("New Email Error");
+            console.log(error.code);
+            console.log(error.message);
+            allValidInputs = false;
+          });
+      } else {
+        allValidInputs = false;
+      }
+    }
+
+    if (newPassword.length > 6 && newPassword != oldPassword) {
+      updatePassword(user, newPassword)
+        .then(() => {
+          updateFirestorePassword();
+          setOldPassword(newPassword);
+          // Update successful.
+        })
+        .catch((error) => {
+          console.log("New Password Error");
+          console.log(error.code);
+          console.log(error.message);
+          allValidInputs = false;
+        });
+    }
+
+    if (allValidInputs) {
+      showMessage({
+        message: "Update Successful",
+        floating: true,
+        textStyle: newStyles.flashText,
+        titleStyle: newStyles.flashText,
+        icon: "success",
+      });
+    } else {
+      showMessage({
+        message: "Some Inputs Invalid",
+        floating: true,
+        textStyle: newStyles.flashText,
+        titleStyle: newStyles.flashText,
+        icon: "danger",
+      });
+    }
+  }
+
+  //—————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+  const handleLogout = () => {
+    console.log("LOGOUT");
+    // navigation.replace('Impulse') //New version
+    navigation.navigate("Login"); //Old version
+  };
+
+  async function reloadUser() {
+    const auth2 = getAuth();
+    const user2 = auth2.currentUser;
+    const docRef3 = doc(db, "accounts", user2.uid);
+    const docSnap3 = await getDoc(docRef3);
+    var credentialPassword = "";
+    if (docSnap3.exists()) {
+      credentialPassword = docSnap3.data().password;
+    } else {
+      console.log("No such document!");
+    }
+
+    const credential = EmailAuthProvider.credential(
+      user2.email,
+      credentialPassword
+    );
+
+    reauthenticateWithCredential(user2, credential)
+      .then(() => {
+        // User re-authenticated.
+      })
+      .catch((error) => {
+        console.log("Re-auth error");
+        console.log(error.code);
+        console.log(error.message);
+      });
+  }
+
+  async function updateFirestorePassword() {
+    const docRef1 = doc(db, "accounts", user.uid);
+    await updateDoc(docRef1, {
+      password: newPassword,
+    });
+  }
+
   return (
     <View style={backgroundStyle.container}>
       <View>
