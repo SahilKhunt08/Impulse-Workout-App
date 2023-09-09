@@ -1358,7 +1358,7 @@ export default function Home({ route, navigation }) {
                         color="#FF0000"
                         name="delete"
                         type="material"
-                        size="30"
+                        size={30}
                       />
                     </TouchableOpacity>
                     <TouchableOpacity
@@ -1370,7 +1370,7 @@ export default function Home({ route, navigation }) {
                         color="#c8c5db"
                         name="menu"
                         type="material"
-                        size="30"
+                        size={30}
                       />
                     </TouchableOpacity>
                   </View>
@@ -1416,7 +1416,7 @@ export default function Home({ route, navigation }) {
                   color="#FF0055"
                   name="close-box-outline"
                   type="material-community"
-                  size="40"
+                  size={40}
                 />
               </View>
               <View style={modalAddStyles.dividerView}>

@@ -463,11 +463,16 @@ export default function AddFriends({ navigation }) {
 
   return (
     <View style={mainStyles.container}>
-      {/* <TouchableOpacity style={makeStyles.makeLeaderboardBtn} onPress={() => {console.log("YUH")}}>
+      {/* <TouchableOpacity
+        style={makeStyles.makeLeaderboardBtn}
+        onPress={() => {
+          console.log("YUH");
+        }}
+      >
         <Text style={makeStyles.makeLeaderboardText}>View Your Friends</Text>
       </TouchableOpacity> */}
 
-      {hasNoFriends ? (
+      {/* {hasNoFriends ? (
         <View style={mainStyles.friendsContainer}>
           <Text style={mainStyles.goAddFriendsText}>
             Add friends in profile page
@@ -540,7 +545,7 @@ export default function AddFriends({ navigation }) {
             </View>
           </ScrollView>
         </View>
-      )}
+      )} */}
 
       {hasNoLeaderboards ? (
         <View style={cardStyles.container1}>
@@ -1090,7 +1095,7 @@ const cardStyles = StyleSheet.create({
   container1: {
     alignItems: "center",
     justifyContent: "center",
-    height: "65%",
+    height: "98%",
     width: "100%",
     marginBottom: 10,
     marginTop: 10,

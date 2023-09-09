@@ -784,138 +784,147 @@ export default function Workout({ navigation }) {
           setModalVisible(!modalVisible);
         }}
       >
-        <View style={modalStyles.modalContainer}>
-          <View style={modalStyles.modalView}>
-            <ScrollView showsVerticalScrollIndicator={false}>
-              <View style={{ alignItems: "center" }}>
-                <View style={modalStyles.titleView}>
-                  <Text style={modalStyles.titleText}>{modalInfo.name}</Text>
-                </View>
-
-                <View style={modalStyles.mainContentView}>
-                  <View style={modalStyles.modalInfoView}>
-                    <View style={modalStyles.infoTextContainer}>
-                      <View style={modalStyles.infoTextView1}>
-                        <Text style={modalStyles.infoText1}> Difficulty </Text>
-                      </View>
-                      <Text style={modalStyles.infoText2}>
-                        {modalInfo.difficulty}
-                      </Text>
-                    </View>
-                    <View style={modalStyles.infoTextContainer}>
-                      <View style={modalStyles.infoTextView1}>
-                        <Text style={modalStyles.infoText1}> Category </Text>
-                      </View>
-                      <Text style={modalStyles.infoText2}>
-                        {modalInfo.type}
-                      </Text>
-                    </View>
-                    <View
-                      style={[
-                        modalStyles.infoTextContainer,
-                        modalStyles.infoTextViewTweak,
-                      ]}
-                    >
-                      <View style={modalStyles.infoTextView1}>
-                        <Text style={modalStyles.infoText1}> Equipment </Text>
-                      </View>
-                      <Text style={modalStyles.infoText2}>
-                        {modalInfo.equipment}
-                      </Text>
-                    </View>
+        <BlurView
+          intensity={65}
+          tint="dark"
+          style={modalAddStyles.modalContainer}
+        >
+          <View style={modalStyles.modalContainer}>
+            <View style={modalStyles.modalView}>
+              <ScrollView showsVerticalScrollIndicator={false}>
+                <View style={{ alignItems: "center" }}>
+                  <View style={modalStyles.titleView}>
+                    <Text style={modalStyles.titleText}>{modalInfo.name}</Text>
                   </View>
 
-                  <View style={modalStyles.flipCardView1}>
-                    <View style={modalStyles.flipCardView2}>
-                      <FlipCard
-                        style={modalStyles.flipCard}
-                        friction={6}
-                        perspective={100000}
-                        flipHorizontal={true}
-                        flipVertical={false}
-                        flip={false}
-                        clickable={true}
+                  <View style={modalStyles.mainContentView}>
+                    <View style={modalStyles.modalInfoView}>
+                      <View style={modalStyles.infoTextContainer}>
+                        <View style={modalStyles.infoTextView1}>
+                          <Text style={modalStyles.infoText1}>
+                            {" "}
+                            Difficulty{" "}
+                          </Text>
+                        </View>
+                        <Text style={modalStyles.infoText2}>
+                          {modalInfo.difficulty}
+                        </Text>
+                      </View>
+                      <View style={modalStyles.infoTextContainer}>
+                        <View style={modalStyles.infoTextView1}>
+                          <Text style={modalStyles.infoText1}> Category </Text>
+                        </View>
+                        <Text style={modalStyles.infoText2}>
+                          {modalInfo.type}
+                        </Text>
+                      </View>
+                      <View
+                        style={[
+                          modalStyles.infoTextContainer,
+                          modalStyles.infoTextViewTweak,
+                        ]}
                       >
-                        <View style={modalStyles.flipContainers}>
-                          <Image
-                            source={modalMusclePath1}
-                            style={modalStyles.imageStyle}
-                          />
+                        <View style={modalStyles.infoTextView1}>
+                          <Text style={modalStyles.infoText1}> Equipment </Text>
                         </View>
-                        <View style={modalStyles.flipContainers}>
-                          <Image
-                            source={modalMusclePath2}
-                            style={modalStyles.imageStyle}
-                          />
-                        </View>
-                      </FlipCard>
-                      <View style={modalStyles.flipMuscleView}>
-                        <Text style={modalStyles.flipMuscleText}>
-                          {modalInfo.muscle}
+                        <Text style={modalStyles.infoText2}>
+                          {modalInfo.equipment}
                         </Text>
                       </View>
                     </View>
+
+                    <View style={modalStyles.flipCardView1}>
+                      <View style={modalStyles.flipCardView2}>
+                        <FlipCard
+                          style={modalStyles.flipCard}
+                          friction={6}
+                          perspective={100000}
+                          flipHorizontal={true}
+                          flipVertical={false}
+                          flip={false}
+                          clickable={true}
+                        >
+                          <View style={modalStyles.flipContainers}>
+                            <Image
+                              source={modalMusclePath1}
+                              style={modalStyles.imageStyle}
+                            />
+                          </View>
+                          <View style={modalStyles.flipContainers}>
+                            <Image
+                              source={modalMusclePath2}
+                              style={modalStyles.imageStyle}
+                            />
+                          </View>
+                        </FlipCard>
+                        <View style={modalStyles.flipMuscleView}>
+                          <Text style={modalStyles.flipMuscleText}>
+                            {modalInfo.muscle}
+                          </Text>
+                        </View>
+                      </View>
+                    </View>
+                  </View>
+                  <View style={modalStyles.controlView}>
+                    <TouchableOpacity
+                      style={modalStyles.controlButtons}
+                      onPress={() => modalButtons("LEFT")}
+                    >
+                      <Icon
+                        name="arrow-left-drop-circle"
+                        type="material-community"
+                        size={55}
+                        color="#fff"
+                      />
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={modalStyles.controlButtons}
+                      onPress={() => modalButtons("ADD")}
+                    >
+                      <Icon
+                        name="plus-circle"
+                        type="material-community"
+                        size={70}
+                        color="#fff"
+                      />
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={modalStyles.controlButtons}
+                      onPress={() => modalButtons("RIGHT")}
+                    >
+                      <Icon
+                        name="arrow-right-drop-circle"
+                        type="material-community"
+                        size={55}
+                        color="#fff"
+                      />
+                    </TouchableOpacity>
+                  </View>
+
+                  <TouchableOpacity
+                    style={modalStyles.returnButton}
+                    onPress={() => setModalVisible(!modalVisible)}
+                  >
+                    <Text style={modalStyles.returnText}>Return</Text>
+                  </TouchableOpacity>
+
+                  <View style={modalStyles.directionsView}>
+                    <ScrollView showsVerticalScrollIndicator={false}>
+                      <View>
+                        <Text style={modalStyles.directionsTitle}>
+                          Directions
+                        </Text>
+                        <Text style={modalStyles.directionsBody}>
+                          {modalInfo.instructions}
+                        </Text>
+                      </View>
+                    </ScrollView>
                   </View>
                 </View>
-                <View style={modalStyles.controlView}>
-                  <TouchableOpacity
-                    style={modalStyles.controlButtons}
-                    onPress={() => modalButtons("LEFT")}
-                  >
-                    <Icon
-                      name="arrow-left-drop-circle"
-                      type="material-community"
-                      size={55}
-                      color="#fff"
-                    />
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={modalStyles.controlButtons}
-                    onPress={() => modalButtons("ADD")}
-                  >
-                    <Icon
-                      name="plus-circle"
-                      type="material-community"
-                      size={70}
-                      color="#fff"
-                    />
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={modalStyles.controlButtons}
-                    onPress={() => modalButtons("RIGHT")}
-                  >
-                    <Icon
-                      name="arrow-right-drop-circle"
-                      type="material-community"
-                      size={55}
-                      color="#fff"
-                    />
-                  </TouchableOpacity>
-                </View>
-
-                <TouchableOpacity
-                  style={modalStyles.returnButton}
-                  onPress={() => setModalVisible(!modalVisible)}
-                >
-                  <Text style={modalStyles.returnText}>Return</Text>
-                </TouchableOpacity>
-
-                <View style={modalStyles.directionsView}>
-                  <ScrollView showsVerticalScrollIndicator={false}>
-                    <View>
-                      <Text style={modalStyles.directionsTitle}>
-                        Directions
-                      </Text>
-                      <Text style={modalStyles.directionsBody}>
-                        {modalInfo.instructions}
-                      </Text>
-                    </View>
-                  </ScrollView>
-                </View>
-              </View>
-            </ScrollView>
+              </ScrollView>
+            </View>
           </View>
-        </View>
+        </BlurView>
 
         <Modal
           animationType="fade"
@@ -944,7 +953,7 @@ export default function Workout({ navigation }) {
                   color="#8a80d1"
                   name="close-box-outline"
                   type="material-community"
-                  size="40"
+                  size={40}
                 />
               </View>
               <View style={modalAddStyles.dividerView}>

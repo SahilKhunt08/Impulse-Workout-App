@@ -45,6 +45,9 @@ import FlashMessage, {
 
 var noPendingRequests = false;
 
+var hasNoFriends = true;
+var hasNoLeaderboards = true;
+
 export default function Profile({ navigation }) {
   const [requestName, setRequestName] = useState("");
   const [requestArr, setRequestArr] = useState([]);
@@ -64,8 +67,8 @@ export default function Profile({ navigation }) {
   const toggleSwitch1 = () => setToggle1((previousState) => !previousState);
   const toggleSwitch2 = () => setToggle2((previousState) => !previousState);
 
-  var hasNoFriends = true;
-  var hasNoLeaderboards = true;
+  const [allFriendsArr1, setAllFriendsArr1] = useState([]);
+  const [allFriendsArr2, setAllFriendsArr2] = useState([]);
 
   React.useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {
@@ -119,6 +122,43 @@ export default function Profile({ navigation }) {
     } else {
       console.log("No such document!");
     }
+
+    const querySnapshotFriends1 = await getDocs(
+      collection(db, "accounts", user.uid, "friends")
+    );
+    var tempFriendIDs = [];
+    querySnapshotFriends1.forEach((doc) => {
+      if (doc.id != "temp") {
+        tempFriendIDs.push(doc.id);
+        hasNoFriends = false;
+      }
+    });
+
+    var tempCombinedData1 = [];
+    var tempCombinedData2 = [];
+    var tempBoolean = true;
+    for (var i = 0; i < tempFriendIDs.length; i++) {
+      const docSnapFriends = await getDoc(
+        doc(db, "accounts", tempFriendIDs[i])
+      );
+      if (docSnapFriends.exists()) {
+        if (tempBoolean) {
+          tempBoolean = false;
+          tempCombinedData1.push({
+            username: docSnapFriends.data().username,
+            id: tempFriendIDs[i],
+          });
+        } else {
+          tempBoolean = true;
+          tempCombinedData2.push({
+            username: docSnapFriends.data().username,
+            id: tempFriendIDs[i],
+          });
+        }
+      }
+    }
+    setAllFriendsArr1(tempCombinedData1);
+    setAllFriendsArr2(tempCombinedData2);
   }
 
   async function saveProfile() {
@@ -392,10 +432,7 @@ export default function Profile({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <ScrollView
-        style={newStyles.scrollView1}
-        showsVerticalScrollIndicator={false}
-      >
+      <View style={newStyles.scrollView1} showsVerticalScrollIndicator={false}>
         <View style={newStyles.scrollView2}>
           {hasNoFriends ? (
             <View style={mainStyles.friendsContainer}>
@@ -425,7 +462,7 @@ export default function Profile({ navigation }) {
                               color="#8e8ef3"
                               name="person-remove"
                               type="material"
-                              size="30"
+                              size={30}
                             ></Icon>
                           </TouchableOpacity>
                           <View style={mainStyles.usernameView}>
@@ -438,6 +475,7 @@ export default function Profile({ navigation }) {
                       </View>
                     ))}
                   </View>
+
                   <View style={mainStyles.scrollContainer3}>
                     {allFriendsArr2.map((info, index) => (
                       <View style={mainStyles.friendCard} key={index}>
@@ -453,7 +491,7 @@ export default function Profile({ navigation }) {
                               color="#8e8ef3"
                               name="person-remove"
                               type="material"
-                              size="30"
+                              size={30}
                             ></Icon>
                           </TouchableOpacity>
                           <View style={mainStyles.usernameView}>
@@ -466,15 +504,6 @@ export default function Profile({ navigation }) {
                       </View>
                     ))}
                   </View>
-                </View>
-                <View style={newStyles.settingsSplit3}>
-                  <Switch
-                    trackColor={{ true: "#8e8efa", false: "#767577" }}
-                    thumbColor={toggle2 ? "#f4f3f4" : "#f4f3f4"}
-                    ios_backgroundColor="#3e3e3e"
-                    onValueChange={toggleSwitch2}
-                    value={toggle2}
-                  />
                 </View>
               </ScrollView>
             </View>
@@ -577,7 +606,7 @@ export default function Profile({ navigation }) {
             <Text style={newStyles.logoutText}>LOGOUT</Text>
           </TouchableOpacity>
         </View>
-      </ScrollView>
+      </View>
     </View>
   );
 }
@@ -616,7 +645,8 @@ const newStyles = StyleSheet.create({
   dividerView2: {
     // backgroundColor: "white",
     width: "87%",
-    marginVertical: 10,
+    marginTop: 20,
+    marginBottom: 20,
   },
   dividerText: {
     color: "#b1b1c9",
@@ -691,7 +721,6 @@ const newStyles = StyleSheet.create({
     width: "100%",
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 30,
     marginBottom: 10,
   },
   requestingView: {
@@ -988,7 +1017,8 @@ const mainStyles = StyleSheet.create({
     marginTop: 25,
     borderRadius: 8,
     width: "90%",
-    height: "40%",
+    height: "35%",
+    maxHeight: "35%",
     alignItems: "center",
     backgroundColor: "#24243b",
     paddingVertical: 8,
