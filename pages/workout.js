@@ -10,6 +10,7 @@ import {
   Pressable,
   Modal,
   Image,
+  Alert,
 } from "react-native";
 import { Button } from "react-native-paper";
 import axios from "axios";
@@ -1072,8 +1073,8 @@ export default function Workout({ navigation }) {
           setModalVisible(!modalVisible);
         }}
       >
-        <View style={vedantStyles.container}>
-          <View style={{ marginTop: "15%" }}>
+        <ScrollView style={vedantStyles.container}>
+          <View style={{ marginTop: "5%" }}>
             <View style={{ marginRight: 210, flexDirection: "row" }}>
               <Text style={vedantStyles.titleText}>Filters</Text>
               <Image
@@ -1111,164 +1112,167 @@ export default function Workout({ navigation }) {
                 <Text style={vedantStyles.loginText}>Expert</Text>
               </TouchableOpacity>
             </View>
+
+            <Text style={vedantStyles.filterHeader}>Muscle Group</Text>
+            <View style={{ flexDirection: "row" }}>
+              <TouchableOpacity
+                style={styleAbdom}
+                onPress={() => recieveButtonClicks(4)}
+              >
+                <Text style={vedantStyles.loginText}>Abdominals</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styleAbduct}
+                onPress={() => recieveButtonClicks(5)}
+              >
+                <Text style={vedantStyles.loginText}>Abductors</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styleAdd}
+                onPress={() => recieveButtonClicks(6)}
+              >
+                <Text style={vedantStyles.loginText}>Adductors</Text>
+              </TouchableOpacity>
+            </View>
+            <View style={{ flexDirection: "row" }}>
+              <TouchableOpacity
+                style={styleBiceps}
+                onPress={() => recieveButtonClicks(7)}
+              >
+                <Text style={vedantStyles.loginText}>Biceps</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styleTriceps}
+                onPress={() => recieveButtonClicks(8)}
+              >
+                <Text style={vedantStyles.loginText}>Triceps</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styleLats}
+                onPress={() => recieveButtonClicks(9)}
+              >
+                <Text style={vedantStyles.loginText}>Lats</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styleFore}
+                onPress={() => recieveButtonClicks(10)}
+              >
+                <Text style={vedantStyles.loginText}>Forearms</Text>
+              </TouchableOpacity>
+            </View>
+            <View style={{ flexDirection: "row" }}>
+              <TouchableOpacity
+                style={styleTraps}
+                onPress={() => recieveButtonClicks(11)}
+              >
+                <Text style={vedantStyles.loginText}>Traps</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styleChest}
+                onPress={() => recieveButtonClicks(12)}
+              >
+                <Text style={vedantStyles.loginText}>Chest</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styleNeck}
+                onPress={() => recieveButtonClicks(13)}
+              >
+                <Text style={vedantStyles.loginText}>Neck</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styleLowBack}
+                onPress={() => recieveButtonClicks(14)}
+              >
+                <Text style={vedantStyles.loginText}>Lower Back</Text>
+              </TouchableOpacity>
+            </View>
+            <View style={{ flexDirection: "row" }}>
+              <TouchableOpacity
+                style={styleMidBack}
+                onPress={() => recieveButtonClicks(15)}
+              >
+                <Text style={vedantStyles.loginText}>Middle Back</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styleCalves}
+                onPress={() => recieveButtonClicks(16)}
+              >
+                <Text style={vedantStyles.loginText}>Calves</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styleGlutes}
+                onPress={() => recieveButtonClicks(17)}
+              >
+                <Text style={vedantStyles.loginText}>Glutes</Text>
+              </TouchableOpacity>
+            </View>
+            <View style={{ flexDirection: "row" }}>
+              <TouchableOpacity
+                style={styleHams}
+                onPress={() => recieveButtonClicks(18)}
+              >
+                <Text style={vedantStyles.loginText}>Hamstrings</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styleQuads}
+                onPress={() => recieveButtonClicks(19)}
+              >
+                <Text style={vedantStyles.loginText}>Quadriceps</Text>
+              </TouchableOpacity>
+            </View>
+            <Text style={vedantStyles.filterHeader}>Type</Text>
+            <View style={{ flexDirection: "row" }}>
+              <TouchableOpacity
+                style={styleCardio}
+                onPress={() => recieveButtonClicks(20)}
+              >
+                <Text style={vedantStyles.loginText}>Cardio</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styleOly}
+                onPress={() => recieveButtonClicks(21)}
+              >
+                <Text style={vedantStyles.loginText}>
+                  Olympic Weightlifting
+                </Text>
+              </TouchableOpacity>
+            </View>
+            <View style={{ flexDirection: "row" }}>
+              <TouchableOpacity
+                style={stylePlyo}
+                onPress={() => recieveButtonClicks(22)}
+              >
+                <Text style={vedantStyles.loginText}>Plyometrics</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={stylePower}
+                onPress={() => recieveButtonClicks(23)}
+              >
+                <Text style={vedantStyles.loginText}>Powerlifting</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styleStrength}
+                onPress={() => recieveButtonClicks(24)}
+              >
+                <Text style={vedantStyles.loginText}>Strength</Text>
+              </TouchableOpacity>
+            </View>
+            <View style={{ flexDirection: "row" }}>
+              <TouchableOpacity
+                style={styleStretch}
+                onPress={() => recieveButtonClicks(25)}
+              >
+                <Text style={vedantStyles.loginText}>Stretching</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styleStrong}
+                onPress={() => recieveButtonClicks(26)}
+              >
+                <Text style={vedantStyles.loginText}>Strongman</Text>
+              </TouchableOpacity>
+            </View>
           </View>
 
-          <Text style={vedantStyles.filterHeader}>Muscle Group</Text>
-          <View style={{ flexDirection: "row" }}>
-            <TouchableOpacity
-              style={styleAbdom}
-              onPress={() => recieveButtonClicks(4)}
-            >
-              <Text style={vedantStyles.loginText}>Abdominals</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styleAbduct}
-              onPress={() => recieveButtonClicks(5)}
-            >
-              <Text style={vedantStyles.loginText}>Abductors</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styleAdd}
-              onPress={() => recieveButtonClicks(6)}
-            >
-              <Text style={vedantStyles.loginText}>Adductors</Text>
-            </TouchableOpacity>
-          </View>
-          <View style={{ flexDirection: "row" }}>
-            <TouchableOpacity
-              style={styleBiceps}
-              onPress={() => recieveButtonClicks(7)}
-            >
-              <Text style={vedantStyles.loginText}>Biceps</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styleTriceps}
-              onPress={() => recieveButtonClicks(8)}
-            >
-              <Text style={vedantStyles.loginText}>Triceps</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styleLats}
-              onPress={() => recieveButtonClicks(9)}
-            >
-              <Text style={vedantStyles.loginText}>Lats</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styleFore}
-              onPress={() => recieveButtonClicks(10)}
-            >
-              <Text style={vedantStyles.loginText}>Forearms</Text>
-            </TouchableOpacity>
-          </View>
-          <View style={{ flexDirection: "row" }}>
-            <TouchableOpacity
-              style={styleTraps}
-              onPress={() => recieveButtonClicks(11)}
-            >
-              <Text style={vedantStyles.loginText}>Traps</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styleChest}
-              onPress={() => recieveButtonClicks(12)}
-            >
-              <Text style={vedantStyles.loginText}>Chest</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styleNeck}
-              onPress={() => recieveButtonClicks(13)}
-            >
-              <Text style={vedantStyles.loginText}>Neck</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styleLowBack}
-              onPress={() => recieveButtonClicks(14)}
-            >
-              <Text style={vedantStyles.loginText}>Lower Back</Text>
-            </TouchableOpacity>
-          </View>
-          <View style={{ flexDirection: "row" }}>
-            <TouchableOpacity
-              style={styleMidBack}
-              onPress={() => recieveButtonClicks(15)}
-            >
-              <Text style={vedantStyles.loginText}>Middle Back</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styleCalves}
-              onPress={() => recieveButtonClicks(16)}
-            >
-              <Text style={vedantStyles.loginText}>Calves</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styleGlutes}
-              onPress={() => recieveButtonClicks(17)}
-            >
-              <Text style={vedantStyles.loginText}>Glutes</Text>
-            </TouchableOpacity>
-          </View>
-          <View style={{ flexDirection: "row" }}>
-            <TouchableOpacity
-              style={styleHams}
-              onPress={() => recieveButtonClicks(18)}
-            >
-              <Text style={vedantStyles.loginText}>Hamstrings</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styleQuads}
-              onPress={() => recieveButtonClicks(19)}
-            >
-              <Text style={vedantStyles.loginText}>Quadriceps</Text>
-            </TouchableOpacity>
-          </View>
-          <Text style={vedantStyles.filterHeader}>Type</Text>
-          <View style={{ flexDirection: "row" }}>
-            <TouchableOpacity
-              style={styleCardio}
-              onPress={() => recieveButtonClicks(20)}
-            >
-              <Text style={vedantStyles.loginText}>Cardio</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styleOly}
-              onPress={() => recieveButtonClicks(21)}
-            >
-              <Text style={vedantStyles.loginText}>Olympic Weightlifting</Text>
-            </TouchableOpacity>
-          </View>
-          <View style={{ flexDirection: "row" }}>
-            <TouchableOpacity
-              style={stylePlyo}
-              onPress={() => recieveButtonClicks(22)}
-            >
-              <Text style={vedantStyles.loginText}>Plyometrics</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={stylePower}
-              onPress={() => recieveButtonClicks(23)}
-            >
-              <Text style={vedantStyles.loginText}>Powerlifting</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styleStrength}
-              onPress={() => recieveButtonClicks(24)}
-            >
-              <Text style={vedantStyles.loginText}>Strength</Text>
-            </TouchableOpacity>
-          </View>
-          <View style={{ flexDirection: "row" }}>
-            <TouchableOpacity
-              style={styleStretch}
-              onPress={() => recieveButtonClicks(25)}
-            >
-              <Text style={vedantStyles.loginText}>Stretching</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styleStrong}
-              onPress={() => recieveButtonClicks(26)}
-            >
-              <Text style={vedantStyles.loginText}>Strongman</Text>
-            </TouchableOpacity>
-          </View>
           <View style={vedantStyles.filterButtonsView}>
             <TouchableOpacity
               onPress={() => setfilterModalVis(false)}
@@ -1283,7 +1287,7 @@ export default function Workout({ navigation }) {
               <Text style={vedantStyles.searchText}>Search</Text>
             </TouchableOpacity>
           </View>
-        </View>
+        </ScrollView>
       </Modal>
 
       <ScrollView
@@ -1804,7 +1808,7 @@ const styles = StyleSheet.create({
 const vedantStyles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "center",
+    // alignItems: "center",
     backgroundColor: "#0d0d12",
   },
   filterContainer: {
@@ -1823,7 +1827,7 @@ const vedantStyles = StyleSheet.create({
     fontWeight: "600",
     color: "#ffffff",
     margin: 5,
-    marginTop: 5,
+    marginTop: 20,
   },
   modalText: {
     marginBottom: 15,
@@ -1930,7 +1934,7 @@ const vedantStyles = StyleSheet.create({
   filterButtonsView: {
     flexDirection: "row",
     marginTop: "4%",
-    // marginRight: 265,
+    marginBottom: "6%",
     justifyContent: "center",
     alignItems: "center",
   },

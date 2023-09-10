@@ -432,7 +432,10 @@ export default function Profile({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <View style={newStyles.scrollView1} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        style={newStyles.scrollView1}
+        showsVerticalScrollIndicator={false}
+      >
         <View style={newStyles.scrollView2}>
           {hasNoFriends ? (
             <View style={mainStyles.friendsContainer}>
@@ -606,7 +609,7 @@ export default function Profile({ navigation }) {
             <Text style={newStyles.logoutText}>LOGOUT</Text>
           </TouchableOpacity>
         </View>
-      </View>
+      </ScrollView>
     </View>
   );
 }
@@ -792,8 +795,8 @@ const newStyles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 10,
-    marginBottom: 40,
+    // marginTop: 10,
+    marginBottom: "40%",
   },
   logoutText: {
     color: "#ffffff",

@@ -702,7 +702,7 @@ export default function Home({ route, navigation }) {
 
   return (
     <View style={backgroundStyle.container}>
-      <View>
+      <ScrollView>
         <View>
           <View flexDirection="row">
             <Text style={backgroundStyle.titleText}> Welcome, {userName} </Text>
@@ -878,7 +878,7 @@ export default function Home({ route, navigation }) {
         {/* <View marginBottom={30}>
             <RedirectCards></RedirectCards>         
           </View> */}
-      </View>
+      </ScrollView>
 
       <Modal
         animationType="slide"
@@ -889,126 +889,133 @@ export default function Home({ route, navigation }) {
           setOpenNewWorkoutPage(!openNewWorkoutPage);
         }}
       >
-        <View style={newWorkout.container}>
-          <View
-            style={{
-              marginTop: 80,
-              marginBottom: 15,
-              width: "100%",
-              height: 50,
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <View style={newWorkout.headerBackground}>
-              <Text style={newWorkout.mainHeader}>Profile</Text>
+        <ScrollView>
+          <View style={newWorkout.container}>
+            <View
+              style={{
+                marginTop: 80,
+                marginBottom: 15,
+                width: "100%",
+                height: 50,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <View style={newWorkout.headerBackground}>
+                <Text style={newWorkout.mainHeader}>Profile</Text>
+              </View>
             </View>
+
+            <View style={newStyles.mainContentContainer}>
+              <View style={newStyles.accountInfoView}>
+                <Text style={newStyles.infoText}> Username </Text>
+                <View style={newStyles.inputView}>
+                  <TextInput
+                    style={newStyles.inputText}
+                    placeholder="Example"
+                    placeholderTextColor="#cccccc"
+                    onChangeText={(newUsername) => setNewUsername(newUsername)}
+                    value={newUsername}
+                    color={"#cccccc"}
+                    keyboardAppearance="dark"
+                  />
+                </View>
+                <Text style={newStyles.infoText}> Email </Text>
+                <View style={newStyles.inputView}>
+                  <TextInput
+                    style={newStyles.inputText}
+                    placeholder="someone@example.com"
+                    placeholderTextColor="#cccccc"
+                    onChangeText={(newEmail) => setNewEmail(newEmail)}
+                    value={newEmail}
+                    color={"#cccccc"}
+                    keyboardAppearance="dark"
+                    autoCapitalize="none"
+                  />
+                </View>
+                <Text style={newStyles.infoText}> Password </Text>
+                <View style={newStyles.inputView}>
+                  <TextInput
+                    style={newStyles.inputText}
+                    // placeholder="Work in Progress"
+                    placeholder="New Password"
+                    placeholderTextColor="#cccccc"
+                    secureTextEntry={true}
+                    onChangeText={(newPassword) => setNewPassword(newPassword)}
+                    value={newPassword}
+                    color={"#cccccc"}
+                    keyboardAppearance="dark"
+                  />
+                </View>
+              </View>
+            </View>
+
+            <View style={newStyles.genSettingsContainer}>
+              <View style={newStyles.settingsView}>
+                <View style={newStyles.settingsSplit1}>
+                  <Icon
+                    name="group"
+                    type="material"
+                    size={31}
+                    color="#8e8efa"
+                  />
+                </View>
+                <View style={newStyles.settingsSplit2}>
+                  <Text style={newStyles.settingsText}>Receive Requests</Text>
+                </View>
+                <View style={newStyles.settingsSplit3}>
+                  <Switch
+                    style={newStyles.switchStyle}
+                    trackColor={{ true: "#8e8efa", false: "#767577" }}
+                    thumbColor={toggle1 ? "#f4f3f4" : "#f4f3f4"}
+                    ios_backgroundColor="#3e3e3e"
+                    onValueChange={toggleSwitch1}
+                    value={toggle1}
+                  />
+                </View>
+              </View>
+              <View style={newStyles.settingsView}>
+                <View style={newStyles.settingsSplit1}>
+                  <Icon
+                    name="leaderboard"
+                    type="material"
+                    size={31}
+                    color="#8e8efa"
+                  />
+                </View>
+                <View style={newStyles.settingsSplit2}>
+                  <Text style={newStyles.settingsText}>Receive Invites</Text>
+                </View>
+                <View style={newStyles.settingsSplit3}>
+                  <Switch
+                    trackColor={{ true: "#8e8efa", false: "#767577" }}
+                    thumbColor={toggle2 ? "#f4f3f4" : "#f4f3f4"}
+                    ios_backgroundColor="#3e3e3e"
+                    onValueChange={toggleSwitch2}
+                    value={toggle2}
+                  />
+                </View>
+              </View>
+            </View>
+
+            <TouchableOpacity
+              style={newStyles.updateBtn}
+              onPress={() => {
+                handleUpdate();
+                setOpenProfilePage(false);
+              }}
+            >
+              <Text style={newStyles.updateText}>Update</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={newStyles.submitButton}
+              onPress={() => setOpenProfilePage(false)}
+            >
+              <Text style={newStyles.submitText}>Return</Text>
+            </TouchableOpacity>
           </View>
-
-          <View style={newStyles.mainContentContainer}>
-            <View style={newStyles.accountInfoView}>
-              <Text style={newStyles.infoText}> Username </Text>
-              <View style={newStyles.inputView}>
-                <TextInput
-                  style={newStyles.inputText}
-                  placeholder="Example"
-                  placeholderTextColor="#cccccc"
-                  onChangeText={(newUsername) => setNewUsername(newUsername)}
-                  value={newUsername}
-                  color={"#cccccc"}
-                  keyboardAppearance="dark"
-                />
-              </View>
-              <Text style={newStyles.infoText}> Email </Text>
-              <View style={newStyles.inputView}>
-                <TextInput
-                  style={newStyles.inputText}
-                  placeholder="someone@example.com"
-                  placeholderTextColor="#cccccc"
-                  onChangeText={(newEmail) => setNewEmail(newEmail)}
-                  value={newEmail}
-                  color={"#cccccc"}
-                  keyboardAppearance="dark"
-                  autoCapitalize="none"
-                />
-              </View>
-              <Text style={newStyles.infoText}> Password </Text>
-              <View style={newStyles.inputView}>
-                <TextInput
-                  style={newStyles.inputText}
-                  // placeholder="Work in Progress"
-                  placeholder="New Password"
-                  placeholderTextColor="#cccccc"
-                  secureTextEntry={true}
-                  onChangeText={(newPassword) => setNewPassword(newPassword)}
-                  value={newPassword}
-                  color={"#cccccc"}
-                  keyboardAppearance="dark"
-                />
-              </View>
-            </View>
-          </View>
-
-          <View style={newStyles.genSettingsContainer}>
-            <View style={newStyles.settingsView}>
-              <View style={newStyles.settingsSplit1}>
-                <Icon name="group" type="material" size={31} color="#8e8efa" />
-              </View>
-              <View style={newStyles.settingsSplit2}>
-                <Text style={newStyles.settingsText}>Receive Requests</Text>
-              </View>
-              <View style={newStyles.settingsSplit3}>
-                <Switch
-                  style={newStyles.switchStyle}
-                  trackColor={{ true: "#8e8efa", false: "#767577" }}
-                  thumbColor={toggle1 ? "#f4f3f4" : "#f4f3f4"}
-                  ios_backgroundColor="#3e3e3e"
-                  onValueChange={toggleSwitch1}
-                  value={toggle1}
-                />
-              </View>
-            </View>
-            <View style={newStyles.settingsView}>
-              <View style={newStyles.settingsSplit1}>
-                <Icon
-                  name="leaderboard"
-                  type="material"
-                  size={31}
-                  color="#8e8efa"
-                />
-              </View>
-              <View style={newStyles.settingsSplit2}>
-                <Text style={newStyles.settingsText}>Receive Invites</Text>
-              </View>
-              <View style={newStyles.settingsSplit3}>
-                <Switch
-                  trackColor={{ true: "#8e8efa", false: "#767577" }}
-                  thumbColor={toggle2 ? "#f4f3f4" : "#f4f3f4"}
-                  ios_backgroundColor="#3e3e3e"
-                  onValueChange={toggleSwitch2}
-                  value={toggle2}
-                />
-              </View>
-            </View>
-          </View>
-
-          <TouchableOpacity
-            style={newStyles.updateBtn}
-            onPress={() => {
-              handleUpdate();
-              setOpenProfilePage(false);
-            }}
-          >
-            <Text style={newStyles.updateText}>Update</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={newStyles.submitButton}
-            onPress={() => setOpenProfilePage(false)}
-          >
-            <Text style={newStyles.submitText}>Return</Text>
-          </TouchableOpacity>
-        </View>
+        </ScrollView>
       </Modal>
 
       <Modal
@@ -1019,156 +1026,158 @@ export default function Home({ route, navigation }) {
           setOpenNewWorkoutPage(!openNewWorkoutPage);
         }}
       >
-        <View style={newWorkout.container}>
-          <View
-            style={{
-              marginTop: 80,
-              marginBottom: 15,
-              width: "100%",
-              height: 50,
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <View style={newWorkout.headerBackground}>
-              <Text style={newWorkout.mainHeader}>Workout Creator</Text>
-            </View>
-          </View>
-
-          <View marginTop={13}>
-            <View style={newWorkout.subHeaderBackground}>
-              <Text style={newWorkout.header}>1. Name</Text>
-              <View style={newWorkout.purpleDivider}></View>
+        <ScrollView>
+          <View style={newWorkout.container}>
+            <View
+              style={{
+                marginTop: 80,
+                marginBottom: 15,
+                width: "100%",
+                height: 50,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <View style={newWorkout.headerBackground}>
+                <Text style={newWorkout.mainHeader}>Workout Creator</Text>
+              </View>
             </View>
 
-            <View style={newWorkout.inputView}>
-              <TextInput
-                style={newWorkout.inputText}
-                placeholder="Workout Name"
-                placeholderTextColor="#9c9c9c"
-                onChangeText={(workoutName) => setWorkoutName(workoutName)}
-                keyboardAppearance="dark"
-              />
-            </View>
-
-            <View style={newWorkout.subHeaderBackground}>
-              <Text style={newWorkout.header}>2. Describe </Text>
-              <View style={newWorkout.purpleDivider}></View>
-            </View>
-
-            <View style={newWorkout.inputView2}>
-              <TextInput
-                style={newWorkout.inputText1}
-                placeholder="Description"
-                placeholderTextColor="#9c9c9c"
-                fontSize={25}
-                maxLength={150}
-                onChangeText={(workoutDesc) => setWorkoutDesc(workoutDesc)}
-                keyboardAppearance="dark"
-              />
-            </View>
-
-            <View>
+            <View marginTop={13}>
               <View style={newWorkout.subHeaderBackground}>
-                <Text style={newWorkout.header}>3. Rest Between Sets</Text>
+                <Text style={newWorkout.header}>1. Name</Text>
                 <View style={newWorkout.purpleDivider}></View>
               </View>
-              <ScrollView
-                horizontal={true}
-                style={{ marginTop: 5, marginLeft: 20, marginRight: 20 }}
-                showsHorizontalScrollIndicator={false}
-              >
-                <TouchableOpacity
-                  style={but5}
-                  onPress={() => recieveBreakTimes(1)}
-                >
-                  <Text style={newWorkout.breakText}>5</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={but10}
-                  onPress={() => recieveBreakTimes(2)}
-                >
-                  <Text style={newWorkout.breakText}>10</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={but15}
-                  onPress={() => recieveBreakTimes(3)}
-                >
-                  <Text style={newWorkout.breakText}>15</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={but20}
-                  onPress={() => recieveBreakTimes(4)}
-                >
-                  <Text style={newWorkout.breakText}>20</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={but25}
-                  onPress={() => recieveBreakTimes(5)}
-                >
-                  <Text style={newWorkout.breakText}>25</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={but30}
-                  onPress={() => recieveBreakTimes(6)}
-                >
-                  <Text style={newWorkout.breakText}>30</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={but35}
-                  onPress={() => recieveBreakTimes(7)}
-                >
-                  <Text style={newWorkout.breakText}>35</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={but40}
-                  onPress={() => recieveBreakTimes(8)}
-                >
-                  <Text style={newWorkout.breakText}>40</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={but45}
-                  onPress={() => recieveBreakTimes(9)}
-                >
-                  <Text style={newWorkout.breakText}>45</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={but50}
-                  onPress={() => recieveBreakTimes(10)}
-                >
-                  <Text style={newWorkout.breakText}>50</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={but55}
-                  onPress={() => recieveBreakTimes(11)}
-                >
-                  <Text style={newWorkout.breakText}>55</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={but60}
-                  onPress={() => recieveBreakTimes(12)}
-                >
-                  <Text style={newWorkout.breakText}>60</Text>
-                </TouchableOpacity>
-              </ScrollView>
-            </View>
 
-            <View style={newWorkout.createLeaveView}>
-              <TouchableOpacity
-                style={newWorkout.submitButton}
-                onPress={createWorkout}
-              >
-                <Text style={newWorkout.submitText}>Create</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={newWorkout.submitButton}
-                onPress={() => setOpenNewWorkoutPage(false)}
-              >
-                <Text style={newWorkout.submitText}>Return</Text>
-              </TouchableOpacity>
+              <View style={newWorkout.inputView}>
+                <TextInput
+                  style={newWorkout.inputText}
+                  placeholder="Workout Name"
+                  placeholderTextColor="#9c9c9c"
+                  onChangeText={(workoutName) => setWorkoutName(workoutName)}
+                  keyboardAppearance="dark"
+                />
+              </View>
+
+              <View style={newWorkout.subHeaderBackground}>
+                <Text style={newWorkout.header}>2. Describe </Text>
+                <View style={newWorkout.purpleDivider}></View>
+              </View>
+
+              <View style={newWorkout.inputView2}>
+                <TextInput
+                  style={newWorkout.inputText1}
+                  placeholder="Description"
+                  placeholderTextColor="#9c9c9c"
+                  fontSize={25}
+                  maxLength={150}
+                  onChangeText={(workoutDesc) => setWorkoutDesc(workoutDesc)}
+                  keyboardAppearance="dark"
+                />
+              </View>
+
+              <View>
+                <View style={newWorkout.subHeaderBackground}>
+                  <Text style={newWorkout.header}>3. Rest Between Sets</Text>
+                  <View style={newWorkout.purpleDivider}></View>
+                </View>
+                <ScrollView
+                  horizontal={true}
+                  style={{ marginTop: 5, marginLeft: 20, marginRight: 20 }}
+                  showsHorizontalScrollIndicator={false}
+                >
+                  <TouchableOpacity
+                    style={but5}
+                    onPress={() => recieveBreakTimes(1)}
+                  >
+                    <Text style={newWorkout.breakText}>5</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={but10}
+                    onPress={() => recieveBreakTimes(2)}
+                  >
+                    <Text style={newWorkout.breakText}>10</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={but15}
+                    onPress={() => recieveBreakTimes(3)}
+                  >
+                    <Text style={newWorkout.breakText}>15</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={but20}
+                    onPress={() => recieveBreakTimes(4)}
+                  >
+                    <Text style={newWorkout.breakText}>20</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={but25}
+                    onPress={() => recieveBreakTimes(5)}
+                  >
+                    <Text style={newWorkout.breakText}>25</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={but30}
+                    onPress={() => recieveBreakTimes(6)}
+                  >
+                    <Text style={newWorkout.breakText}>30</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={but35}
+                    onPress={() => recieveBreakTimes(7)}
+                  >
+                    <Text style={newWorkout.breakText}>35</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={but40}
+                    onPress={() => recieveBreakTimes(8)}
+                  >
+                    <Text style={newWorkout.breakText}>40</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={but45}
+                    onPress={() => recieveBreakTimes(9)}
+                  >
+                    <Text style={newWorkout.breakText}>45</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={but50}
+                    onPress={() => recieveBreakTimes(10)}
+                  >
+                    <Text style={newWorkout.breakText}>50</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={but55}
+                    onPress={() => recieveBreakTimes(11)}
+                  >
+                    <Text style={newWorkout.breakText}>55</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={but60}
+                    onPress={() => recieveBreakTimes(12)}
+                  >
+                    <Text style={newWorkout.breakText}>60</Text>
+                  </TouchableOpacity>
+                </ScrollView>
+              </View>
+
+              <View style={newWorkout.createLeaveView}>
+                <TouchableOpacity
+                  style={newWorkout.submitButton}
+                  onPress={createWorkout}
+                >
+                  <Text style={newWorkout.submitText}>Create</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={newWorkout.submitButton}
+                  onPress={() => setOpenNewWorkoutPage(false)}
+                >
+                  <Text style={newWorkout.submitText}>Return</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
-        </View>
+        </ScrollView>
       </Modal>
 
       <Modal
@@ -1179,55 +1188,63 @@ export default function Home({ route, navigation }) {
           setOpenNewWorkoutPage(!openNewWorkoutPage);
         }}
       >
-        <View style={specWorkout.container}>
-          <View style={{ flexDirection: "row", marginTop: 50 }}>
-            <Text style={specWorkout.title}>Impulse</Text>
-          </View>
+        <ScrollView style={specWorkout.container}>
+          <View style={{ alignItems: "center" }}>
+            <View style={{ flexDirection: "row", marginTop: 50 }}>
+              <Text style={specWorkout.title}>Impulse</Text>
+            </View>
 
-          <Divider borderColor="#a3a3bf" color="#a3a3bf" orientation="center">
-            Workout
-          </Divider>
+            <Divider borderColor="#a3a3bf" color="#a3a3bf" orientation="center">
+              Workout
+            </Divider>
 
-          <View marginTop={50}>
-            <Text style={specWorkout.header}>
-              Current Exercise: {nameConfigs[currStep]}
-            </Text>
-          </View>
+            <View marginTop={50}>
+              <Text style={specWorkout.header}>
+                Current Exercise: {nameConfigs[currStep]}
+              </Text>
+            </View>
 
-          <View marginTop={40}>
-            <CountdownCircleTimer
-              key={currStep}
-              isPlaying
-              isSmoothColorTransition
-              duration={timeConfigs[currStep]}
-              colors={["#8e8efa", "#af64bf", "#c44a9b", "#ef1414", " #ff0000"]}
-              colorsTime={[
-                timeConfigs[currStep],
-                timeConfigs[currStep] / 2,
-                timeConfigs[currStep] / 3,
-                0,
-              ]}
-              onComplete={() => setCurrStep(currStep + 1)}
-              updateInterval={1}
+            <View marginTop={40}>
+              <CountdownCircleTimer
+                key={currStep}
+                isPlaying
+                isSmoothColorTransition
+                duration={timeConfigs[currStep]}
+                colors={[
+                  "#8e8efa",
+                  "#af64bf",
+                  "#c44a9b",
+                  "#ef1414",
+                  " #ff0000",
+                ]}
+                colorsTime={[
+                  timeConfigs[currStep],
+                  timeConfigs[currStep] / 2,
+                  timeConfigs[currStep] / 3,
+                  0,
+                ]}
+                onComplete={() => setCurrStep(currStep + 1)}
+                updateInterval={1}
+              >
+                {({ remainingTime, color }) => (
+                  <Text style={{ color, fontSize: 40 }}>{remainingTime}</Text>
+                )}
+              </CountdownCircleTimer>
+            </View>
+
+            <View>
+              <Text style={specWorkout.header}>
+                Next Exercise: {nextNameConfigs[currStep]}
+              </Text>
+            </View>
+            <TouchableOpacity
+              style={specWorkout.returnButton}
+              onPress={() => setOpenSpecWorkout(false)}
             >
-              {({ remainingTime, color }) => (
-                <Text style={{ color, fontSize: 40 }}>{remainingTime}</Text>
-              )}
-            </CountdownCircleTimer>
+              <Text style={specWorkout.returnText}>Return</Text>
+            </TouchableOpacity>
           </View>
-
-          <View>
-            <Text style={specWorkout.header}>
-              Next Exercise: {nextNameConfigs[currStep]}
-            </Text>
-          </View>
-          <TouchableOpacity
-            style={specWorkout.returnButton}
-            onPress={() => setOpenSpecWorkout(false)}
-          >
-            <Text style={specWorkout.returnText}>Return</Text>
-          </TouchableOpacity>
-        </View>
+        </ScrollView>
       </Modal>
 
       <Modal
@@ -1583,7 +1600,7 @@ const deleteModalStyles = StyleSheet.create({
     // backgroundColor: "#1a1a29", //'#404057', //0d0d12
     backgroundColor: "#bac1d2",
     alignItems: "center",
-    height: "21%",
+    height: "28%",
     width: "75%",
     borderRadius: 12,
   },
@@ -1905,7 +1922,8 @@ const newWorkout = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 80,
+    marginTop: 40,
+    marginBottom: "10%",
   },
 
   purpleDivider: {
@@ -2060,7 +2078,7 @@ const cardStyle = StyleSheet.create({
 const specWorkout = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "center",
+    // alignItems: "center",
     backgroundColor: "#0d0d12",
   },
 
@@ -2081,7 +2099,6 @@ const specWorkout = StyleSheet.create({
   returnButton: {
     borderRadius: 9,
     width: "60%",
-    height: 45,
     backgroundColor: "#8e8efa",
     shadowColor: "rgba(227, 227, 255, 0.2)",
     shadowOpacity: 0.8,
@@ -2091,7 +2108,8 @@ const specWorkout = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginHorizontal: 17,
-    marginTop: 150,
+    marginTop: "15%",
+    marginBottom: "10%",
   },
 
   returnText: {
@@ -2621,6 +2639,7 @@ const newStyles = StyleSheet.create({
     shadowRadius: 15,
     shadowOffset: { width: 1, height: 13 },
     alignSelf: "center",
+    marginBottom: "10%",
   },
 
   submitText: {
