@@ -589,117 +589,6 @@ export default function Home({ route, navigation }) {
     setDeleteModalVis(false);
   }
 
-  async function handleUpdate() {
-    reloadUser();
-    var allValidInputs = true;
-
-    const docRef1 = doc(db, "accounts", user.uid);
-    await updateDoc(docRef1, {
-      settings1: toggle1,
-      settings2: toggle2,
-    });
-    if (newUsername.length > 0) {
-      await updateDoc(docRef1, {
-        username: newUsername,
-      });
-    } else {
-      allValidInputs = false;
-    }
-
-    const auth1 = getAuth();
-    const user1 = auth1.currentUser;
-    if (newEmail != user1.email) {
-      if (newEmail.length > 0) {
-        updateEmail(auth.currentUser, newEmail)
-          .then(() => {})
-          .catch((error) => {
-            console.log("New Email Error");
-            console.log(error.code);
-            console.log(error.message);
-            allValidInputs = false;
-          });
-      } else {
-        allValidInputs = false;
-      }
-    }
-
-    if (newPassword.length > 6 && newPassword != oldPassword) {
-      updatePassword(user, newPassword)
-        .then(() => {
-          updateFirestorePassword();
-          setOldPassword(newPassword);
-          // Update successful.
-        })
-        .catch((error) => {
-          console.log("New Password Error");
-          console.log(error.code);
-          console.log(error.message);
-          allValidInputs = false;
-        });
-    }
-
-    if (allValidInputs) {
-      showMessage({
-        message: "Update Successful",
-        floating: true,
-        textStyle: newStyles.flashText,
-        titleStyle: newStyles.flashText,
-        icon: "success",
-      });
-    } else {
-      showMessage({
-        message: "Some Inputs Invalid",
-        floating: true,
-        textStyle: newStyles.flashText,
-        titleStyle: newStyles.flashText,
-        icon: "danger",
-      });
-    }
-  }
-
-  //—————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
-  const handleLogout = () => {
-    console.log("LOGOUT");
-    // navigation.replace('Impulse') //New version
-    navigation.navigate("Login"); //Old version
-  };
-
-  async function reloadUser() {
-    const auth2 = getAuth();
-    const user2 = auth2.currentUser;
-    const docRef3 = doc(db, "accounts", user2.uid);
-    const docSnap3 = await getDoc(docRef3);
-    var credentialPassword = "";
-    if (docSnap3.exists()) {
-      credentialPassword = docSnap3.data().password;
-    } else {
-      console.log("No such document!");
-    }
-
-    const credential = EmailAuthProvider.credential(
-      user2.email,
-      credentialPassword
-    );
-
-    reauthenticateWithCredential(user2, credential)
-      .then(() => {
-        // User re-authenticated.
-      })
-      .catch((error) => {
-        console.log("Re-auth error");
-        console.log(error.code);
-        console.log(error.message);
-      });
-  }
-
-  async function updateFirestorePassword() {
-    const docRef1 = doc(db, "accounts", user.uid);
-    await updateDoc(docRef1, {
-      password: newPassword,
-    });
-  }
-
   return (
     <View style={backgroundStyle.container}>
       <ScrollView>
@@ -731,6 +620,7 @@ export default function Home({ route, navigation }) {
             horizontal={true}
             // alignSelf={"left"}
             showsHorizontalScrollIndicator={false}
+            style={cardStyle.workoutCardScroll}
           >
             {totalWorkoutsArr.map((info, index) => (
               <View key={index} style={cardStyle.container}>
@@ -1188,8 +1078,8 @@ export default function Home({ route, navigation }) {
           setOpenNewWorkoutPage(!openNewWorkoutPage);
         }}
       >
-        <ScrollView style={specWorkout.container}>
-          <View style={{ alignItems: "center" }}>
+        <ScrollView>
+          <View style={specWorkout.container}>
             <View style={{ flexDirection: "row", marginTop: 50 }}>
               <Text style={specWorkout.title}>Impulse</Text>
             </View>
@@ -1371,7 +1261,7 @@ export default function Home({ route, navigation }) {
                       onPress={() => deleteExercise(info.name)}
                     >
                       <Icon
-                        style={{ alignContent: "end" }}
+                        style={{ alignContent: "flex-end" }}
                         color="#FF0000"
                         name="delete"
                         type="material"
@@ -1383,7 +1273,7 @@ export default function Home({ route, navigation }) {
                       onPress={() => editExercises(info.name)}
                     >
                       <Icon
-                        style={{ alignContent: "end" }}
+                        style={{ alignContent: "flex-end" }}
                         color="#c8c5db"
                         name="menu"
                         type="material"
@@ -2005,8 +1895,8 @@ const cardStyle = StyleSheet.create({
     backgroundColor: "#0d0d12",
     // marginTop: 50,
     height: 160,
-    width: 365,
-    marginLeft: 10,
+    width: "90%",
+    marginLeft: "8%",
     borderRadius: 10,
     borderWidth: 2,
     borderColor: "#404057",
@@ -2025,8 +1915,7 @@ const cardStyle = StyleSheet.create({
 
   container: {
     backgroundColor: "#0d0d12",
-    // marginTop: 50,
-    height: "85%",
+    height: "82%",
     width: 255,
     marginLeft: 5,
     borderRadius: 10,
@@ -2078,7 +1967,7 @@ const cardStyle = StyleSheet.create({
 const specWorkout = StyleSheet.create({
   container: {
     flex: 1,
-    // alignItems: "center",
+    alignItems: "center",
     backgroundColor: "#0d0d12",
   },
 
@@ -2346,12 +2235,6 @@ const homeScrollMain = StyleSheet.create({
     height: 205,
     // backgroundColor: "red",
   },
-  scrollContainer2: {
-    // minHeight: 200,
-  },
-  scrollContainer3: {
-    // height: 300,
-  },
   banner: {
     alignSelf: "center",
     height: 140,
@@ -2366,6 +2249,7 @@ const homeScrollMain = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
   },
+
   titleText: {
     position: "absolute",
     color: "#00B592",
