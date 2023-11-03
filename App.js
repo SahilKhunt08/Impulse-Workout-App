@@ -16,6 +16,7 @@ import Friends from "./pages/friends";
 import Profile from "./pages/profile";
 import Login from "./pages/login";
 
+const temp;
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
