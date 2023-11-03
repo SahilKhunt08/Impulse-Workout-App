@@ -17,6 +17,7 @@ import Profile from "./pages/profile";
 import Login from "./pages/login";
 
 const temp;
+// gfdhdghrgher
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
